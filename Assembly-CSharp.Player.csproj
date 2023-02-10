@@ -58,20 +58,22 @@
   <ItemGroup>
     <Compile Include="Assets\Scripts\FollowPlayer.cs" />
     <Compile Include="Assets\Scripts\GameManager.cs" />
-    <Compile Include="Assets\Scripts\PlayerJumpState.cs" />
-    <Compile Include="Assets\Scripts\PlayerStateMachine.cs" />
-    <Compile Include="Assets\Scripts\State.cs" />
-    <Compile Include="Assets\Scripts\PlayerBaseState.cs" />
-    <Compile Include="Assets\Scripts\PlayerController.cs" />
-    <Compile Include="Assets\Scripts\PlayerControls.cs" />
-    <Compile Include="Assets\Scripts\PlayerFallState.cs" />
-    <Compile Include="Assets\Scripts\StateMachine.cs" />
-    <Compile Include="Assets\Scripts\PlayerDoubleJumpState.cs" />
-    <Compile Include="Assets\Scripts\RotateObject.cs" />
-    <Compile Include="Assets\Scripts\PlayerMoveState.cs" />
-    <Compile Include="Assets\Scripts\InputReader.cs" />
+    <Compile Include="Assets\Scripts\SpawnChallenge.cs" />
+    <Compile Include="Assets\Scripts\PlayerMovement\PlayerJumpState.cs" />
     <Compile Include="Assets\Scripts\SpawnPlatforms.cs" />
     <Compile Include="Assets\Scripts\MovePlatform.cs" />
+    <Compile Include="Assets\Scripts\PlayerMovement\PlayerStateMachine.cs" />
+    <Compile Include="Assets\Scripts\State.cs" />
+    <Compile Include="Assets\Scripts\PlayerMovement\PlayerBaseState.cs" />
+    <Compile Include="Assets\Scripts\PlayerMovement\PlayerController.cs" />
+    <Compile Include="Assets\Scripts\PlayerMovement\PlayerControls.cs" />
+    <Compile Include="Assets\Scripts\PlayerMovement\PlayerFallState.cs" />
+    <Compile Include="Assets\Scripts\StateMachine.cs" />
+    <Compile Include="Assets\Scripts\PlayerMovement\PlayerDoubleJumpState.cs" />
+    <Compile Include="Assets\Scripts\HoopCollectible.cs" />
+    <Compile Include="Assets\Scripts\RotateObject.cs" />
+    <Compile Include="Assets\Scripts\PlayerMovement\PlayerMoveState.cs" />
+    <Compile Include="Assets\Scripts\PlayerMovement\InputReader.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">
