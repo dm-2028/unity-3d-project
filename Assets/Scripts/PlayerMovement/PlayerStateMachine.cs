@@ -25,4 +25,22 @@ public class PlayerStateMachine : StateMachine
 
         SwitchState(new PlayerMoveState(this));
     }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        Debug.Log("collision");
+        if (collision.gameObject.CompareTag("Vine"))
+        {
+            SwitchState(new PlayerClimbState(this, collision.gameObject));
+        }
+    }
+    private void OnControllerColliderHit(ControllerColliderHit hit)
+    {
+        Debug.Log("collision");
+        if (hit.gameObject.CompareTag("Tree"))
+        {
+            Debug.Log("hit vine");
+            SwitchState(new PlayerClimbState(this, hit.gameObject));
+        }
+    }
 }
