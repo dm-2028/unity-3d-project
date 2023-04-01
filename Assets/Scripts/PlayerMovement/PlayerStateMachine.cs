@@ -22,7 +22,7 @@ public class PlayerStateMachine : StateMachine
         inputReader = GetComponent<InputReader>();
         animator = GetComponent<Animator>();
         controller = GetComponent<CharacterController>();
-
+        
         SwitchState(new PlayerMoveState(this));
     }
 
@@ -36,8 +36,8 @@ public class PlayerStateMachine : StateMachine
     }
     private void OnControllerColliderHit(ControllerColliderHit hit)
     {
-        Debug.Log("collision");
-        if (hit.gameObject.CompareTag("Tree"))
+        Debug.Log("collision cloider");
+        if (hit.gameObject.CompareTag("Vines"))
         {
             Debug.Log("hit vine");
             SwitchState(new PlayerClimbState(this, hit.gameObject));
