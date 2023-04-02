@@ -16,6 +16,9 @@ public class PlayerMoveState : PlayerBaseState
         stateMachine.velocity.y = Physics.gravity.y;
         stateMachine.animator.CrossFadeInFixedTime(moveBlendTreeHash, crossFadeDuration);
         stateMachine.inputReader.OnJumpPerformed += SwitchToJumpState;
+
+
+        ignoreLayers = 1 << 10;
     }
 
     public override void Tick()
@@ -27,6 +30,7 @@ public class PlayerMoveState : PlayerBaseState
         CalculateMoveDirection();
         FaceMoveDirection();
         Move();
+        CheckForClimb();
 
         stateMachine.animator.SetFloat(moveSpeedHash, stateMachine.inputReader.movement.sqrMagnitude > 0f ? 1f : 0f, animationDampTime, Time.deltaTime);
 

@@ -6,10 +6,16 @@ public abstract class PlayerBaseState : State
 {
     protected readonly PlayerStateMachine stateMachine;
     // Start is called before the first frame update
-    
+
+    public float offsetFromWall = 0.3f;
+    protected Transform helper = new GameObject().transform;
+    protected LayerMask ignoreLayers;
+
     protected PlayerBaseState(PlayerStateMachine stateMachine)
     {
+        helper.name = "Climb Helper";
         this.stateMachine = stateMachine;
+
     }
 
     protected void CalculateMoveDirection()
@@ -44,5 +50,32 @@ public abstract class PlayerBaseState : State
     protected void Move()
     {
         stateMachine.controller.Move(stateMachine.velocity * Time.deltaTime);
+    }
+
+    protected void CheckForClimb()
+    {
+        Debug.Log("Check for Climb");
+        Vector3 origin = stateMachine.transform.position;
+        origin.y += 1f;
+        Vector3 dir = stateMachine.transform.forward;
+        Debug.Log("origin location " + origin);
+        Debug.Log("direction location " + dir);
+        Debug.Log("ignore " + ignoreLayers.value);
+        Debug.DrawRay(origin, dir,Color.white);
+        if (Physics.Raycast(origin, dir, out RaycastHit hit, 1f, ignoreLayers))
+        {
+            Debug.Log("climb state?");
+            helper.position = PosWithOffset(origin, hit.point);
+            stateMachine.SwitchState(new PlayerClimbState(stateMachine, hit));
+        }
+
+    }
+
+    protected Vector3 PosWithOffset(Vector3 origin, Vector3 target)
+    {
+        Vector3 direction = origin - target;
+        direction.Normalize();
+        Vector3 offset = direction * offsetFromWall;
+        return target + offset;
     }
 }

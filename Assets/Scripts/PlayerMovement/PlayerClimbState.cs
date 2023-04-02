@@ -17,28 +17,28 @@ public class PlayerClimbState : PlayerBaseState
     Quaternion startRot;
     Quaternion targetRot;
     public float positionOffset = 1.0f;
-    public float offsetFromWall = 0.3f;
+
     public float speedMultiplier = 0.2f;
     public float climbSpeed = 3;
     public float rotateSpeed = 5;
     public float distanceToWall = 1;
     public float distanceToMoveDirection = 1.0f;
 
-    Transform helper;
-
-    LayerMask ignoreLayers;
+    RaycastHit hit;
+    
 
     //ThirdPersonController tpc;
 
-    public PlayerClimbState(PlayerStateMachine stateMachine, GameObject attached): base(stateMachine)
+    public PlayerClimbState(PlayerStateMachine stateMachine, RaycastHit hit): base(stateMachine)
     {
-        this.attached = attached;
+        this.hit = hit;
+
+        InitForClimb(this.hit);
     }
     public override void Enter()
     { 
         Debug.Log("enter climb state");
-        helper = new GameObject().transform;
-        helper.name = "Climb Helper";
+        
         ignoreLayers = ~(1 << 9);
     }
 
@@ -86,11 +86,14 @@ public class PlayerClimbState : PlayerBaseState
 
             float hor = stateMachine.inputReader.movement.x;
             float vert = stateMachine.inputReader.movement.y;
+            Debug.Log("up " + vert + " side " + hor);
             float m = Mathf.Abs(hor) + Mathf.Abs(vert);
 
             Vector3 h = helper.right * hor;
             Vector3 v = helper.up * vert;
             Vector3 moveDir = (h + v).normalized;
+
+            Debug.Log("move dir " + moveDir);
 
             if (isMid)
             {
@@ -139,20 +142,7 @@ public class PlayerClimbState : PlayerBaseState
         }
     }
 
-    public bool CheckForClimb()
-    {
-        Vector3 origin = stateMachine.transform.position;
-        origin.y += 0.02f;
-        Vector3 dir = stateMachine.transform.forward;
-        if (Physics.Raycast(origin, dir, out RaycastHit hit, 0.5f, ignoreLayers))
-        {
-            helper.position = PosWithOffset(origin, hit.point);
-            InitForClimb(hit);
-            return true;
-        }
 
-        return false;
-    }
 
     void InitForClimb(RaycastHit hit)
     {
@@ -223,6 +213,7 @@ public class PlayerClimbState : PlayerBaseState
     }
     void GetInPosition()
     {
+        
         // transition time
         t += delta * 10;
 
@@ -235,15 +226,10 @@ public class PlayerClimbState : PlayerBaseState
 
         Vector3 tp = Vector3.Lerp(startPos, targetPos, t);
         stateMachine.transform.SetPositionAndRotation(tp, Quaternion.Slerp(stateMachine.transform.rotation, helper.rotation, delta * rotateSpeed));
+        Debug.Log("getting in position" + tp);
     }
 
-    Vector3 PosWithOffset(Vector3 origin, Vector3 target)
-    {
-        Vector3 direction = origin - target;
-        direction.Normalize();
-        Vector3 offset = direction * offsetFromWall;
-        return target + offset;
-    }
+
 
     void LookForGround()
     {
