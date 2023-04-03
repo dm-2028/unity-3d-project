@@ -28,6 +28,7 @@ public class PlayerDoubleJumpState : PlayerBaseState
         CalculateMoveDirection();
         FaceMoveDirection();
         Move();
+        CheckForClimb();
     }
 
     public override void Exit()

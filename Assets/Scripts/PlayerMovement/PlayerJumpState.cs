@@ -30,6 +30,7 @@ public class PlayerJumpState : PlayerBaseState
         CalculateMoveDirection();
         FaceMoveDirection();
         Move();
+        CheckForClimb();
     }
 
     public override void Exit()

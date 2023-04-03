@@ -8,6 +8,7 @@ TagManager:
   - Hoop
   - Vine
   - Tree
+  - Vines
   layers:
   - Default
   - TransparentFX
@@ -19,7 +20,7 @@ TagManager:
   - 
   - 
   - 
-  - 
+  - Climbable
   - 
   - 
   - 

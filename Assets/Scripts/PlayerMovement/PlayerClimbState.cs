@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class PlayerClimbState : PlayerBaseState
 {
-    private GameObject attached;
     public bool isClimbing;
     public bool isMid;
 
@@ -17,12 +16,13 @@ public class PlayerClimbState : PlayerBaseState
     Quaternion startRot;
     Quaternion targetRot;
     public float positionOffset = 1.0f;
+    private LayerMask playerLayer = ~(1 << 3);
 
     public float speedMultiplier = 0.2f;
-    public float climbSpeed = 3;
+    public float climbSpeed = 5;
     public float rotateSpeed = 5;
     public float distanceToWall = 1;
-    public float distanceToMoveDirection = 1.0f;
+    public float distanceToMoveDirection = .5f;
 
     RaycastHit hit;
     
@@ -105,6 +105,7 @@ public class PlayerClimbState : PlayerBaseState
             else
             {
                 bool canMove = CanMove(moveDir);
+                Debug.Log("can move " + canMove);
                 if (!canMove || moveDir == Vector3.zero)
                 {
                     return;
@@ -163,9 +164,12 @@ public class PlayerClimbState : PlayerBaseState
         Vector3 dir = moveDir;
         //DebugLine.singleton.SetLine(origin, origin + (dir * dis), 0);
 
+        Debug.DrawRay(origin, dir, Color.white);
         // Raycast desired direction
-        if (Physics.Raycast(origin, dir, out RaycastHit hit, dis))
+        if (Physics.Raycast(origin, dir, out RaycastHit hit, dis, playerLayer))
         {
+            
+            Debug.Log("it's a corner");
             // Check if corner
             return false;
         }
@@ -201,14 +205,16 @@ public class PlayerClimbState : PlayerBaseState
 
         if (Physics.Raycast(origin, dir, out hit, dis2))
         {
+            
             float angle = Vector3.Angle(-helper.forward, hit.normal);
+            Debug.Log("within physics raycast if angle " + angle);
             if (angle < 40)
             {
                 helper.SetPositionAndRotation(PosWithOffset(origin, hit.point), Quaternion.LookRotation(-hit.normal));
                 return true;
             }
         }
-
+        Debug.Log("all checks failed");
         return false;
     }
     void GetInPosition()
