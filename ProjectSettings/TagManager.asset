@@ -9,6 +9,7 @@ TagManager:
   - Vine
   - Tree
   - Vines
+  - FrogBoundary
   layers:
   - Default
   - TransparentFX

@@ -54,13 +54,13 @@ public abstract class PlayerBaseState : State
 
     protected void CheckForClimb()
     {
-        Debug.Log("Check for Climb");
+        //Debug.Log("Check for Climb");
         Vector3 origin = stateMachine.transform.position;
         origin.y += 1f;
         Vector3 dir = stateMachine.transform.forward;
-        Debug.Log("origin location " + origin);
+/*        Debug.Log("origin location " + origin);
         Debug.Log("direction location " + dir);
-        Debug.Log("ignore " + ignoreLayers.value);
+        Debug.Log("ignore " + ignoreLayers.value);*/
         Debug.DrawRay(origin, dir,Color.white);
         if (Physics.Raycast(origin, dir, out RaycastHit hit, 1f, ignoreLayers))
         {
