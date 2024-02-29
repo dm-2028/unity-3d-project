@@ -42,6 +42,6 @@ public class InputReader : MonoBehaviour, PlayerControls.IControlsActions
 
     public void OnMovement(InputAction.CallbackContext context)
     {
-        movement = context.ReadValue<Vector2>(); 
+        movement = Vector2.ClampMagnitude(context.ReadValue<Vector2>(), 1f); 
     }
 }
