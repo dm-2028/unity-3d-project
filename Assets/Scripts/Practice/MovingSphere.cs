@@ -74,7 +74,7 @@ public class MovingSphere : MonoBehaviour
 
     Vector3 connectionWorldPosition, connectionLocalPosition;
 
-    MeshRenderer meshRenderer;
+    SkinnedMeshRenderer meshRenderer;
     
     float submergence;
 
@@ -100,7 +100,7 @@ public class MovingSphere : MonoBehaviour
     {
         body = GetComponent<Rigidbody>();
         body.useGravity = false;
-        meshRenderer = ball.GetComponent<MeshRenderer>();
+        meshRenderer = ball.GetComponent<SkinnedMeshRenderer>();
         OnValidate();
     }
 
