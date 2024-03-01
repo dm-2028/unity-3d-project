@@ -1,10 +1,10 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(InputReader))]
 [RequireComponent(typeof(Animator))]
-[RequireComponent(typeof(CharacterController))]
 public class PlayerStateMachine : StateMachine
 {
     //public Vector3 velocity;
@@ -12,7 +12,7 @@ public class PlayerStateMachine : StateMachine
     //public float jumpForce { get; private set; } = 5f;
     //public float lookRotationDampFactor { get; private set; } = 10f;
 
-    public Vector3 velocity, connectionVelocity, lastConnectionVelocity;
+    //public Vector3 velocity, connectionVelocity, lastConnectionVelocity;
 
     public Transform mainCamera { get; private set; }
     public InputReader inputReader { get; private set; }
@@ -72,6 +72,13 @@ public class PlayerStateMachine : StateMachine
         playerInputSpace = default,
         ball = default;
 
+    public float groundContactCount { get; set; }
+    public float steepContactCount { get; set; }
+    public float climbContactCount { get; set; }
+
+    public int jumpPhase { get; set; }
+    public int stepsSinceLastGrounded{get; set;}
+    public int stepsSinceLastJump { get; set; }
 
     float minGroundDotProduct, minStairsDotProduct, minClimbDotProduct;
 
@@ -85,7 +92,6 @@ public class PlayerStateMachine : StateMachine
         mainCamera = Camera.main.transform;
         inputReader = GetComponent<InputReader>();
         animator = GetComponent<Animator>();
-        body = GetComponent<Rigidbody>();
         
         SwitchState(new PlayerMoveState(this));
     }

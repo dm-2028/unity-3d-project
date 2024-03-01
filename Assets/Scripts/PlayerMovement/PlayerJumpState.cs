@@ -11,34 +11,82 @@ public class PlayerJumpState : PlayerBaseState
 
     public override void Enter()
     {
-        Debug.Log("enter jump state");
-        stateMachine.velocity = new Vector3(stateMachine.velocity.x, stateMachine.jumpForce, stateMachine.velocity.z);
+        Vector3 jumpDirection;
+        Debug.Log("on ground " + OnGround + " OnSteep " + OnSteep);
+        if (OnGround)
+        {
+            jumpDirection = contactNormal;
+        }
+        else if (OnSteep)
+        {
+            jumpDirection = steepNormal;
+            stateMachine.jumpPhase = 0;
+        }
+        else if (stateMachine.maxAirJumps > 0 && stateMachine.jumpPhase <= stateMachine.maxAirJumps)
+        {
+            if (stateMachine.jumpPhase == 0)
+            {
+                stateMachine.jumpPhase = 1;
+            }
+            jumpDirection = contactNormal;
+        }
+        else
+        {
+            return;
+        }
+
+        stateMachine.stepsSinceLastJump = 0;
+        stateMachine.jumpPhase += 1;
+
+        float jumpSpeed = Mathf.Sqrt(2f * Physics.gravity.magnitude * stateMachine.jumpHeight);
+        if (InWater)
+        {
+            jumpSpeed *= Mathf.Max(0f, 1f - submergence / stateMachine.swimThreshold);
+        }
+        jumpDirection = (jumpDirection + upAxis).normalized;
+        float alignedSpeed = Vector3.Dot(velocity, jumpDirection);
+        if (alignedSpeed > 0f)
+        {
+            jumpSpeed = Mathf.Max(jumpSpeed - alignedSpeed, 0f);
+        }
+        velocity += jumpDirection * jumpSpeed;
+        Debug.Log("velocity of jump " + velocity);
 
         stateMachine.animator.CrossFadeInFixedTime(jumpHash, crossFadeDuration);
 
-        stateMachine.inputReader.OnJumpPerformed += SwitchToDoubleJumpState;
     }
 
     public override void Tick()
     {
-        ApplyGravity();
+        //ApplyGravity();
 
-        if(stateMachine.velocity.y <= 0f)
-        {
-            stateMachine.SwitchState(new PlayerFallState(stateMachine));
-        }
-        CalculateMoveDirection();
-        FaceMoveDirection();
-        Move();
-        CheckForClimb();
+        //if(stateMachine.velocity.y <= 0f)
+        //{
+        //    stateMachine.SwitchState(new PlayerFallState(stateMachine));
+        //}
+        //CalculateMoveDirection();
+        //FaceMoveDirection();
+        //Move();
+        //CheckForClimb();
     }
 
     public override void Exit()
     {
-        stateMachine.inputReader.OnJumpPerformed -= SwitchToDoubleJumpState;
+        //stateMachine.inputReader.OnJumpPerformed -= SwitchToDoubleJumpState;
     }
-    private void SwitchToDoubleJumpState()
+    //private void SwitchToDoubleJumpState()
+    //{
+    //    stateMachine.SwitchState(new PlayerDoubleJumpState(stateMachine));
+    //}
+
+    public override void TickFixed()
     {
-        stateMachine.SwitchState(new PlayerDoubleJumpState(stateMachine));
+        upAxis = -Physics.gravity.normalized;
+        Vector3 gravity = CustomGravity.GetGravity(stateMachine.body.position, out upAxis);
+        //UpdateState();
+        AdjustVelocity();
+        velocity += gravity * Time.deltaTime;
+        stateMachine.body.velocity = velocity;
+        ClearState();
     }
 }

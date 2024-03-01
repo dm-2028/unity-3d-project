@@ -29,7 +29,7 @@ public class RotateWheel : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Debug.Log(Quaternion.Angle(transform.rotation, startingRotation));
+        //Debug.Log(Quaternion.Angle(transform.rotation, startingRotation));
         if (backAndForth && Quaternion.Angle(transform.rotation, startingRotation) > maxAngle)
         {
             reversing = !reversing;

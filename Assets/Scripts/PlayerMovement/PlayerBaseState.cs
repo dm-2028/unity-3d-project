@@ -7,32 +7,30 @@ public abstract class PlayerBaseState : State
     protected readonly PlayerStateMachine stateMachine;
     // Start is called before the first frame update
 
-    int jumpPhase, stepsSinceLastGrounded, stepsSinceLastJump;
-    float groundContactCount, steepContactCount, climbContactCount;
-    bool desiredJump, desiresClimbing;
-    Vector3 playerInput;
-    Vector3 velocity, connectionVelocity, lastConnectionVelocity;
-    Vector3 contactNormal, steepNormal, climbNormal, lastClimbNormal, lastContactNormal, lastSteepNormal;
+    protected bool desiredJump, desiresClimbing;
+    protected Vector3 playerInput;
+    protected Vector3 velocity, connectionVelocity, lastConnectionVelocity;
+    protected Vector3 contactNormal, steepNormal, climbNormal, lastClimbNormal, lastContactNormal, lastSteepNormal;
     protected Vector3 upAxis, rightAxis, forwardAxis;
-    float minGroundDotProduct, minStairsDotProduct, minClimbDotProduct;
+    protected float minGroundDotProduct, minStairsDotProduct, minClimbDotProduct;
 
-    Vector3 connectionWorldPosition, connectionLocalPosition;
+    protected Vector3 connectionWorldPosition, connectionLocalPosition;
 
-    MeshRenderer meshRenderer;
+    protected MeshRenderer meshRenderer;
 
-    float submergence;
+    protected float submergence;
 
-    bool OnGround => groundContactCount > 0;
+    protected bool OnGround => stateMachine.groundContactCount > 0;
 
-    bool OnSteep => steepContactCount > 0;
+    protected bool OnSteep => stateMachine.steepContactCount > 0;
 
-    bool Climbing => climbContactCount > 0 && stepsSinceLastJump > 2;
+    protected bool Climbing => stateMachine.climbContactCount > 0 && stateMachine.stepsSinceLastJump > 2;
 
-    bool InWater => submergence > 0f;
+    protected bool InWater => submergence > 0f;
 
-    bool Swimming => submergence >= stateMachine.swimThreshold;
+    protected bool Swimming => submergence >= stateMachine.swimThreshold;
 
-    Rigidbody connectedBody, previousConnectedBody;
+    protected Rigidbody connectedBody, previousConnectedBody;
 
     public float offsetFromWall = 0.3f;
     protected Transform helper = new GameObject().transform;
@@ -45,60 +43,31 @@ public abstract class PlayerBaseState : State
 
     }
 
-    public override void TickFixed()
+
+    protected float GetMinDot(int layer)
     {
-        upAxis = -Physics.gravity.normalized;
-        Vector3 gravity = CustomGravity.GetGravity(body.position, out upAxis);
-        UpdateState();
+        return (stateMachine.stairsMask & (1 << layer)) == 0 ? minGroundDotProduct : minStairsDotProduct;
+    }
 
-        if (InWater)
-        {
-            velocity *= 1f - waterDrag * submergence * Time.deltaTime;
-        }
-        AdjustVelocity();
-
-        if (desiredJump)
-        {
-            desiredJump = false;
-            Jump(gravity);
-        }
-        if (Climbing)
-        {
-            velocity -= contactNormal * (maxClimbAcceleration * 0.9f * Time.deltaTime);
-        }
-        else if (InWater)
-        {
-            velocity += gravity * ((1f - bouyancy * submergence) * Time.deltaTime);
-        }
-        else if (OnGround && velocity.sqrMagnitude < 0.01f)
-        {
-            velocity += contactNormal * (Vector3.Dot(gravity, contactNormal) * Time.deltaTime);
-        }
-        else if (desiresClimbing && OnGround)
-        {
-            velocity += (gravity - contactNormal * (maxClimbAcceleration * 0.9f)) * Time.deltaTime;
-        }
-        else
-        {
-            velocity += gravity * Time.deltaTime;
-        }
-        body.velocity = velocity;
-        ClearState();
+    protected Vector3 ProjectDirectionOnPlane(Vector3 direction, Vector3 normal)
+    {
+        return (direction - normal * Vector3.Dot(direction, normal)).normalized;
     }
 
     protected void CalculateMoveDirection()
     {
-        Vector3 cameraForward = new(stateMachine.mainCamera.forward.x, 0, stateMachine.mainCamera.forward.z);
-        Vector3 cameraRight = new(stateMachine.mainCamera.right.x, 0, stateMachine.mainCamera.right.z);
+        //Vector3 cameraForward = new(stateMachine.mainCamera.forward.x, 0, stateMachine.mainCamera.forward.z);
+        //Vector3 cameraRight = new(stateMachine.mainCamera.right.x, 0, stateMachine.mainCamera.right.z);
 
-        Vector3 moveDirection;
-        moveDirection.x = stateMachine.inputReader.movement.x;
-        moveDirection.z = stateMachine.inputReader.movement.y;
-        if (playerInputSpace)
+        playerInput.x = stateMachine.inputReader.movement.x;
+        playerInput.z = stateMachine.inputReader.movement.y;
+        playerInput.y = 0f;
+        Debug.Log("move direction: " + playerInput.ToString());
+        if (stateMachine.playerInputSpace)
         {
-            rightAxis = ProjectDirectionOnPlane(playerInputSpace.right, upAxis);
+            rightAxis = ProjectDirectionOnPlane(stateMachine.playerInputSpace.right, upAxis);
             forwardAxis =
-                ProjectDirectionOnPlane(playerInputSpace.forward, upAxis);
+                ProjectDirectionOnPlane(stateMachine.playerInputSpace.forward, upAxis);
         }
         else
         {
@@ -107,38 +76,86 @@ public abstract class PlayerBaseState : State
         }
     }
 
-    protected void FaceMoveDirection()
+    //protected void FaceMoveDirection()
+    //{
+    //    Vector3 faceDirection = new(stateMachine.velocity.x, 0f, stateMachine.velocity.z);
+
+    //    if (faceDirection == Vector3.zero) return;
+
+    //    stateMachine.transform.rotation = Quaternion.Slerp(stateMachine.transform.rotation, Quaternion.LookRotation(faceDirection), stateMachine.lookRotationDampFactor * Time.deltaTime);
+
+    //}
+
+    //protected void ApplyGravity()
+    //{
+    //    if(stateMachine.velocity.y > Physics.gravity.y)
+    //    {
+    //        stateMachine.velocity.y += Physics.gravity.y * Time.deltaTime;
+    //    }
+    //}
+
+    //protected void Move()
+    //{
+    //    stateMachine.controller.Move(stateMachine.velocity * Time.deltaTime);
+    //}
+
+    protected void AdjustVelocity()
     {
-        Vector3 faceDirection = new(stateMachine.velocity.x, 0f, stateMachine.velocity.z);
+        float acceleration, speed;
+        Vector3 xAxis, zAxis;
 
-        if (faceDirection == Vector3.zero) return;
-
-        stateMachine.transform.rotation = Quaternion.Slerp(stateMachine.transform.rotation, Quaternion.LookRotation(faceDirection), stateMachine.lookRotationDampFactor * Time.deltaTime);
-
-    }
-
-    protected void ApplyGravity()
-    {
-        if(stateMachine.velocity.y > Physics.gravity.y)
+        if (Climbing)
         {
-            stateMachine.velocity.y += Physics.gravity.y * Time.deltaTime;
+            acceleration = stateMachine.maxClimbAcceleration;
+            speed = stateMachine.maxClimbSpeed;
+            xAxis = Vector3.Cross(contactNormal, upAxis);
+            zAxis = upAxis;
+        }
+        else if (InWater)
+        {
+            float swimFactor = Mathf.Min(1f, submergence / stateMachine.swimThreshold);
+            acceleration = Mathf.LerpUnclamped(
+                OnGround ? stateMachine.maxAcceleration : stateMachine.maxAirAcceleration, stateMachine.maxSwimAcceleration, swimFactor);
+            speed = Mathf.LerpUnclamped(stateMachine.maxSpeed, stateMachine.maxSwimSpeed, swimFactor);
+            xAxis = rightAxis;
+            zAxis = forwardAxis;
+        }
+        else
+        {
+            acceleration = OnGround ? stateMachine.maxAcceleration : stateMachine.maxAirAcceleration;
+            speed = OnGround && desiresClimbing ? stateMachine.maxClimbSpeed : stateMachine.maxSpeed;
+            xAxis = rightAxis;
+            zAxis = forwardAxis;
+        }
+        xAxis = ProjectDirectionOnPlane(xAxis, contactNormal);
+        zAxis = ProjectDirectionOnPlane(zAxis, contactNormal);
+
+        Vector3 relativeVelocity = velocity - connectionVelocity;
+
+        Vector3 adjustment;
+        adjustment.x = playerInput.x * speed - Vector3.Dot(relativeVelocity, xAxis);
+        adjustment.z = playerInput.z * speed - Vector3.Dot(relativeVelocity, zAxis);
+        adjustment.y = Swimming ? playerInput.y * speed - Vector3.Dot(relativeVelocity, upAxis) : 0f;
+
+        adjustment = Vector3.ClampMagnitude(adjustment, acceleration * Time.deltaTime);
+
+        velocity += xAxis * adjustment.x + zAxis * adjustment.z;
+
+        if (Swimming)
+        {
+            velocity += upAxis * adjustment.y;
         }
     }
-    
-    protected void Move()
-    {
-        stateMachine.controller.Move(stateMachine.velocity * Time.deltaTime);
-    }
 
-    bool CheckSteepContacts()
+    protected bool CheckSteepContacts()
     {
-        if (steepContactCount > 1)
+        if (stateMachine.steepContactCount > 1)
         {
             steepNormal.Normalize();
             float upDot = Vector3.Dot(upAxis, steepNormal);
             if (upDot >= minGroundDotProduct)
             {
-                groundContactCount = 1;
+                stateMachine.groundContactCount = 1;
                 contactNormal = steepNormal;
                 return true;
             }
@@ -146,11 +163,11 @@ public abstract class PlayerBaseState : State
         return false;
     }
 
-    bool CheckClimbing()
+    protected bool CheckClimbing()
     {
         if (Climbing)
         {
-            if (climbContactCount > 1)
+            if (stateMachine.climbContactCount > 1)
             {
                 climbNormal.Normalize();
                 float upDot = Vector3.Dot(upAxis, climbNormal);
@@ -159,18 +176,18 @@ public abstract class PlayerBaseState : State
                     climbNormal = lastClimbNormal;
                 }
             }
-            groundContactCount = climbContactCount;
+            stateMachine.groundContactCount = stateMachine.climbContactCount;
             contactNormal = climbNormal;
             return true;
         }
         return false;
     }
 
-    bool CheckSwimming()
+    protected bool CheckSwimming()
     {
         if (Swimming)
         {
-            groundContactCount = 0;
+            stateMachine.groundContactCount = 0;
             contactNormal = upAxis;
             return true;
         }
@@ -190,9 +207,9 @@ public abstract class PlayerBaseState : State
         lastContactNormal = contactNormal;
         lastSteepNormal = steepNormal;
         lastConnectionVelocity = connectionVelocity;
-        groundContactCount = 0;
-        steepContactCount = 0;
-        climbContactCount = 0;
+        stateMachine.groundContactCount = 0;
+        stateMachine.steepContactCount = 0;
+        stateMachine.climbContactCount = 0;
         contactNormal = Vector3.zero;
         steepNormal = Vector3.zero;
         climbNormal = Vector3.zero;
@@ -217,7 +234,7 @@ public abstract class PlayerBaseState : State
             float upDot = Vector3.Dot(upAxis, normal);
             if (upDot >= minDot)
             {
-                groundContactCount += 1;
+                stateMachine.groundContactCount += 1;
                 contactNormal += normal;
                 connectedBody = collision.rigidbody;
             }
@@ -225,19 +242,19 @@ public abstract class PlayerBaseState : State
             {
                 if (upDot > -0.01f)
                 {
-                    steepContactCount += 1;
+                    stateMachine.steepContactCount += 1;
                     steepNormal += normal;
-                    if (groundContactCount == 0)
+                    if (stateMachine.groundContactCount == 0)
                     {
                         connectedBody = collision.rigidbody;
                     }
                 }
-                Debug.Log("climb mask " + climbMask.value + " " + layer);
+                Debug.Log("climb mask " + stateMachine.climbMask.value + " " + layer);
                 int layerPrint = 1 << layer;
                 Debug.Log("climb layer " + layerPrint);
-                if (desiresClimbing && upDot >= minClimbDotProduct && (climbMask & (1 << layer)) == 0)
+                if (desiresClimbing && upDot >= minClimbDotProduct && (stateMachine.climbMask & (1 << layer)) == 0)
                 {
-                    climbContactCount += 1;
+                    stateMachine.climbContactCount += 1;
                     climbNormal += normal;
                     lastClimbNormal = normal;
                     connectedBody = collision.rigidbody;
@@ -251,14 +268,14 @@ public abstract class PlayerBaseState : State
         if ((stateMachine.waterMask & (1 << other.gameObject.layer)) != 0)
         {
             if (Physics.Raycast(
-            body.position + upAxis * submergenceOffset,
+            stateMachine.body.position + upAxis * stateMachine.submergenceOffset,
             -upAxis,
             out RaycastHit hit,
-            submergenceRange + 1f,
-            waterMask,
+            stateMachine.submergenceRange + 1f,
+            stateMachine.waterMask,
             QueryTriggerInteraction.Collide))
             {
-                submergence = 1f - hit.distance / submergenceRange;
+                submergence = 1f - hit.distance / stateMachine.submergenceRange;
             }
             else
             {
@@ -266,8 +283,50 @@ public abstract class PlayerBaseState : State
             }
             if (Swimming)
             {
-                connectedBody = collider.attachedRigidbody;
+                connectedBody = other.attachedRigidbody;
             }
         }
+    }
+
+    protected void UpdateConnectionState()
+    {
+        if (connectedBody == previousConnectedBody)
+        {
+            Vector3 connectionMovement = connectedBody.transform.TransformPoint(connectionLocalPosition) - connectionWorldPosition;
+            connectionVelocity = connectionMovement / Time.deltaTime;
+        }
+        connectionWorldPosition = stateMachine.body.position;
+        connectionLocalPosition = connectedBody.transform.InverseTransformPoint(connectionWorldPosition);
+    }
+
+    protected bool SnapToGround()
+    {
+        if (stateMachine.stepsSinceLastGrounded > 1 || stateMachine.stepsSinceLastJump <= 2)
+        {
+            return false;
+        }
+        float speed = velocity.magnitude;
+        if (speed > stateMachine.maxSnapSpeed)
+        {
+            return false;
+        }
+        if (!Physics.Raycast(stateMachine.body.position, -upAxis, out RaycastHit hit, stateMachine.probeDistance, stateMachine.probeMask, QueryTriggerInteraction.Ignore))
+        {
+            return false;
+        }
+        float upDot = Vector3.Dot(upAxis, hit.normal);
+        if (upDot < GetMinDot(hit.collider.gameObject.layer))
+        {
+            return false;
+        }
+        stateMachine.groundContactCount = 1;
+        contactNormal = hit.normal;
+        float dot = Vector3.Dot(velocity, hit.normal);
+        if (dot > 0f)
+        {
+            velocity = (velocity - hit.normal * dot).normalized * speed;
+        }
+        connectedBody = hit.rigidbody;
+        return true;
     }
 }

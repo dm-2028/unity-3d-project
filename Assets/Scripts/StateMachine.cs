@@ -34,17 +34,13 @@ public abstract class StateMachine : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if ((waterMask & (1 << other.gameObject.layer)) != 0)
-        {
-            currentState?.EvaluateSubmergence(other);
-        }
+
+        currentState?.EvaluateSubmergence(other);
+
     }
 
     private void OnTriggerStay(Collider other)
     {
-        if ((waterMask & (1 << other.gameObject.layer)) != 0)
-        {
-            currentState?.EvaluateSubmergence(other);
-        }
+        currentState?.EvaluateSubmergence(other);  
     }
 }

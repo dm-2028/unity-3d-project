@@ -4,8 +4,7 @@ using UnityEngine;
 
 public class PlayerMoveState : PlayerBaseState
 {
-    private readonly int moveSpeedHash = Animator.StringToHash("MoveSpeed");
-    private readonly int moveBlendTreeHash = Animator.StringToHash("MoveBlendTree");
+    private readonly int walkHash = Animator.StringToHash("Walk");
     private const float animationDampTime = 0.1f;
     private const float crossFadeDuration = 0.1f;
 
@@ -13,66 +12,63 @@ public class PlayerMoveState : PlayerBaseState
 
     public override void Enter()
     {
-        stateMachine.velocity.y = Physics.gravity.y;
-        stateMachine.animator.CrossFadeInFixedTime(moveBlendTreeHash, crossFadeDuration);
+        stateMachine.animator.CrossFadeInFixedTime(walkHash, crossFadeDuration);
         stateMachine.inputReader.OnJumpPerformed += SwitchToJumpState;
-
-
         ignoreLayers = 1 << 10;
     }
 
     public override void Tick()
     {
-        if (!stateMachine.controller.isGrounded)
-        {
-            stateMachine.SwitchState(new PlayerFallState(stateMachine));
-        }
         CalculateMoveDirection();
-        FaceMoveDirection();
-        Move();
-        CheckForClimb();
+        //if (!stateMachine.controller.isGrounded)
+        //{
+        //    stateMachine.SwitchState(new PlayerFallState(stateMachine));
+        //}
+        //CalculateMoveDirection();
+        //FaceMoveDirection();
+        //Move();
+        //CheckForClimb();
 
-        stateMachine.animator.SetFloat(moveSpeedHash, stateMachine.inputReader.movement.sqrMagnitude > 0f ? 1f : 0f, animationDampTime, Time.deltaTime);
+        //stateMachine.animator.SetFloat(moveSpeedHash, stateMachine.inputReader.movement.sqrMagnitude > 0f ? 1f : 0f, animationDampTime, Time.deltaTime);
 
     }
     public override void TickFixed()
     {
+        Debug.Log("tick fixed");
         upAxis = -Physics.gravity.normalized;
         Vector3 gravity = CustomGravity.GetGravity(stateMachine.body.position, out upAxis);
         UpdateState();
 
-        AdjustVelocity();
+        CalcVelocity();
 
 
-        if (OnGround && velocity.sqrMagnitude < 0.01f)
+        if (velocity.sqrMagnitude < 0.01f)
         {
             velocity += contactNormal * (Vector3.Dot(gravity, contactNormal) * Time.deltaTime);
         }
-        else if (desiresClimbing && OnGround)
-        {
-            //velocity += (gravity - contactNormal * (maxClimbAcceleration * 0.9f)) * Time.deltaTime;
-        }
         else
         {
-            stateMachine.velocity += gravity * Time.deltaTime;
+            velocity += gravity * Time.deltaTime;
         }
-        stateMachine.body.velocity = stateMachine.velocity;
+        Debug.Log("velocity: " + velocity.ToString());
+
+        stateMachine.body.velocity = velocity;
         ClearState();
     }
 
     void UpdateState()
     {
-        stepsSinceLastGrounded += 1;
-        stepsSinceLastJump += 1;
-        statemachine.velocity = stateMachine.body.velocity;
+        stateMachine.stepsSinceLastGrounded += 1;
+        stateMachine.stepsSinceLastJump += 1;
+        velocity = stateMachine.body.velocity;
         if (OnGround || SnapToGround() || CheckSteepContacts())
         {
-            stepsSinceLastGrounded = 0;
-            if (stepsSinceLastJump > 1)
+            stateMachine.stepsSinceLastGrounded = 0;
+            if (stateMachine.stepsSinceLastJump > 1)
             {
-                jumpPhase = 0;
+                stateMachine.jumpPhase = 0;
             }
-            if (groundContactCount > 1)
+            if (stateMachine.groundContactCount > 1)
             {
                 contactNormal.Normalize();
             }
@@ -84,7 +80,7 @@ public class PlayerMoveState : PlayerBaseState
 
         if (connectedBody)
         {
-            if (connectedBody.isKinematic || connectedBody.mass >= body.mass)
+            if (connectedBody.isKinematic || connectedBody.mass >= stateMachine.body.mass)
             {
                 UpdateConnectionState();
             }
@@ -98,6 +94,33 @@ public class PlayerMoveState : PlayerBaseState
 
     private void SwitchToJumpState()
     {
+        Debug.Log("switch to jump state");
         stateMachine.SwitchState(new PlayerJumpState(stateMachine));
+    }
+
+    protected void CalcVelocity()
+    {
+        float acceleration, speed;
+        Vector3 xAxis, zAxis;
+        Debug.Log("player input " + playerInput.ToString());
+
+        acceleration = OnGround ? stateMachine.maxAcceleration : stateMachine.maxAirAcceleration;
+        speed = OnGround && desiresClimbing ? stateMachine.maxClimbSpeed : stateMachine.maxSpeed;
+        xAxis = rightAxis;
+        zAxis = forwardAxis;
+        
+        xAxis = ProjectDirectionOnPlane(xAxis, contactNormal);
+        zAxis = ProjectDirectionOnPlane(zAxis, contactNormal);
+
+        Vector3 relativeVelocity = velocity - connectionVelocity;
+
+        Vector3 adjustment;
+        adjustment.x = playerInput.x * speed - Vector3.Dot(relativeVelocity, xAxis);
+        adjustment.z = playerInput.z * speed - Vector3.Dot(relativeVelocity, zAxis);
+        adjustment.y = Swimming ? playerInput.y * speed - Vector3.Dot(relativeVelocity, upAxis) : 0f;
+
+        adjustment = Vector3.ClampMagnitude(adjustment, acceleration * Time.deltaTime);
+
+        velocity += xAxis * adjustment.x + zAxis * adjustment.z;
     }
 }

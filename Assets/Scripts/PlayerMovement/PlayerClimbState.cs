@@ -55,15 +55,15 @@ public class PlayerClimbState : PlayerBaseState
 
     private void CalculateUpwardMovement()
     {
-        Vector3 cameraForward = new(stateMachine.mainCamera.forward.x, 0, stateMachine.mainCamera.forward.z);
-        Vector3 cameraRight = new(stateMachine.mainCamera.right.x, 0, stateMachine.mainCamera.right.z);
+        //Vector3 cameraForward = new(stateMachine.mainCamera.forward.x, 0, stateMachine.mainCamera.forward.z);
+        //Vector3 cameraRight = new(stateMachine.mainCamera.right.x, 0, stateMachine.mainCamera.right.z);
 
-        Vector3 moveDirection = cameraForward.normalized * stateMachine.inputReader.movement.y + cameraRight.normalized * stateMachine.inputReader.movement.x;
+        //Vector3 moveDirection = cameraForward.normalized * stateMachine.inputReader.movement.y + cameraRight.normalized * stateMachine.inputReader.movement.x;
 
-        Debug.Log("moving " + moveDirection);
+        //Debug.Log("moving " + moveDirection);
 
-        stateMachine.velocity.y = moveDirection.x * stateMachine.movementSpeed;
-        stateMachine.velocity.z = moveDirection.z * stateMachine.movementSpeed;
+        //stateMachine.velocity.y = moveDirection.x * stateMachine.movementSpeed;
+        //stateMachine.velocity.z = moveDirection.z * stateMachine.movementSpeed;
     }
 
     public void Tick(float deltaTime)
@@ -251,8 +251,11 @@ public class PlayerClimbState : PlayerBaseState
     private void CancelClimb()
     {
         isClimbing = false;
-        //tpc.EnableController();
-        //aHook.enabled = false;
+    }
+
+    public override void TickFixed()
+    {
+        throw new System.NotImplementedException();
     }
 }
 

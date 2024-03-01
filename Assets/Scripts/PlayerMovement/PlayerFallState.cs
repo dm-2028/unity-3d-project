@@ -11,30 +11,35 @@ public class PlayerFallState : PlayerBaseState
 
     public override void Enter()
     {
-        stateMachine.velocity.y = 0f;
+        velocity.y = 0f;
         stateMachine.animator.CrossFadeInFixedTime(fallHash, crossFadeDuration);
-        stateMachine.inputReader.OnJumpPerformed += SwitchToDoubleJumpState;
+        //stateMachine.inputReader.OnJumpPerformed += SwitchToDoubleJumpState;
     }
     public override void Tick()
     {
-        ApplyGravity();
-        CalculateMoveDirection();
-        FaceMoveDirection();
-        Move();
+        //ApplyGravity();
+        //CalculateMoveDirection();
+        //FaceMoveDirection();
+        //Move();
 
-        if (stateMachine.controller.isGrounded)
-        {
-            stateMachine.SwitchState(new PlayerMoveState(stateMachine));
-        }
+        //if (stateMachine.controller.isGrounded)
+        //{
+        //    stateMachine.SwitchState(new PlayerMoveState(stateMachine));
+        //}
     }
 
     public override void Exit()
     {
-        stateMachine.inputReader.OnJumpPerformed -= SwitchToDoubleJumpState;
+        //stateMachine.inputReader.OnJumpPerformed -= SwitchToDoubleJumpState;
     }
 
-    private void SwitchToDoubleJumpState()
+    //private void SwitchToDoubleJumpState()
+    //{
+    //    stateMachine.SwitchState(new PlayerDoubleJumpState(stateMachine));
+    //}
+
+    public override void TickFixed()
     {
-        stateMachine.SwitchState(new PlayerDoubleJumpState(stateMachine));
+        throw new System.NotImplementedException();
     }
 }
