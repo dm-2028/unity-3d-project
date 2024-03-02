@@ -87,13 +87,22 @@ public class PlayerStateMachine : StateMachine
     public Vector3 lastContactNormal { get; set; }
     public Vector3 lastSteepNormal { get; set; }
 
-    float minGroundDotProduct, minStairsDotProduct, minClimbDotProduct;
+    public float minGroundDotProduct { get; private set; }
+    public float minStairsDotProduct { get; private set; }
+    public float minClimbDotProduct { get; private set; }
 
     public Rigidbody body;
 
     MeshRenderer meshRenderer;
 
-    // Start is called before the first frame update
+
+    private void OnValidate()
+    {
+        minGroundDotProduct = Mathf.Cos(maxGroundAngle * Mathf.Deg2Rad);
+        minStairsDotProduct = Mathf.Cos(maxStairsAngle * Mathf.Deg2Rad);
+        minClimbDotProduct = Mathf.Cos(maxClimbAngle * Mathf.Deg2Rad);
+    }
+
     private void Start()
     {
         mainCamera = Camera.main.transform;
@@ -109,13 +118,6 @@ public class PlayerStateMachine : StateMachine
         body.useGravity = false;
         meshRenderer = character.GetComponent<MeshRenderer>();
         OnValidate();
-    }
-
-    private void OnValidate()
-    {
-        minGroundDotProduct = Mathf.Cos(maxGroundAngle * Mathf.Deg2Rad);
-        minStairsDotProduct = Mathf.Cos(maxStairsAngle * Mathf.Deg2Rad);
-        minClimbDotProduct = Mathf.Cos(maxClimbAngle * Mathf.Deg2Rad);
     }
 
 }

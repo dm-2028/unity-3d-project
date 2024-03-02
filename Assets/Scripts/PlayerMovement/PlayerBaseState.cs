@@ -11,7 +11,6 @@ public abstract class PlayerBaseState : State
     protected Vector3 playerInput;
     protected Vector3 velocity, connectionVelocity, lastConnectionVelocity;
     protected Vector3 upAxis, rightAxis, forwardAxis;
-    protected float minGroundDotProduct, minStairsDotProduct, minClimbDotProduct;
 
     protected Vector3 connectionWorldPosition, connectionLocalPosition;
 
@@ -45,7 +44,7 @@ public abstract class PlayerBaseState : State
 
     protected float GetMinDot(int layer)
     {
-        return (stateMachine.stairsMask & (1 << layer)) == 0 ? minGroundDotProduct : minStairsDotProduct;
+        return (stateMachine.stairsMask & (1 << layer)) == 0 ? stateMachine.minGroundDotProduct : stateMachine.minStairsDotProduct;
     }
 
     protected Vector3 ProjectDirectionOnPlane(Vector3 direction, Vector3 normal)
@@ -74,29 +73,6 @@ public abstract class PlayerBaseState : State
             forwardAxis = ProjectDirectionOnPlane(Vector3.forward, upAxis);
         }
     }
-
-    //protected void FaceMoveDirection()
-    //{
-    //    Vector3 faceDirection = new(stateMachine.velocity.x, 0f, stateMachine.velocity.z);
-
-    //    if (faceDirection == Vector3.zero) return;
-
-    //    stateMachine.transform.rotation = Quaternion.Slerp(stateMachine.transform.rotation, Quaternion.LookRotation(faceDirection), stateMachine.lookRotationDampFactor * Time.deltaTime);
-
-    //}
-
-    //protected void ApplyGravity()
-    //{
-    //    if(stateMachine.velocity.y > Physics.gravity.y)
-    //    {
-    //        stateMachine.velocity.y += Physics.gravity.y * Time.deltaTime;
-    //    }
-    //}
-
-    //protected void Move()
-    //{
-    //    stateMachine.controller.Move(stateMachine.velocity * Time.deltaTime);
-    //}
 
     protected void AdjustVelocity()
     {
@@ -152,7 +128,7 @@ public abstract class PlayerBaseState : State
         {
             stateMachine.steepNormal.Normalize();
             float upDot = Vector3.Dot(upAxis, stateMachine.steepNormal);
-            if (upDot >= minGroundDotProduct)
+            if (upDot >= stateMachine.minGroundDotProduct)
             {
                 stateMachine.groundContactCount = 1;
                 stateMachine.contactNormal = stateMachine.steepNormal;
@@ -170,7 +146,7 @@ public abstract class PlayerBaseState : State
             {
                 stateMachine.climbNormal.Normalize();
                 float upDot = Vector3.Dot(upAxis, stateMachine.climbNormal);
-                if (upDot >= minGroundDotProduct)
+                if (upDot >= stateMachine.minGroundDotProduct)
                 {
                     stateMachine.climbNormal = stateMachine.lastClimbNormal;
                 }
@@ -251,7 +227,7 @@ public abstract class PlayerBaseState : State
                 Debug.Log("climb mask " + stateMachine.climbMask.value + " " + layer);
                 int layerPrint = 1 << layer;
                 Debug.Log("climb layer " + layerPrint);
-                if (desiresClimbing && upDot >= minClimbDotProduct && (stateMachine.climbMask & (1 << layer)) == 0)
+                if (desiresClimbing && upDot >= stateMachine.minClimbDotProduct && (stateMachine.climbMask & (1 << layer)) == 0)
                 {
                     stateMachine.climbContactCount += 1;
                     stateMachine.climbNormal += normal;
@@ -300,7 +276,7 @@ public abstract class PlayerBaseState : State
 
     protected bool SnapToGround()
     {
-        return false;
+        Debug.Log("steps since " + stateMachine.stepsSinceLastJump);
         if (stateMachine.stepsSinceLastGrounded > 1 || stateMachine.stepsSinceLastJump <= 2)
         {
             return false;

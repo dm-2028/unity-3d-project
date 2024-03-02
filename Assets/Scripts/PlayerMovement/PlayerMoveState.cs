@@ -117,8 +117,8 @@ public class PlayerMoveState : PlayerBaseState
         Vector3 xAxis, zAxis;
         Debug.Log("player input " + playerInput.ToString());
 
-        acceleration = OnGround ? stateMachine.maxAcceleration : stateMachine.maxAirAcceleration;
-        speed = OnGround && desiresClimbing ? stateMachine.maxClimbSpeed : stateMachine.maxSpeed;
+        acceleration = stateMachine.maxAcceleration;
+        speed = stateMachine.maxSpeed;
         xAxis = rightAxis;
         zAxis = forwardAxis;
         
@@ -130,7 +130,7 @@ public class PlayerMoveState : PlayerBaseState
         Vector3 adjustment;
         adjustment.x = playerInput.x * speed - Vector3.Dot(relativeVelocity, xAxis);
         adjustment.z = playerInput.z * speed - Vector3.Dot(relativeVelocity, zAxis);
-        adjustment.y = Swimming ? playerInput.y * speed - Vector3.Dot(relativeVelocity, upAxis) : 0f;
+        adjustment.y = 0f;
 
         adjustment = Vector3.ClampMagnitude(adjustment, acceleration * Time.deltaTime);
 
