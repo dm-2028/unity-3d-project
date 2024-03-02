@@ -18,14 +18,14 @@ public class PlayerFallState : PlayerBaseState
     public override void Tick()
     {
         //ApplyGravity();
-        //CalculateMoveDirection();
-        //FaceMoveDirection();
+        CalculateMoveDirection();
+        FaceMoveDirection();
         //Move();
 
-        //if (stateMachine.controller.isGrounded)
-        //{
-        //    stateMachine.SwitchState(new PlayerMoveState(stateMachine));
-        //}
+        if (OnGround)
+        {
+            stateMachine.SwitchState(new PlayerMoveState(stateMachine));
+        }
     }
 
     public override void Exit()
@@ -40,6 +40,19 @@ public class PlayerFallState : PlayerBaseState
 
     public override void TickFixed()
     {
-        throw new System.NotImplementedException();
+        upAxis = -Physics.gravity.normalized;
+        Vector3 gravity = CustomGravity.GetGravity(stateMachine.body.position, out upAxis);
+        UpdateState();
+        AdjustVelocity();
+        velocity += gravity * Time.deltaTime;
+        stateMachine.body.velocity = velocity;
+        ClearState();
+    }
+
+    void UpdateState()
+    {
+        stateMachine.stepsSinceLastGrounded += 1;
+        stateMachine.stepsSinceLastJump += 1;
+        velocity = stateMachine.body.velocity;
     }
 }

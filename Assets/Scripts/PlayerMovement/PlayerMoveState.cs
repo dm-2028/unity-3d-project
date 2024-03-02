@@ -4,22 +4,32 @@ using UnityEngine;
 
 public class PlayerMoveState : PlayerBaseState
 {
-    private readonly int walkHash = Animator.StringToHash("Walk");
+    private readonly int moveSpeedHash = Animator.StringToHash("MoveSpeed");
+    private readonly int moveBlendTreeHash = Animator.StringToHash("MoveBlendTree");
     private const float animationDampTime = 0.1f;
     private const float crossFadeDuration = 0.1f;
+
+    bool jumping = false;
 
     public PlayerMoveState(PlayerStateMachine stateMachine) : base(stateMachine) { }
 
     public override void Enter()
     {
-        stateMachine.animator.CrossFadeInFixedTime(walkHash, crossFadeDuration);
+        stateMachine.animator.CrossFadeInFixedTime(moveBlendTreeHash, crossFadeDuration);
+
         stateMachine.inputReader.OnJumpPerformed += SwitchToJumpState;
         ignoreLayers = 1 << 10;
     }
 
     public override void Tick()
     {
+        //if (!OnGround)
+        //{
+        //    Debug.Log("switch to fall state move");
+        //    stateMachine.SwitchState(new PlayerFallState(stateMachine));
+        //}
         CalculateMoveDirection();
+        FaceMoveDirection();
         //if (!stateMachine.controller.isGrounded)
         //{
         //    stateMachine.SwitchState(new PlayerFallState(stateMachine));
@@ -29,7 +39,8 @@ public class PlayerMoveState : PlayerBaseState
         //Move();
         //CheckForClimb();
 
-        //stateMachine.animator.SetFloat(moveSpeedHash, stateMachine.inputReader.movement.sqrMagnitude > 0f ? 1f : 0f, animationDampTime, Time.deltaTime);
+        stateMachine.animator.SetFloat(moveSpeedHash, stateMachine.inputReader.movement.sqrMagnitude > 0f ? 1f : 0f, animationDampTime, Time.deltaTime);
+        stateMachine.animator.speed = stateMachine.inputReader.movement.sqrMagnitude > 0f ? 2f : 1f;
 
     }
     public override void TickFixed()
@@ -44,7 +55,7 @@ public class PlayerMoveState : PlayerBaseState
 
         if (velocity.sqrMagnitude < 0.01f)
         {
-            velocity += contactNormal * (Vector3.Dot(gravity, contactNormal) * Time.deltaTime);
+            velocity += stateMachine.contactNormal * (Vector3.Dot(gravity, stateMachine.contactNormal) * Time.deltaTime);
         }
         else
         {
@@ -61,7 +72,7 @@ public class PlayerMoveState : PlayerBaseState
         stateMachine.stepsSinceLastGrounded += 1;
         stateMachine.stepsSinceLastJump += 1;
         velocity = stateMachine.body.velocity;
-        if (OnGround || SnapToGround() || CheckSteepContacts())
+        if (!jumping && ( OnGround || SnapToGround() || CheckSteepContacts()))
         {
             stateMachine.stepsSinceLastGrounded = 0;
             if (stateMachine.stepsSinceLastJump > 1)
@@ -70,12 +81,12 @@ public class PlayerMoveState : PlayerBaseState
             }
             if (stateMachine.groundContactCount > 1)
             {
-                contactNormal.Normalize();
+                stateMachine.contactNormal.Normalize();
             }
         }
         else
         {
-            contactNormal = upAxis;
+            stateMachine.contactNormal = upAxis;
         }
 
         if (connectedBody)
@@ -89,12 +100,14 @@ public class PlayerMoveState : PlayerBaseState
 
     public override void Exit()
     {
+        Debug.Log("exit move state");
         stateMachine.inputReader.OnJumpPerformed -= SwitchToJumpState;
     }
 
     private void SwitchToJumpState()
     {
-        Debug.Log("switch to jump state");
+        jumping = true;
+        Debug.Log("switch to jump state move");
         stateMachine.SwitchState(new PlayerJumpState(stateMachine));
     }
 
@@ -109,8 +122,8 @@ public class PlayerMoveState : PlayerBaseState
         xAxis = rightAxis;
         zAxis = forwardAxis;
         
-        xAxis = ProjectDirectionOnPlane(xAxis, contactNormal);
-        zAxis = ProjectDirectionOnPlane(zAxis, contactNormal);
+        xAxis = ProjectDirectionOnPlane(xAxis, stateMachine.contactNormal);
+        zAxis = ProjectDirectionOnPlane(zAxis, stateMachine.contactNormal);
 
         Vector3 relativeVelocity = velocity - connectionVelocity;
 

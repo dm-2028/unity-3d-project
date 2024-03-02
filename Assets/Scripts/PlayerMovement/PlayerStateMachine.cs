@@ -10,7 +10,7 @@ public class PlayerStateMachine : StateMachine
     //public Vector3 velocity;
     //public float movementSpeed { get; private set; } = 5f;
     //public float jumpForce { get; private set; } = 5f;
-    //public float lookRotationDampFactor { get; private set; } = 10f;
+    public float lookRotationDampFactor { get; private set; } = 10f;
 
     //public Vector3 velocity, connectionVelocity, lastConnectionVelocity;
 
@@ -70,7 +70,7 @@ public class PlayerStateMachine : StateMachine
 
     public Transform
         playerInputSpace = default,
-        ball = default;
+        character = default;
 
     public float groundContactCount { get; set; }
     public float steepContactCount { get; set; }
@@ -79,6 +79,13 @@ public class PlayerStateMachine : StateMachine
     public int jumpPhase { get; set; }
     public int stepsSinceLastGrounded{get; set;}
     public int stepsSinceLastJump { get; set; }
+
+    public Vector3 contactNormal { get; set; }
+    public Vector3 steepNormal { get; set; }
+    public Vector3 climbNormal { get; set; }
+    public Vector3 lastClimbNormal { get; set; }
+    public Vector3 lastContactNormal { get; set; }
+    public Vector3 lastSteepNormal { get; set; }
 
     float minGroundDotProduct, minStairsDotProduct, minClimbDotProduct;
 
@@ -100,7 +107,7 @@ public class PlayerStateMachine : StateMachine
     {
         body = GetComponent<Rigidbody>();
         body.useGravity = false;
-        meshRenderer = ball.GetComponent<MeshRenderer>();
+        meshRenderer = character.GetComponent<MeshRenderer>();
         OnValidate();
     }
 

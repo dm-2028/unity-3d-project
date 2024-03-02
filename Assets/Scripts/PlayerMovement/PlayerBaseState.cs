@@ -10,7 +10,6 @@ public abstract class PlayerBaseState : State
     protected bool desiredJump, desiresClimbing;
     protected Vector3 playerInput;
     protected Vector3 velocity, connectionVelocity, lastConnectionVelocity;
-    protected Vector3 contactNormal, steepNormal, climbNormal, lastClimbNormal, lastContactNormal, lastSteepNormal;
     protected Vector3 upAxis, rightAxis, forwardAxis;
     protected float minGroundDotProduct, minStairsDotProduct, minClimbDotProduct;
 
@@ -108,7 +107,7 @@ public abstract class PlayerBaseState : State
         {
             acceleration = stateMachine.maxClimbAcceleration;
             speed = stateMachine.maxClimbSpeed;
-            xAxis = Vector3.Cross(contactNormal, upAxis);
+            xAxis = Vector3.Cross(stateMachine.contactNormal, upAxis);
             zAxis = upAxis;
         }
         else if (InWater)
@@ -127,8 +126,8 @@ public abstract class PlayerBaseState : State
             xAxis = rightAxis;
             zAxis = forwardAxis;
         }
-        xAxis = ProjectDirectionOnPlane(xAxis, contactNormal);
-        zAxis = ProjectDirectionOnPlane(zAxis, contactNormal);
+        xAxis = ProjectDirectionOnPlane(xAxis, stateMachine.contactNormal);
+        zAxis = ProjectDirectionOnPlane(zAxis, stateMachine.contactNormal);
 
         Vector3 relativeVelocity = velocity - connectionVelocity;
 
@@ -151,12 +150,12 @@ public abstract class PlayerBaseState : State
     {
         if (stateMachine.steepContactCount > 1)
         {
-            steepNormal.Normalize();
-            float upDot = Vector3.Dot(upAxis, steepNormal);
+            stateMachine.steepNormal.Normalize();
+            float upDot = Vector3.Dot(upAxis, stateMachine.steepNormal);
             if (upDot >= minGroundDotProduct)
             {
                 stateMachine.groundContactCount = 1;
-                contactNormal = steepNormal;
+                stateMachine.contactNormal = stateMachine.steepNormal;
                 return true;
             }
         }
@@ -169,15 +168,15 @@ public abstract class PlayerBaseState : State
         {
             if (stateMachine.climbContactCount > 1)
             {
-                climbNormal.Normalize();
-                float upDot = Vector3.Dot(upAxis, climbNormal);
+                stateMachine.climbNormal.Normalize();
+                float upDot = Vector3.Dot(upAxis, stateMachine.climbNormal);
                 if (upDot >= minGroundDotProduct)
                 {
-                    climbNormal = lastClimbNormal;
+                    stateMachine.climbNormal = stateMachine.lastClimbNormal;
                 }
             }
             stateMachine.groundContactCount = stateMachine.climbContactCount;
-            contactNormal = climbNormal;
+            stateMachine.contactNormal = stateMachine.climbNormal;
             return true;
         }
         return false;
@@ -188,7 +187,7 @@ public abstract class PlayerBaseState : State
         if (Swimming)
         {
             stateMachine.groundContactCount = 0;
-            contactNormal = upAxis;
+            stateMachine.contactNormal = upAxis;
             return true;
         }
         return false;
@@ -204,15 +203,15 @@ public abstract class PlayerBaseState : State
 
     protected void ClearState()
     {
-        lastContactNormal = contactNormal;
-        lastSteepNormal = steepNormal;
+        stateMachine.lastContactNormal = stateMachine.contactNormal;
+        stateMachine.lastSteepNormal = stateMachine.steepNormal;
         lastConnectionVelocity = connectionVelocity;
         stateMachine.groundContactCount = 0;
         stateMachine.steepContactCount = 0;
         stateMachine.climbContactCount = 0;
-        contactNormal = Vector3.zero;
-        steepNormal = Vector3.zero;
-        climbNormal = Vector3.zero;
+        stateMachine.contactNormal = Vector3.zero;
+        stateMachine.steepNormal = Vector3.zero;
+        stateMachine.climbNormal = Vector3.zero;
         connectionVelocity = Vector3.zero;
         previousConnectedBody = connectedBody;
         connectedBody = null;
@@ -235,7 +234,7 @@ public abstract class PlayerBaseState : State
             if (upDot >= minDot)
             {
                 stateMachine.groundContactCount += 1;
-                contactNormal += normal;
+                stateMachine.contactNormal += normal;
                 connectedBody = collision.rigidbody;
             }
             else
@@ -243,7 +242,7 @@ public abstract class PlayerBaseState : State
                 if (upDot > -0.01f)
                 {
                     stateMachine.steepContactCount += 1;
-                    steepNormal += normal;
+                    stateMachine.steepNormal += normal;
                     if (stateMachine.groundContactCount == 0)
                     {
                         connectedBody = collision.rigidbody;
@@ -255,8 +254,8 @@ public abstract class PlayerBaseState : State
                 if (desiresClimbing && upDot >= minClimbDotProduct && (stateMachine.climbMask & (1 << layer)) == 0)
                 {
                     stateMachine.climbContactCount += 1;
-                    climbNormal += normal;
-                    lastClimbNormal = normal;
+                    stateMachine.climbNormal += normal;
+                    stateMachine.lastClimbNormal = normal;
                     connectedBody = collision.rigidbody;
                 }
             }
@@ -301,11 +300,12 @@ public abstract class PlayerBaseState : State
 
     protected bool SnapToGround()
     {
+        return false;
         if (stateMachine.stepsSinceLastGrounded > 1 || stateMachine.stepsSinceLastJump <= 2)
         {
             return false;
         }
-        float speed = velocity.magnitude;
+        float speed = stateMachine.body.velocity.magnitude;
         if (speed > stateMachine.maxSnapSpeed)
         {
             return false;
@@ -319,8 +319,9 @@ public abstract class PlayerBaseState : State
         {
             return false;
         }
+        Debug.Log("snapping to ground");
         stateMachine.groundContactCount = 1;
-        contactNormal = hit.normal;
+        stateMachine.contactNormal = hit.normal;
         float dot = Vector3.Dot(velocity, hit.normal);
         if (dot > 0f)
         {
@@ -329,4 +330,16 @@ public abstract class PlayerBaseState : State
         connectedBody = hit.rigidbody;
         return true;
     }
+    protected void FaceMoveDirection()
+    {
+        Vector3 faceDirection = new(stateMachine.body.velocity.x, 0f, stateMachine.body.velocity.z);
+        if (faceDirection == Vector3.zero) return;
+        stateMachine.transform.rotation = Quaternion.Slerp(stateMachine.transform.rotation, Quaternion.LookRotation(-faceDirection), stateMachine.lookRotationDampFactor * Time.deltaTime);
+    }
+
+    public void PreventSnapToGround()
+    {
+        stateMachine.stepsSinceLastJump = -1;
+    }
+
 }
