@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(InputReader))]
-[RequireComponent(typeof(Animator))]
 public class PlayerStateMachine : StateMachine
 {
     //public Vector3 velocity;
@@ -77,7 +76,7 @@ public class PlayerStateMachine : StateMachine
     public float climbContactCount { get; set; }
 
     public int jumpPhase { get; set; }
-    public int stepsSinceLastGrounded{get; set;}
+    public int stepsSinceLastGrounded { get; set; }
     public int stepsSinceLastJump { get; set; }
 
     public Vector3 contactNormal { get; set; }
@@ -87,9 +86,22 @@ public class PlayerStateMachine : StateMachine
     public Vector3 lastContactNormal { get; set; }
     public Vector3 lastSteepNormal { get; set; }
 
+    public Vector3 velocity {get; set;}
+    public Vector3 connectionVelocity { get; set; }
+    public Vector3 lastConnectionVelocity { get; set; }
+    public Vector3 upAxis;
+    public Vector3 rightAxis;
+    public Vector3 forwardAxis;
+    public Vector3 connectionWorldPosition { get; set; }
+    public Vector3 connectionLocalPosition { get; set; }
     public float minGroundDotProduct { get; private set; }
     public float minStairsDotProduct { get; private set; }
     public float minClimbDotProduct { get; private set; }
+    public float submergence { get; set; }
+
+
+    public Rigidbody connectedBody { get; set; }
+    public Rigidbody previousConnectedBody { get; set; }
 
     public Rigidbody body;
 
@@ -107,7 +119,7 @@ public class PlayerStateMachine : StateMachine
     {
         mainCamera = Camera.main.transform;
         inputReader = GetComponent<InputReader>();
-        animator = GetComponent<Animator>();
+        animator = GetComponentInChildren<Animator>();
         
         SwitchState(new PlayerMoveState(this));
     }

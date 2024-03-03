@@ -11,8 +11,11 @@ public class PlayerJumpState : PlayerBaseState
 
     public override void Enter()
     {
+
+
+        stateMachine.inputReader.OnJumpPerformed += CheckDoubleJump;
+
         Vector3 jumpDirection;
-        Debug.Log("on ground " + OnGround + " OnSteep " + OnSteep);
         if (OnGround)
         {
             jumpDirection = stateMachine.contactNormal;
@@ -32,9 +35,10 @@ public class PlayerJumpState : PlayerBaseState
         }
         else
         {
+            Debug.Log("return without jumping");
             return;
         }
-
+        Debug.Log("jump direction before " + jumpDirection);
         stateMachine.stepsSinceLastJump = 0;
         stateMachine.jumpPhase += 1;
 
@@ -42,46 +46,38 @@ public class PlayerJumpState : PlayerBaseState
         Debug.Log("jump speed " + jumpSpeed);
         if (InWater)
         {
-            jumpSpeed *= Mathf.Max(0f, 1f - submergence / stateMachine.swimThreshold);
+            jumpSpeed *= Mathf.Max(0f, 1f - stateMachine.submergence / stateMachine.swimThreshold);
         }
-        jumpDirection = (jumpDirection + upAxis).normalized;
-        float alignedSpeed = Vector3.Dot(velocity, jumpDirection);
+        jumpDirection = (jumpDirection + stateMachine.upAxis).normalized;
+        float alignedSpeed = Vector3.Dot(stateMachine.velocity, jumpDirection);
+        if(stateMachine.velocity.y < 0)
+        {
+            stateMachine.velocity += new Vector3(0f, -stateMachine.velocity.y, 0f);
+        }
         if (alignedSpeed > 0f)
         {
             jumpSpeed = Mathf.Max(jumpSpeed - alignedSpeed, 0f);
         }
-        Debug.Log("jump direction " + jumpDirection);
-        velocity += jumpDirection * jumpSpeed;
-        Debug.Log("velocity of jump " + velocity);
-        stateMachine.body.velocity = velocity;
+            Debug.Log("jump direction " + jumpDirection);
+        stateMachine.velocity += jumpDirection * jumpSpeed;
+        Debug.Log("velocity of jump " + stateMachine.velocity);
+        stateMachine.body.velocity = stateMachine.velocity;
         stateMachine.animator.CrossFadeInFixedTime(jumpHash, crossFadeDuration);
 
     }
 
+
+
     public override void Tick()
     {
         CalculateMoveDirection();
-        //ApplyGravity();
-
-        //if(stateMachine.velocity.y <= 0f)
-        //{
-        //    stateMachine.SwitchState(new PlayerFallState(stateMachine));
-        //}
-        //CalculateMoveDirection();
-        //FaceMoveDirection();
-        //Move();
-        //CheckForClimb();
     }
 
     public override void Exit()
     {
         Debug.Log("exit jump state");
-        //stateMachine.inputReader.OnJumpPerformed -= SwitchToDoubleJumpState;
+        stateMachine.inputReader.OnJumpPerformed -= CheckDoubleJump;
     }
-    //private void SwitchToDoubleJumpState()
-    //{
-    //    stateMachine.SwitchState(new PlayerDoubleJumpState(stateMachine));
-    //}
 
     public override void TickFixed()
     {
@@ -93,15 +89,15 @@ public class PlayerJumpState : PlayerBaseState
             Debug.Log("Switching states fall");
             stateMachine.SwitchState(new PlayerFallState(stateMachine));
         }
-        upAxis = -Physics.gravity.normalized;
-        Vector3 gravity = CustomGravity.GetGravity(stateMachine.body.position, out upAxis);
-        Debug.Log("velocity before update " + velocity);
+        stateMachine.upAxis = -Physics.gravity.normalized;
+        Vector3 gravity = CustomGravity.GetGravity(stateMachine.body.position, out stateMachine.upAxis);
+        Debug.Log("velocity before update " + stateMachine.velocity);
         UpdateState();
-        Debug.Log("velocity before adjust " + velocity);
+        Debug.Log("velocity before adjust " + stateMachine.velocity);
         CalcVelocity();
-        velocity += gravity * Time.deltaTime;
-        Debug.Log("velocity in jump = " + velocity);
-        stateMachine.body.velocity = velocity;
+        stateMachine.velocity += gravity * Time.deltaTime;
+        Debug.Log("velocity in jump = " + stateMachine.velocity);
+        stateMachine.body.velocity = stateMachine.velocity;
         ClearState();
     }
 
@@ -109,7 +105,7 @@ public class PlayerJumpState : PlayerBaseState
     {
         stateMachine.stepsSinceLastGrounded += 1;
         stateMachine.stepsSinceLastJump += 1;
-        velocity = stateMachine.body.velocity;
+        stateMachine.velocity = stateMachine.body.velocity;
         if (CheckClimbing() || CheckSwimming() ||
             OnGround || CheckSteepContacts())
         {
@@ -125,12 +121,12 @@ public class PlayerJumpState : PlayerBaseState
         }
         else
         {
-            stateMachine.contactNormal = upAxis;
+            stateMachine.contactNormal = stateMachine.upAxis;
         }
 
-        if (connectedBody)
+        if (stateMachine.connectedBody)
         {
-            if (connectedBody.isKinematic || connectedBody.mass >= stateMachine.body.mass)
+            if (stateMachine.connectedBody.isKinematic || stateMachine.connectedBody.mass >= stateMachine.body.mass)
             {
                 UpdateConnectionState();
             }
@@ -146,42 +142,42 @@ public class PlayerJumpState : PlayerBaseState
         {
             acceleration = stateMachine.maxClimbAcceleration;
             speed = stateMachine.maxClimbSpeed;
-            xAxis = Vector3.Cross(stateMachine.contactNormal, upAxis);
-            zAxis = upAxis;
+            xAxis = Vector3.Cross(stateMachine.contactNormal, stateMachine.upAxis);
+            zAxis = stateMachine.upAxis;
         }
         else if (InWater)
         {
-            float swimFactor = Mathf.Min(1f, submergence / stateMachine.swimThreshold);
+            float swimFactor = Mathf.Min(1f, stateMachine.submergence / stateMachine.swimThreshold);
             acceleration = Mathf.LerpUnclamped(
                 OnGround ? stateMachine.maxAcceleration : stateMachine.maxAirAcceleration, stateMachine.maxSwimAcceleration, swimFactor);
             speed = Mathf.LerpUnclamped(stateMachine.maxSpeed, stateMachine.maxSwimSpeed, swimFactor);
-            xAxis = rightAxis;
-            zAxis = forwardAxis;
+            xAxis = stateMachine.rightAxis;
+            zAxis = stateMachine.forwardAxis;
         }
         else
         {
             acceleration = OnGround ? stateMachine.maxAcceleration : stateMachine.maxAirAcceleration;
             speed = OnGround && desiresClimbing ? stateMachine.maxClimbSpeed : stateMachine.maxSpeed;
-            xAxis = rightAxis;
-            zAxis = forwardAxis;
+            xAxis = stateMachine.rightAxis;
+            zAxis = stateMachine.forwardAxis;
         }
         xAxis = ProjectDirectionOnPlane(xAxis, stateMachine.contactNormal);
         zAxis = ProjectDirectionOnPlane(zAxis, stateMachine.contactNormal);
 
-        Vector3 relativeVelocity = velocity - connectionVelocity;
+        Vector3 relativeVelocity = stateMachine.velocity - stateMachine.connectionVelocity;
 
         Vector3 adjustment;
         adjustment.x = playerInput.x * speed - Vector3.Dot(relativeVelocity, xAxis);
         adjustment.z = playerInput.z * speed - Vector3.Dot(relativeVelocity, zAxis);
-        adjustment.y = Swimming ? playerInput.y * speed - Vector3.Dot(relativeVelocity, upAxis) : 0f;
+        adjustment.y = Swimming ? playerInput.y * speed - Vector3.Dot(relativeVelocity, stateMachine.upAxis) : 0f;
 
         adjustment = Vector3.ClampMagnitude(adjustment, acceleration * Time.deltaTime);
 
-        velocity += xAxis * adjustment.x + zAxis * adjustment.z;
+        stateMachine.velocity += xAxis * adjustment.x + zAxis * adjustment.z;
 
         if (Swimming)
         {
-            velocity += upAxis * adjustment.y;
+            stateMachine.velocity += stateMachine.upAxis * adjustment.y;
         }
     }
 }

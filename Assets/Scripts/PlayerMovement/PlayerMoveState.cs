@@ -9,8 +9,6 @@ public class PlayerMoveState : PlayerBaseState
     private const float animationDampTime = 0.1f;
     private const float crossFadeDuration = 0.1f;
 
-    bool jumping = false;
-
     public PlayerMoveState(PlayerStateMachine stateMachine) : base(stateMachine) { }
 
     public override void Enter()
@@ -23,21 +21,14 @@ public class PlayerMoveState : PlayerBaseState
 
     public override void Tick()
     {
-        //if (!OnGround)
-        //{
-        //    Debug.Log("switch to fall state move");
-        //    stateMachine.SwitchState(new PlayerFallState(stateMachine));
-        //}
+        Debug.Log("steps since last grounded: " + stateMachine.stepsSinceLastGrounded + "\n" + "ground contact count " + stateMachine.groundContactCount + "\ncontact normal: " + stateMachine.contactNormal);
+        if (!OnGround && stateMachine.stepsSinceLastGrounded > 2)
+        {
+            Debug.Log("switch to fall state move");
+            stateMachine.SwitchState(new PlayerFallState(stateMachine));
+        }
         CalculateMoveDirection();
         FaceMoveDirection();
-        //if (!stateMachine.controller.isGrounded)
-        //{
-        //    stateMachine.SwitchState(new PlayerFallState(stateMachine));
-        //}
-        //CalculateMoveDirection();
-        //FaceMoveDirection();
-        //Move();
-        //CheckForClimb();
 
         stateMachine.animator.SetFloat(moveSpeedHash, stateMachine.inputReader.movement.sqrMagnitude > 0f ? 1f : 0f, animationDampTime, Time.deltaTime);
         stateMachine.animator.speed = stateMachine.inputReader.movement.sqrMagnitude > 0f ? 2f : 1f;
@@ -45,25 +36,23 @@ public class PlayerMoveState : PlayerBaseState
     }
     public override void TickFixed()
     {
-        Debug.Log("tick fixed");
-        upAxis = -Physics.gravity.normalized;
-        Vector3 gravity = CustomGravity.GetGravity(stateMachine.body.position, out upAxis);
+        stateMachine.upAxis = -Physics.gravity.normalized;
+        Vector3 gravity = CustomGravity.GetGravity(stateMachine.body.position, out stateMachine.upAxis);
         UpdateState();
 
         CalcVelocity();
 
 
-        if (velocity.sqrMagnitude < 0.01f)
+        if (stateMachine.velocity.sqrMagnitude < 0.01f)
         {
-            velocity += stateMachine.contactNormal * (Vector3.Dot(gravity, stateMachine.contactNormal) * Time.deltaTime);
+            stateMachine.velocity += stateMachine.contactNormal * (Vector3.Dot(gravity, stateMachine.contactNormal) * Time.deltaTime);
         }
         else
         {
-            velocity += gravity * Time.deltaTime;
+            stateMachine.velocity += gravity * Time.deltaTime;
         }
-        Debug.Log("velocity: " + velocity.ToString());
 
-        stateMachine.body.velocity = velocity;
+        stateMachine.body.velocity = stateMachine.velocity;
         ClearState();
     }
 
@@ -71,7 +60,7 @@ public class PlayerMoveState : PlayerBaseState
     {
         stateMachine.stepsSinceLastGrounded += 1;
         stateMachine.stepsSinceLastJump += 1;
-        velocity = stateMachine.body.velocity;
+        stateMachine.velocity = stateMachine.body.velocity;
         if (!jumping && ( OnGround || SnapToGround() || CheckSteepContacts()))
         {
             stateMachine.stepsSinceLastGrounded = 0;
@@ -86,12 +75,12 @@ public class PlayerMoveState : PlayerBaseState
         }
         else
         {
-            stateMachine.contactNormal = upAxis;
+            stateMachine.contactNormal = stateMachine.upAxis;
         }
 
-        if (connectedBody)
+        if (stateMachine.connectedBody)
         {
-            if (connectedBody.isKinematic || connectedBody.mass >= stateMachine.body.mass)
+            if (stateMachine.connectedBody.isKinematic || stateMachine.connectedBody.mass >= stateMachine.body.mass)
             {
                 UpdateConnectionState();
             }
@@ -104,28 +93,20 @@ public class PlayerMoveState : PlayerBaseState
         stateMachine.inputReader.OnJumpPerformed -= SwitchToJumpState;
     }
 
-    private void SwitchToJumpState()
-    {
-        jumping = true;
-        Debug.Log("switch to jump state move");
-        stateMachine.SwitchState(new PlayerJumpState(stateMachine));
-    }
-
     protected void CalcVelocity()
     {
         float acceleration, speed;
         Vector3 xAxis, zAxis;
-        Debug.Log("player input " + playerInput.ToString());
 
         acceleration = stateMachine.maxAcceleration;
         speed = stateMachine.maxSpeed;
-        xAxis = rightAxis;
-        zAxis = forwardAxis;
+        xAxis = stateMachine.rightAxis;
+        zAxis = stateMachine.forwardAxis;
         
         xAxis = ProjectDirectionOnPlane(xAxis, stateMachine.contactNormal);
         zAxis = ProjectDirectionOnPlane(zAxis, stateMachine.contactNormal);
 
-        Vector3 relativeVelocity = velocity - connectionVelocity;
+        Vector3 relativeVelocity = stateMachine.velocity - stateMachine.connectionVelocity;
 
         Vector3 adjustment;
         adjustment.x = playerInput.x * speed - Vector3.Dot(relativeVelocity, xAxis);
@@ -134,6 +115,6 @@ public class PlayerMoveState : PlayerBaseState
 
         adjustment = Vector3.ClampMagnitude(adjustment, acceleration * Time.deltaTime);
 
-        velocity += xAxis * adjustment.x + zAxis * adjustment.z;
+        stateMachine.velocity += xAxis * adjustment.x + zAxis * adjustment.z;
     }
 }

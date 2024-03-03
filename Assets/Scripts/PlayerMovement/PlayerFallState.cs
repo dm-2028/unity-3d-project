@@ -11,16 +11,22 @@ public class PlayerFallState : PlayerBaseState
 
     public override void Enter()
     {
-        velocity.y = 0f;
+        stateMachine.inputReader.OnJumpPerformed += CheckDoubleJump;
+
         stateMachine.animator.CrossFadeInFixedTime(fallHash, crossFadeDuration);
-        //stateMachine.inputReader.OnJumpPerformed += SwitchToDoubleJumpState;
+
+        if (stateMachine.maxAirJumps > 0 && stateMachine.jumpPhase <= stateMachine.maxAirJumps)
+        {
+            if (stateMachine.jumpPhase == 0)
+            {
+                stateMachine.jumpPhase = 1;
+            }
+        }
     }
     public override void Tick()
     {
-        //ApplyGravity();
         CalculateMoveDirection();
         FaceMoveDirection();
-        //Move();
 
         if (OnGround)
         {
@@ -30,22 +36,17 @@ public class PlayerFallState : PlayerBaseState
 
     public override void Exit()
     {
-        //stateMachine.inputReader.OnJumpPerformed -= SwitchToDoubleJumpState;
+        stateMachine.inputReader.OnJumpPerformed -= CheckDoubleJump;
     }
-
-    //private void SwitchToDoubleJumpState()
-    //{
-    //    stateMachine.SwitchState(new PlayerDoubleJumpState(stateMachine));
-    //}
 
     public override void TickFixed()
     {
-        upAxis = -Physics.gravity.normalized;
-        Vector3 gravity = CustomGravity.GetGravity(stateMachine.body.position, out upAxis);
+        stateMachine.upAxis = -Physics.gravity.normalized;
+        Vector3 gravity = CustomGravity.GetGravity(stateMachine.body.position, out stateMachine.upAxis);
         UpdateState();
         AdjustVelocity();
-        velocity += gravity * Time.deltaTime;
-        stateMachine.body.velocity = velocity;
+        stateMachine.velocity += gravity * Time.deltaTime;
+        stateMachine.body.velocity = stateMachine.velocity;
         ClearState();
     }
 
@@ -53,6 +54,6 @@ public class PlayerFallState : PlayerBaseState
     {
         stateMachine.stepsSinceLastGrounded += 1;
         stateMachine.stepsSinceLastJump += 1;
-        velocity = stateMachine.body.velocity;
+        stateMachine.velocity = stateMachine.body.velocity;
     }
 }
