@@ -12,6 +12,8 @@ public class PlayerSwimState : PlayerBaseState
 
     float waterSurface;
 
+    int stepsSinceLastSwimming;
+
 
     public PlayerSwimState(PlayerStateMachine stateMachine) : base(stateMachine) { }
     public override void Enter()
@@ -29,6 +31,8 @@ public class PlayerSwimState : PlayerBaseState
     public override void Tick()
     {
         CalculateMoveDirection();
+        playerInput.y = stateMachine.inputReader.verticalMovement;
+        playerInput = Vector3.ClampMagnitude(playerInput, 1f);
         FaceMoveDirection();
 
 
@@ -40,7 +44,35 @@ public class PlayerSwimState : PlayerBaseState
     public override void TickFixed()
     {
         stateMachine.upAxis = -Physics.gravity.normalized;
-        UpdateState();
+        stateMachine.stepsSinceLastJump += 1;
+        stateMachine.velocity = stateMachine.body.velocity;
+
+        if (!CheckSwimming())
+        {
+            if (OnGround)
+            {
+                stateMachine.SwitchState(new PlayerMoveState(stateMachine));
+            }
+        }
+
+        stateMachine.stepsSinceLastGrounded = 0;
+        if (stateMachine.stepsSinceLastJump > 1)
+        {
+            stateMachine.jumpPhase = 0;
+        }
+        if (stateMachine.groundContactCount > 1)
+        {
+            stateMachine.contactNormal.Normalize();
+        }
+
+        if (stateMachine.connectedBody)
+        {
+            if (stateMachine.connectedBody.isKinematic || stateMachine.connectedBody.mass >= stateMachine.body.mass)
+            {
+                UpdateConnectionState();
+            }
+        }
+
         stateMachine.velocity *= 1f - stateMachine.waterDrag * stateMachine.submergence * Time.deltaTime; 
         float swimFactor = Mathf.Min(1f, stateMachine.submergence / stateMachine.swimThreshold);
         float speed = Mathf.LerpUnclamped(stateMachine.maxSpeed, stateMachine.maxSwimSpeed, swimFactor);
@@ -51,14 +83,14 @@ public class PlayerSwimState : PlayerBaseState
 
         Vector3 relativeVelocity = stateMachine.velocity - stateMachine.connectionVelocity;
         float yMovement = playerInput.y * speed - Vector3.Dot(relativeVelocity, stateMachine.upAxis);
-
-        if (Swimming)
+        Debug.Log("ymovement " + yMovement);
+        if (!Swimming && yMovement >= 0)
         {
-            Debug.Log("body position " + stateMachine.body.position.y + "\nwater surface " + waterSurface);
-            if(stateMachine.body.position.y >= waterSurface)
-            {
-                yMovement = Mathf.Min(yMovement, 0f);
-            }
+
+            stateMachine.body.velocity = new(stateMachine.body.velocity.x, 0f, stateMachine.body.velocity.z);
+        }
+        else
+        {
             stateMachine.velocity += stateMachine.upAxis * yMovement;
         }
         Debug.Log("velocity in tick fixed " + stateMachine.velocity + "\nand " + stateMachine.body.velocity);
@@ -67,7 +99,7 @@ public class PlayerSwimState : PlayerBaseState
     }
     void EvaluateJump()
     {
-        if (stateMachine.body.position.y >= waterSurface)
+        if (!Swimming)
         {
             stateMachine.SwitchState(new PlayerJumpState(stateMachine));
         }

@@ -69,7 +69,13 @@ public abstract class PlayerBaseState : State
         stateMachine.stepsSinceLastGrounded += 1;
         stateMachine.stepsSinceLastJump += 1;
         stateMachine.velocity = stateMachine.body.velocity;
-        if (!jumping && (CheckClimbing() || CheckSwimming() || OnGround || SnapToGround() || CheckSteepContacts()))
+        if (CheckClimbing())
+        {
+            //switch to climb state
+        }else if(CheckSwimming()){
+            stateMachine.SwitchState(new PlayerSwimState(stateMachine));
+        }
+        if (!jumping && (OnGround || SnapToGround() || CheckSteepContacts()))
         {
             stateMachine.stepsSinceLastGrounded = 0;
             if (stateMachine.stepsSinceLastJump > 1)
@@ -134,20 +140,11 @@ public abstract class PlayerBaseState : State
     protected bool CheckSwimming()
     {
         Debug.Log("check swimming " + Swimming);
-        if (Swimming || this is PlayerSwimState)
+        if (Swimming)
         {
             stateMachine.groundContactCount = 0;
             stateMachine.contactNormal = stateMachine.upAxis;
-            if (!(this is PlayerSwimState))
-            {
-                stateMachine.SwitchState(new
-                    PlayerSwimState(stateMachine));
-            }
             return true;
-        }
-        if(OnGround && !(this is PlayerMoveState))
-        {
-            stateMachine.SwitchState(new PlayerMoveState(stateMachine));
         }
         return false;
     }
