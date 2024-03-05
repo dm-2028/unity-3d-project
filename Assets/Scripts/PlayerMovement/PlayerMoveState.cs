@@ -40,7 +40,7 @@ public class PlayerMoveState : PlayerBaseState
         Vector3 gravity = CustomGravity.GetGravity(stateMachine.body.position, out stateMachine.upAxis);
         UpdateState();
 
-        CalcVelocity();
+        CalcVelocity(stateMachine.maxAcceleration, stateMachine.maxSpeed);
 
 
         if (stateMachine.velocity.sqrMagnitude < 0.01f)
@@ -56,65 +56,9 @@ public class PlayerMoveState : PlayerBaseState
         ClearState();
     }
 
-    void UpdateState()
-    {
-        stateMachine.stepsSinceLastGrounded += 1;
-        stateMachine.stepsSinceLastJump += 1;
-        stateMachine.velocity = stateMachine.body.velocity;
-        if (!jumping && ( OnGround || SnapToGround() || CheckSteepContacts()))
-        {
-            stateMachine.stepsSinceLastGrounded = 0;
-            if (stateMachine.stepsSinceLastJump > 1)
-            {
-                stateMachine.jumpPhase = 0;
-            }
-            if (stateMachine.groundContactCount > 1)
-            {
-                stateMachine.contactNormal.Normalize();
-            }
-        }
-        else
-        {
-            stateMachine.contactNormal = stateMachine.upAxis;
-        }
-
-        if (stateMachine.connectedBody)
-        {
-            if (stateMachine.connectedBody.isKinematic || stateMachine.connectedBody.mass >= stateMachine.body.mass)
-            {
-                UpdateConnectionState();
-            }
-        }
-    }
-
     public override void Exit()
     {
         Debug.Log("exit move state");
         stateMachine.inputReader.OnJumpPerformed -= SwitchToJumpState;
-    }
-
-    protected void CalcVelocity()
-    {
-        float acceleration, speed;
-        Vector3 xAxis, zAxis;
-
-        acceleration = stateMachine.maxAcceleration;
-        speed = stateMachine.maxSpeed;
-        xAxis = stateMachine.rightAxis;
-        zAxis = stateMachine.forwardAxis;
-        
-        xAxis = ProjectDirectionOnPlane(xAxis, stateMachine.contactNormal);
-        zAxis = ProjectDirectionOnPlane(zAxis, stateMachine.contactNormal);
-
-        Vector3 relativeVelocity = stateMachine.velocity - stateMachine.connectionVelocity;
-
-        Vector3 adjustment;
-        adjustment.x = playerInput.x * speed - Vector3.Dot(relativeVelocity, xAxis);
-        adjustment.z = playerInput.z * speed - Vector3.Dot(relativeVelocity, zAxis);
-        adjustment.y = 0f;
-
-        adjustment = Vector3.ClampMagnitude(adjustment, acceleration * Time.deltaTime);
-
-        stateMachine.velocity += xAxis * adjustment.x + zAxis * adjustment.z;
     }
 }

@@ -46,13 +46,11 @@ public abstract class PlayerBaseState : State
 
     protected void CalculateMoveDirection()
     {
-        //Vector3 cameraForward = new(stateMachine.mainCamera.forward.x, 0, stateMachine.mainCamera.forward.z);
-        //Vector3 cameraRight = new(stateMachine.mainCamera.right.x, 0, stateMachine.mainCamera.right.z);
-
         playerInput.x = stateMachine.inputReader.movement.x;
         playerInput.z = stateMachine.inputReader.movement.y;
         playerInput.y = 0f;
-        Debug.Log("move direction: " + playerInput.ToString());
+
+        playerInput = Vector3.ClampMagnitude(playerInput, 1f);
         if (stateMachine.playerInputSpace)
         {
             stateMachine.rightAxis = ProjectDirectionOnPlane(stateMachine.playerInputSpace.right, stateMachine.upAxis);
@@ -66,51 +64,34 @@ public abstract class PlayerBaseState : State
         }
     }
 
-    protected void AdjustVelocity()
+    protected void UpdateState()
     {
-        float acceleration, speed;
-        Vector3 xAxis, zAxis;
-
-        if (Climbing)
+        stateMachine.stepsSinceLastGrounded += 1;
+        stateMachine.stepsSinceLastJump += 1;
+        stateMachine.velocity = stateMachine.body.velocity;
+        if (!jumping && (CheckClimbing() || CheckSwimming() || OnGround || SnapToGround() || CheckSteepContacts()))
         {
-            acceleration = stateMachine.maxClimbAcceleration;
-            speed = stateMachine.maxClimbSpeed;
-            xAxis = Vector3.Cross(stateMachine.contactNormal, stateMachine.upAxis);
-            zAxis = stateMachine.upAxis;
-        }
-        else if (InWater)
-        {
-            float swimFactor = Mathf.Min(1f, stateMachine.submergence / stateMachine.swimThreshold);
-            acceleration = Mathf.LerpUnclamped(
-                OnGround ? stateMachine.maxAcceleration : stateMachine.maxAirAcceleration, stateMachine.maxSwimAcceleration, swimFactor);
-            speed = Mathf.LerpUnclamped(stateMachine.maxSpeed, stateMachine.maxSwimSpeed, swimFactor);
-            xAxis = stateMachine.rightAxis;
-            zAxis = stateMachine.forwardAxis;
+            stateMachine.stepsSinceLastGrounded = 0;
+            if (stateMachine.stepsSinceLastJump > 1)
+            {
+                stateMachine.jumpPhase = 0;
+            }
+            if (stateMachine.groundContactCount > 1)
+            {
+                stateMachine.contactNormal.Normalize();
+            }
         }
         else
         {
-            acceleration = OnGround ? stateMachine.maxAcceleration : stateMachine.maxAirAcceleration;
-            speed = OnGround && desiresClimbing ? stateMachine.maxClimbSpeed : stateMachine.maxSpeed;
-            xAxis = stateMachine.rightAxis;
-            zAxis = stateMachine.forwardAxis;
+            stateMachine.contactNormal = stateMachine.upAxis;
         }
-        xAxis = ProjectDirectionOnPlane(xAxis, stateMachine.contactNormal);
-        zAxis = ProjectDirectionOnPlane(zAxis, stateMachine.contactNormal);
 
-        Vector3 relativeVelocity = stateMachine.velocity - stateMachine.connectionVelocity;
-
-        Vector3 adjustment;
-        adjustment.x = playerInput.x * speed - Vector3.Dot(relativeVelocity, xAxis);
-        adjustment.z = playerInput.z * speed - Vector3.Dot(relativeVelocity, zAxis);
-        adjustment.y = Swimming ? playerInput.y * speed - Vector3.Dot(relativeVelocity, stateMachine.upAxis) : 0f;
-
-        adjustment = Vector3.ClampMagnitude(adjustment, acceleration * Time.deltaTime);
-
-        stateMachine.velocity += xAxis * adjustment.x + zAxis * adjustment.z;
-
-        if (Swimming)
+        if (stateMachine.connectedBody)
         {
-            stateMachine.velocity += stateMachine.upAxis * adjustment.y;
+            if (stateMachine.connectedBody.isKinematic || stateMachine.connectedBody.mass >= stateMachine.body.mass)
+            {
+                UpdateConnectionState();
+            }
         }
     }
 
@@ -152,11 +133,21 @@ public abstract class PlayerBaseState : State
 
     protected bool CheckSwimming()
     {
-        if (Swimming)
+        Debug.Log("check swimming " + Swimming);
+        if (Swimming || this is PlayerSwimState)
         {
             stateMachine.groundContactCount = 0;
             stateMachine.contactNormal = stateMachine.upAxis;
+            if (!(this is PlayerSwimState))
+            {
+                stateMachine.SwitchState(new
+                    PlayerSwimState(stateMachine));
+            }
             return true;
+        }
+        if(OnGround && !(this is PlayerMoveState))
+        {
+            stateMachine.SwitchState(new PlayerMoveState(stateMachine));
         }
         return false;
     }
@@ -322,5 +313,33 @@ public abstract class PlayerBaseState : State
         jumping = true;
         Debug.Log("switch to jump state move");
         stateMachine.SwitchState(new PlayerJumpState(stateMachine));
+    }
+
+    protected void CalcVelocity(float acceleration, float speed)
+    {
+        Vector3 xAxis, zAxis;
+
+        xAxis = stateMachine.rightAxis;
+        zAxis = stateMachine.forwardAxis;
+
+        xAxis = ProjectDirectionOnPlane(xAxis, stateMachine.contactNormal);
+        zAxis = ProjectDirectionOnPlane(zAxis, stateMachine.contactNormal);
+
+        Vector3 relativeVelocity = stateMachine.velocity - stateMachine.connectionVelocity;
+
+        Vector3 adjustment;
+        adjustment.x = playerInput.x * speed - Vector3.Dot(relativeVelocity, xAxis);
+        adjustment.z = playerInput.z * speed - Vector3.Dot(relativeVelocity, zAxis);
+        adjustment.y = Swimming ? playerInput.y * speed - Vector3.Dot(relativeVelocity, stateMachine.upAxis) : 0f;
+
+        adjustment = Vector3.ClampMagnitude(adjustment, acceleration * Time.deltaTime);
+
+        stateMachine.velocity += xAxis * adjustment.x + zAxis * adjustment.z;
+
+
+        if (Swimming)
+        {
+            stateMachine.velocity += stateMachine.upAxis * adjustment.y;
+        }
     }
 }

@@ -7,6 +7,7 @@ using UnityEngine.InputSystem;
 public class InputReader : MonoBehaviour, PlayerControls.IControlsActions
 {
     public Vector2 movement;
+    public float verticalMovement;
     public Vector2 cameraMovement;
 
     public Action OnJumpPerformed;
@@ -42,6 +43,11 @@ public class InputReader : MonoBehaviour, PlayerControls.IControlsActions
 
     public void OnMovement(InputAction.CallbackContext context)
     {
-        movement = Vector2.ClampMagnitude(context.ReadValue<Vector2>(), 1f); 
+        movement = context.ReadValue<Vector2>(); 
+    }
+
+    public void OnVertical(InputAction.CallbackContext context)
+    {
+        verticalMovement = context.ReadValue<float>();
     }
 }

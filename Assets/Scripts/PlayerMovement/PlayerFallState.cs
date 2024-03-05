@@ -11,6 +11,7 @@ public class PlayerFallState : PlayerBaseState
 
     public override void Enter()
     {
+        Debug.Log("entering fall state");
         stateMachine.inputReader.OnJumpPerformed += CheckDoubleJump;
 
         stateMachine.animator.CrossFadeInFixedTime(fallHash, crossFadeDuration);
@@ -36,6 +37,7 @@ public class PlayerFallState : PlayerBaseState
 
     public override void Exit()
     {
+        Debug.Log("exiting fall state");
         stateMachine.inputReader.OnJumpPerformed -= CheckDoubleJump;
     }
 
@@ -44,16 +46,9 @@ public class PlayerFallState : PlayerBaseState
         stateMachine.upAxis = -Physics.gravity.normalized;
         Vector3 gravity = CustomGravity.GetGravity(stateMachine.body.position, out stateMachine.upAxis);
         UpdateState();
-        AdjustVelocity();
+        CalcVelocity(stateMachine.maxAirAcceleration, stateMachine.maxSpeed);
         stateMachine.velocity += gravity * Time.deltaTime;
         stateMachine.body.velocity = stateMachine.velocity;
         ClearState();
-    }
-
-    void UpdateState()
-    {
-        stateMachine.stepsSinceLastGrounded += 1;
-        stateMachine.stepsSinceLastJump += 1;
-        stateMachine.velocity = stateMachine.body.velocity;
     }
 }

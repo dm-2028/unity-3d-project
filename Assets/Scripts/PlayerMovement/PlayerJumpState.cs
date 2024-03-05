@@ -11,7 +11,7 @@ public class PlayerJumpState : PlayerBaseState
 
     public override void Enter()
     {
-
+        jumping = true;
 
         stateMachine.inputReader.OnJumpPerformed += CheckDoubleJump;
 
@@ -94,90 +94,10 @@ public class PlayerJumpState : PlayerBaseState
         Debug.Log("velocity before update " + stateMachine.velocity);
         UpdateState();
         Debug.Log("velocity before adjust " + stateMachine.velocity);
-        CalcVelocity();
+        CalcVelocity(stateMachine.maxAirAcceleration, stateMachine.maxSpeed);
         stateMachine.velocity += gravity * Time.deltaTime;
         Debug.Log("velocity in jump = " + stateMachine.velocity);
         stateMachine.body.velocity = stateMachine.velocity;
         ClearState();
-    }
-
-    void UpdateState()
-    {
-        stateMachine.stepsSinceLastGrounded += 1;
-        stateMachine.stepsSinceLastJump += 1;
-        stateMachine.velocity = stateMachine.body.velocity;
-        if (CheckClimbing() || CheckSwimming() ||
-            OnGround || CheckSteepContacts())
-        {
-            stateMachine.stepsSinceLastGrounded = 0;
-            if (stateMachine.stepsSinceLastJump > 1)
-            {
-                stateMachine.jumpPhase = 0;
-            }
-            if (stateMachine.groundContactCount > 1)
-            {
-                stateMachine.contactNormal.Normalize();
-            }
-        }
-        else
-        {
-            stateMachine.contactNormal = stateMachine.upAxis;
-        }
-
-        if (stateMachine.connectedBody)
-        {
-            if (stateMachine.connectedBody.isKinematic || stateMachine.connectedBody.mass >= stateMachine.body.mass)
-            {
-                UpdateConnectionState();
-            }
-        }
-    }
-
-    protected void CalcVelocity()
-    {
-        float acceleration, speed;
-        Vector3 xAxis, zAxis;
-
-        if (Climbing)
-        {
-            acceleration = stateMachine.maxClimbAcceleration;
-            speed = stateMachine.maxClimbSpeed;
-            xAxis = Vector3.Cross(stateMachine.contactNormal, stateMachine.upAxis);
-            zAxis = stateMachine.upAxis;
-        }
-        else if (InWater)
-        {
-            float swimFactor = Mathf.Min(1f, stateMachine.submergence / stateMachine.swimThreshold);
-            acceleration = Mathf.LerpUnclamped(
-                OnGround ? stateMachine.maxAcceleration : stateMachine.maxAirAcceleration, stateMachine.maxSwimAcceleration, swimFactor);
-            speed = Mathf.LerpUnclamped(stateMachine.maxSpeed, stateMachine.maxSwimSpeed, swimFactor);
-            xAxis = stateMachine.rightAxis;
-            zAxis = stateMachine.forwardAxis;
-        }
-        else
-        {
-            acceleration = OnGround ? stateMachine.maxAcceleration : stateMachine.maxAirAcceleration;
-            speed = OnGround && desiresClimbing ? stateMachine.maxClimbSpeed : stateMachine.maxSpeed;
-            xAxis = stateMachine.rightAxis;
-            zAxis = stateMachine.forwardAxis;
-        }
-        xAxis = ProjectDirectionOnPlane(xAxis, stateMachine.contactNormal);
-        zAxis = ProjectDirectionOnPlane(zAxis, stateMachine.contactNormal);
-
-        Vector3 relativeVelocity = stateMachine.velocity - stateMachine.connectionVelocity;
-
-        Vector3 adjustment;
-        adjustment.x = playerInput.x * speed - Vector3.Dot(relativeVelocity, xAxis);
-        adjustment.z = playerInput.z * speed - Vector3.Dot(relativeVelocity, zAxis);
-        adjustment.y = Swimming ? playerInput.y * speed - Vector3.Dot(relativeVelocity, stateMachine.upAxis) : 0f;
-
-        adjustment = Vector3.ClampMagnitude(adjustment, acceleration * Time.deltaTime);
-
-        stateMachine.velocity += xAxis * adjustment.x + zAxis * adjustment.z;
-
-        if (Swimming)
-        {
-            stateMachine.velocity += stateMachine.upAxis * adjustment.y;
-        }
     }
 }
