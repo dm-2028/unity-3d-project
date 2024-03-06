@@ -38,6 +38,7 @@ public class PlayerSwimState : PlayerBaseState
 
         stateMachine.animator.SetFloat(moveSpeedHash, stateMachine.inputReader.movement.sqrMagnitude > 0f ? 1f : 0f, animationDampTime, Time.deltaTime);
         stateMachine.animator.speed = stateMachine.inputReader.movement.sqrMagnitude > 0f ? .5f : .25f;
+        stateMachine.animator.speed = stateMachine.inputReader.movement.sqrMagnitude > 0f ? .5f : .25f;
         Debug.Log("velocity in tick " + stateMachine.velocity + "\nand " + stateMachine.body.velocity);
     }
 
@@ -77,7 +78,7 @@ public class PlayerSwimState : PlayerBaseState
         float swimFactor = Mathf.Min(1f, stateMachine.submergence / stateMachine.swimThreshold);
         float speed = Mathf.LerpUnclamped(stateMachine.maxSpeed, stateMachine.maxSwimSpeed, swimFactor);
         CalcVelocity(Mathf.LerpUnclamped(
-            OnGround ? stateMachine.maxAcceleration : stateMachine.maxAirAcceleration, stateMachine.maxSwimAcceleration, swimFactor), speed);
+            OnGround ? stateMachine.maxAcceleration : stateMachine.maxAirAcceleration, stateMachine.maxSwimAcceleration, swimFactor), speed, stateMachine.rightAxis, stateMachine.forwardAxis);
         stateMachine.body.velocity = stateMachine.velocity;
 
 
@@ -101,6 +102,7 @@ public class PlayerSwimState : PlayerBaseState
     {
         if (!Swimming)
         {
+            jumping = true;
             stateMachine.SwitchState(new PlayerJumpState(stateMachine));
         }
     }
@@ -108,6 +110,8 @@ public class PlayerSwimState : PlayerBaseState
     public override void Exit()
     {
         Debug.Log("exiting swim state");
+        stateMachine.jumpFromSwim = true;
+        stateMachine.contactNormal = stateMachine.upAxis;
         stateMachine.inputReader.OnJumpPerformed -= EvaluateJump;
     }
 

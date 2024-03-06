@@ -46,7 +46,7 @@ public class PlayerFallState : PlayerBaseState
         stateMachine.upAxis = -Physics.gravity.normalized;
         Vector3 gravity = CustomGravity.GetGravity(stateMachine.body.position, out stateMachine.upAxis);
         UpdateState();
-        CalcVelocity(stateMachine.maxAirAcceleration, stateMachine.maxSpeed);
+        CalcVelocity(stateMachine.maxAirAcceleration, stateMachine.maxSpeed, stateMachine.rightAxis, stateMachine.forwardAxis);
         stateMachine.velocity += gravity * Time.deltaTime;
         stateMachine.body.velocity = stateMachine.velocity;
         ClearState();

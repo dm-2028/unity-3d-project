@@ -4,258 +4,114 @@ using UnityEngine;
 
 public class PlayerClimbState : PlayerBaseState
 {
-    public bool isClimbing;
-    public bool isMid;
+    private readonly int climbHash = Animator.StringToHash("ClimbBlendTree");
+    private const float crossFadeDuration = 0.1f;
 
-    bool inPosition;
-    bool isLerping;
-    float t;
-    float delta;
-    Vector3 startPos;
-    Vector3 targetPos;
-    Quaternion startRot;
-    Quaternion targetRot;
-    public float positionOffset = 1.0f;
-    private LayerMask playerLayer = ~(1 << 3);
-
-    public float speedMultiplier = 0.2f;
-    public float climbSpeed = 5;
-    public float rotateSpeed = 5;
-    public float distanceToWall = 1;
-    public float distanceToMoveDirection = .5f;
-
-    RaycastHit hit;
-    
-
-    //ThirdPersonController tpc;
-
-    public PlayerClimbState(PlayerStateMachine stateMachine, RaycastHit hit): base(stateMachine)
+    public PlayerClimbState(PlayerStateMachine stateMachine) : base(stateMachine)
     {
-        this.hit = hit;
-
-        InitForClimb(this.hit);
     }
     public override void Enter()
-    { 
-        Debug.Log("enter climb state");
-        
-        ignoreLayers = ~(1 << 9);
-    }
-
-    public override void Exit()
     {
-       
+        Debug.Log("climbing " + Climbing + "\nsteepcontactcount " + stateMachine.climbContactCount);
+        Debug.Log("enter climb state");
+        stateMachine.inputReader.OnJumpPerformed += SwitchToJumpState;
     }
 
     public override void Tick()
     {
-        delta = Time.deltaTime;
-        Tick(delta);
-    }
 
-    private void CalculateUpwardMovement()
-    {
-        //Vector3 cameraForward = new(stateMachine.mainCamera.forward.x, 0, stateMachine.mainCamera.forward.z);
-        //Vector3 cameraRight = new(stateMachine.mainCamera.right.x, 0, stateMachine.mainCamera.right.z);
-
-        //Vector3 moveDirection = cameraForward.normalized * stateMachine.inputReader.movement.y + cameraRight.normalized * stateMachine.inputReader.movement.x;
-
-        //Debug.Log("moving " + moveDirection);
-
-        //stateMachine.velocity.y = moveDirection.x * stateMachine.movementSpeed;
-        //stateMachine.velocity.z = moveDirection.z * stateMachine.movementSpeed;
-    }
-
-    public void Tick(float deltaTime)
-    {
-        this.delta = deltaTime;
-        if (!inPosition)
-        {
-            GetInPosition();
-            return;
-        }
-
-        if (!isLerping)
-        {
-            bool cancel = Input.GetButtonDown("Jump");
-            if (cancel)
-            {
-                CancelClimb();
-                return;
-            }
-
-            float hor = stateMachine.inputReader.movement.x;
-            float vert = stateMachine.inputReader.movement.y;
-            Debug.Log("up " + vert + " side " + hor);
-            float m = Mathf.Abs(hor) + Mathf.Abs(vert);
-
-            Vector3 h = helper.right * hor;
-            Vector3 v = helper.up * vert;
-            Vector3 moveDir = (h + v).normalized;
-
-            Debug.Log("move dir " + moveDir);
-
-            if (isMid)
-            {
-                if (moveDir == Vector3.zero)
-                {
-                    return;
-                }
-            }
-            else
-            {
-                bool canMove = CanMove(moveDir);
-                Debug.Log("can move " + canMove);
-                if (!canMove || moveDir == Vector3.zero)
-                {
-                    return;
-                }
-            }
-
-            isMid = !isMid;
-
-
-            t = 0;
-            isLerping = true;
-            startPos = stateMachine.transform.position;
-            Vector3 tp = helper.position - stateMachine.transform.position;
-            float distance = Vector3.Distance(helper.position, startPos) / 2;
-            tp *= positionOffset;
-            tp += stateMachine.transform.position;
-            targetPos = isMid ? tp : helper.position;
-
-            //aHook.CreatePositions(targetPos, moveDir, isMid);
-        }
-        else
-        {
-            t += delta * climbSpeed;
-            if (t > 1)
-            {
-                t = 1;
-                isLerping = false;
-            }
-
-            Vector3 cp = Vector3.Lerp(startPos, targetPos, t);
-            stateMachine.transform.position = cp;
-            stateMachine.transform.rotation = Quaternion.Slerp(stateMachine.transform.rotation, helper.rotation, delta * rotateSpeed);
-
-            LookForGround();
-        }
-    }
-
-
-
-    void InitForClimb(RaycastHit hit)
-    {
-        isClimbing = true;
-        //aHook.enabled = true;
-        helper.transform.rotation = Quaternion.LookRotation(-hit.normal);
-        startPos = stateMachine.transform.position;
-        targetPos = hit.point + (hit.normal * offsetFromWall);
-        t = 0;
-        inPosition = false;
-        //anim.CrossFade("Hanging Idle", 2);
-    }
-
-    bool CanMove(Vector3 moveDir)
-    {
-        Vector3 origin = stateMachine.transform.position;
-        float dis = distanceToMoveDirection;
-        Vector3 dir = moveDir;
-        //DebugLine.singleton.SetLine(origin, origin + (dir * dis), 0);
-
-        Debug.DrawRay(origin, dir, Color.white);
-        // Raycast desired direction
-        if (Physics.Raycast(origin, dir, out RaycastHit hit, dis, playerLayer))
-        {
-            
-            Debug.Log("it's a corner");
-            // Check if corner
-            return false;
-        }
-
-        origin += moveDir * dis;
-        dir = helper.forward;
-
-        float dis2 = distanceToWall;
-        //DebugLine.singleton.SetLine(origin, origin + (dir * dis2), 1);
-
-        // Raycast towards wall
-        if (Physics.Raycast(origin, dir, out hit, dis))
-        {
-            helper.SetPositionAndRotation(PosWithOffset(origin, hit.point), Quaternion.LookRotation(-hit.normal));
-            return true;
-        }
-
-        origin += (dir * dis2);
-        dir = -moveDir;
-
-        //DebugLine.singleton.SetLine(origin, origin + dir, 1);
-        // Raycast for inside corners
-        if (Physics.Raycast(origin, dir, out hit, distanceToWall))
-        {
-            helper.SetPositionAndRotation(PosWithOffset(origin, hit.point), Quaternion.LookRotation(-hit.normal));
-            return true;
-        }
-
-        origin += dir * dis2;
-        dir = -Vector3.up;
-
-        //DebugLine.singleton.SetLine(origin, origin + dir, 2);
-
-        if (Physics.Raycast(origin, dir, out hit, dis2))
-        {
-            
-            float angle = Vector3.Angle(-helper.forward, hit.normal);
-            Debug.Log("within physics raycast if angle " + angle);
-            if (angle < 40)
-            {
-                helper.SetPositionAndRotation(PosWithOffset(origin, hit.point), Quaternion.LookRotation(-hit.normal));
-                return true;
-            }
-        }
-        Debug.Log("all checks failed");
-        return false;
-    }
-    void GetInPosition()
-    {
-        
-        // transition time
-        t += delta * 10;
-
-        if (t > 1)
-        {
-            t = 1;
-            inPosition = true;
-            //aHook.CreatePositions(targetPos, Vector3.zero, false);
-        }
-
-        Vector3 tp = Vector3.Lerp(startPos, targetPos, t);
-        stateMachine.transform.SetPositionAndRotation(tp, Quaternion.Slerp(stateMachine.transform.rotation, helper.rotation, delta * rotateSpeed));
-        Debug.Log("getting in position" + tp);
-    }
-
-
-
-    void LookForGround()
-    {
-        Vector3 origin = stateMachine.transform.position;
-        Vector3 direction = -stateMachine.transform.up;
-
-        if (Physics.Raycast(origin, direction, out RaycastHit hit, distanceToMoveDirection + 0.05f, ignoreLayers))
-        {
-            CancelClimb();
-        }
-    }
-
-    private void CancelClimb()
-    {
-        isClimbing = false;
+        CalculateMoveDirection();
+        FaceMoveDirection();
     }
 
     public override void TickFixed()
     {
-        throw new System.NotImplementedException();
+        Debug.Log("tick fixed " + stateMachine.body.velocity);
+        stateMachine.stepsSinceLastGrounded += 1;
+        stateMachine.stepsSinceLastJump += 1;
+        stateMachine.velocity = stateMachine.body.velocity;
+        if (stateMachine.climbContactCount > 1)
+        {
+            stateMachine.climbNormal.Normalize();
+            float upDot = Vector3.Dot(stateMachine.upAxis, stateMachine.climbNormal);
+            if (upDot >= stateMachine.minGroundDotProduct)
+            {
+                stateMachine.climbNormal = stateMachine.lastClimbNormal;
+            }
+        }
+        stateMachine.groundContactCount = stateMachine.climbContactCount;
+        stateMachine.contactNormal = stateMachine.climbNormal;
+
+        if (stateMachine.connectedBody)
+        {
+            if (stateMachine.connectedBody.isKinematic || stateMachine.connectedBody.mass >= stateMachine.body.mass)
+            {
+                UpdateConnectionState();
+            }
+        }
+        Debug.Log("state machine " + stateMachine.velocity);
+        CalcVelocity(stateMachine.maxClimbAcceleration, stateMachine.maxClimbSpeed, Vector3.Cross(stateMachine.contactNormal, stateMachine.upAxis), stateMachine.upAxis);
+        Debug.Log("state machine after " + stateMachine.velocity);
+
+
+        stateMachine.velocity -= stateMachine.contactNormal * (stateMachine.maxClimbAcceleration * 0.9f * Time.deltaTime);
+
+        stateMachine.body.velocity = stateMachine.velocity;
+
+        Debug.Log("body velocity " + stateMachine.body.velocity);
+        ClearState();
     }
+
+    public override void Exit()
+    {
+        stateMachine.inputReader.OnJumpPerformed -= SwitchToJumpState;
+    }
+    //void AdjustVelocity()
+    //{
+    //    float acceleration, speed;
+    //    Vector3 xAxis, zAxis;
+
+    //    if (Climbing)
+    //    {
+    //        acceleration = maxClimbAcceleration;
+    //        speed = maxClimbSpeed;
+    //        xAxis = Vector3.Cross(contactNormal, upAxis);
+    //        zAxis = upAxis;
+    //    }
+    //    else if (InWater)
+    //    {
+    //        float swimFactor = Mathf.Min(1f, submergence / swimThreshold);
+    //        acceleration = Mathf.LerpUnclamped(
+    //            OnGround ? maxAcceleration : maxAirAcceleration, maxSwimAcceleration, swimFactor);
+    //        speed = Mathf.LerpUnclamped(maxSpeed, maxSwimSpeed, swimFactor);
+    //        xAxis = rightAxis;
+    //        zAxis = forwardAxis;
+    //    }
+    //    else
+    //    {
+    //        acceleration = OnGround ? maxAcceleration : maxAirAcceleration;
+    //        speed = OnGround && desiresClimbing ? maxClimbSpeed : maxSpeed;
+    //        xAxis = rightAxis;
+    //        zAxis = forwardAxis;
+    //    }
+    //    xAxis = ProjectDirectionOnPlane(xAxis, contactNormal);
+    //    zAxis = ProjectDirectionOnPlane(zAxis, contactNormal);
+
+    //    Vector3 relativeVelocity = velocity - connectionVelocity;
+
+    //    Vector3 adjustment;
+    //    adjustment.x = playerInput.x * speed - Vector3.Dot(relativeVelocity, xAxis);
+    //    adjustment.z = playerInput.z * speed - Vector3.Dot(relativeVelocity, zAxis);
+    //    adjustment.y = Swimming ? playerInput.y * speed - Vector3.Dot(relativeVelocity, upAxis) : 0f;
+
+    //    adjustment = Vector3.ClampMagnitude(adjustment, acceleration * Time.deltaTime);
+
+    //    velocity += xAxis * adjustment.x + zAxis * adjustment.z;
+
+    //    if (Swimming)
+    //    {
+    //        velocity += upAxis * adjustment.y;
+    //    }
+    //}
 }
 

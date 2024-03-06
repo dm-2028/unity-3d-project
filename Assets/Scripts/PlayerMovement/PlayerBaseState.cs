@@ -7,7 +7,7 @@ public abstract class PlayerBaseState : State
     protected readonly PlayerStateMachine stateMachine;
     // Start is called before the first frame update
 
-    protected bool jumping, desiresClimbing;
+    protected bool jumping;
 
     protected Vector3 playerInput;
 
@@ -24,7 +24,6 @@ public abstract class PlayerBaseState : State
 
     public float offsetFromWall = 0.3f;
     protected Transform helper = new GameObject().transform;
-    protected LayerMask ignoreLayers;
 
     protected PlayerBaseState(PlayerStateMachine stateMachine)
     {
@@ -71,8 +70,8 @@ public abstract class PlayerBaseState : State
         stateMachine.velocity = stateMachine.body.velocity;
         if (CheckClimbing())
         {
-            //switch to climb state
-        }else if(CheckSwimming()){
+            stateMachine.SwitchState(new PlayerClimbState(stateMachine));
+        }else if(CheckSwimming() && !jumping){
             stateMachine.SwitchState(new PlayerSwimState(stateMachine));
         }
         if (!jumping && (OnGround || SnapToGround() || CheckSteepContacts()))
@@ -204,10 +203,8 @@ public abstract class PlayerBaseState : State
                         stateMachine.connectedBody = collision.rigidbody;
                     }
                 }
-                Debug.Log("climb mask " + stateMachine.climbMask.value + " " + layer);
                 int layerPrint = 1 << layer;
-                Debug.Log("climb layer " + layerPrint);
-                if (desiresClimbing && upDot >= stateMachine.minClimbDotProduct && (stateMachine.climbMask & (1 << layer)) == 0)
+                if (upDot >= stateMachine.minClimbDotProduct && (stateMachine.climbMask & (1 << layer)) == 0)
                 {
                     stateMachine.climbContactCount += 1;
                     stateMachine.climbNormal += normal;
@@ -312,28 +309,31 @@ public abstract class PlayerBaseState : State
         stateMachine.SwitchState(new PlayerJumpState(stateMachine));
     }
 
-    protected void CalcVelocity(float acceleration, float speed)
+    protected void CalcVelocity(float acceleration, float speed, Vector3 xAxisIn, Vector3 zAxisIn)
     {
-        Vector3 xAxis, zAxis;
+        Debug.Log("before calc velocity " + stateMachine.velocity);
+        Vector3 zAxis, xAxis;
 
-        xAxis = stateMachine.rightAxis;
-        zAxis = stateMachine.forwardAxis;
+        xAxis = xAxisIn;
+        zAxis = zAxisIn;
 
         xAxis = ProjectDirectionOnPlane(xAxis, stateMachine.contactNormal);
         zAxis = ProjectDirectionOnPlane(zAxis, stateMachine.contactNormal);
 
         Vector3 relativeVelocity = stateMachine.velocity - stateMachine.connectionVelocity;
 
+        Debug.Log("relative velocity " + relativeVelocity);
+
         Vector3 adjustment;
         adjustment.x = playerInput.x * speed - Vector3.Dot(relativeVelocity, xAxis);
         adjustment.z = playerInput.z * speed - Vector3.Dot(relativeVelocity, zAxis);
         adjustment.y = Swimming ? playerInput.y * speed - Vector3.Dot(relativeVelocity, stateMachine.upAxis) : 0f;
-
+        Debug.Log("adjustment before clamp " + adjustment);
         adjustment = Vector3.ClampMagnitude(adjustment, acceleration * Time.deltaTime);
-
+        Debug.Log("adjustment " + adjustment);
         stateMachine.velocity += xAxis * adjustment.x + zAxis * adjustment.z;
 
-
+        Debug.Log("after calc velocity " + stateMachine.velocity);
         if (Swimming)
         {
             stateMachine.velocity += stateMachine.upAxis * adjustment.y;

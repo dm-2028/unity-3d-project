@@ -99,6 +99,8 @@ public class PlayerStateMachine : StateMachine
     public float minClimbDotProduct { get; private set; }
     public float submergence { get; set; }
 
+    public bool jumpFromSwim { get; set; }
+
 
     public Rigidbody connectedBody { get; set; }
     public Rigidbody previousConnectedBody { get; set; }

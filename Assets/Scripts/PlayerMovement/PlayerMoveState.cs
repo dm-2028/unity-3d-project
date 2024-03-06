@@ -16,7 +16,6 @@ public class PlayerMoveState : PlayerBaseState
         stateMachine.animator.CrossFadeInFixedTime(moveBlendTreeHash, crossFadeDuration);
 
         stateMachine.inputReader.OnJumpPerformed += SwitchToJumpState;
-        ignoreLayers = 1 << 10;
     }
 
     public override void Tick()
@@ -40,7 +39,7 @@ public class PlayerMoveState : PlayerBaseState
         Vector3 gravity = CustomGravity.GetGravity(stateMachine.body.position, out stateMachine.upAxis);
         UpdateState();
 
-        CalcVelocity(stateMachine.maxAcceleration, stateMachine.maxSpeed);
+        CalcVelocity(stateMachine.maxAcceleration, stateMachine.maxSpeed, stateMachine.rightAxis, stateMachine.forwardAxis);
 
 
         if (stateMachine.velocity.sqrMagnitude < 0.01f)

@@ -16,7 +16,7 @@ public class PlayerJumpState : PlayerBaseState
         stateMachine.inputReader.OnJumpPerformed += CheckDoubleJump;
 
         Vector3 jumpDirection;
-        if (OnGround)
+        if (OnGround || stateMachine.jumpFromSwim)
         {
             jumpDirection = stateMachine.contactNormal;
         }
@@ -44,12 +44,10 @@ public class PlayerJumpState : PlayerBaseState
 
         float jumpSpeed = Mathf.Sqrt(2f * Physics.gravity.magnitude * stateMachine.jumpHeight);
         Debug.Log("jump speed " + jumpSpeed);
-        if (InWater)
-        {
-            jumpSpeed *= Mathf.Max(0f, 1f - stateMachine.submergence / stateMachine.swimThreshold);
-        }
+
         jumpDirection = (jumpDirection + stateMachine.upAxis).normalized;
         float alignedSpeed = Vector3.Dot(stateMachine.velocity, jumpDirection);
+        Debug.Log("aligned speed " + alignedSpeed);
         if(stateMachine.velocity.y < 0)
         {
             stateMachine.velocity += new Vector3(0f, -stateMachine.velocity.y, 0f);
@@ -59,6 +57,7 @@ public class PlayerJumpState : PlayerBaseState
             jumpSpeed = Mathf.Max(jumpSpeed - alignedSpeed, 0f);
         }
             Debug.Log("jump direction " + jumpDirection);
+        Debug.Log("aligned jump speed " + jumpSpeed);
         stateMachine.velocity += jumpDirection * jumpSpeed;
         Debug.Log("velocity of jump " + stateMachine.velocity);
         stateMachine.body.velocity = stateMachine.velocity;
@@ -94,7 +93,7 @@ public class PlayerJumpState : PlayerBaseState
         Debug.Log("velocity before update " + stateMachine.velocity);
         UpdateState();
         Debug.Log("velocity before adjust " + stateMachine.velocity);
-        CalcVelocity(stateMachine.maxAirAcceleration, stateMachine.maxSpeed);
+        CalcVelocity(stateMachine.maxAirAcceleration, stateMachine.maxSpeed, stateMachine.rightAxis, stateMachine.forwardAxis);
         stateMachine.velocity += gravity * Time.deltaTime;
         Debug.Log("velocity in jump = " + stateMachine.velocity);
         stateMachine.body.velocity = stateMachine.velocity;
