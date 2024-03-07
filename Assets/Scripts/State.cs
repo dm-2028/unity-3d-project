@@ -10,4 +10,5 @@ public abstract class State
     public abstract void Exit();
     public abstract void EvaluateCollision(Collision collision);
     public abstract void EvaluateSubmergence(Collider other);
+    public abstract void ExitCollision(Collision collision);
 }

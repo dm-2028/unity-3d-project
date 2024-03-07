@@ -57,6 +57,7 @@ public class PlayerMoveState : PlayerBaseState
 
     public override void Exit()
     {
+        stateMachine.animator.speed = 1f;
         Debug.Log("exit move state");
         stateMachine.inputReader.OnJumpPerformed -= SwitchToJumpState;
     }

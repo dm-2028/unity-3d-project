@@ -24,6 +24,7 @@ public abstract class PlayerBaseState : State
 
     public float offsetFromWall = 0.3f;
     protected Transform helper = new GameObject().transform;
+    protected List<ContactPoint> climbNormals = new List<ContactPoint>();
 
     protected PlayerBaseState(PlayerStateMachine stateMachine)
     {
@@ -171,6 +172,7 @@ public abstract class PlayerBaseState : State
         stateMachine.previousConnectedBody = stateMachine.connectedBody;
         stateMachine.connectedBody = null;
         stateMachine.submergence = 0f;
+        climbNormals.Clear();
     }
 
     public override void EvaluateCollision(Collision collision)
@@ -180,11 +182,27 @@ public abstract class PlayerBaseState : State
             return;
         }
         int layer = collision.gameObject.layer;
-
         float minDot = GetMinDot(layer);
+
         for (int i = 0; i < collision.contactCount; i++)
         {
-            Vector3 normal = collision.GetContact(i).normal;
+            ContactPoint point = collision.GetContact(i);
+            Vector3 normal = point.normal;
+            bool alreadyEvaluated = false;
+            foreach (ContactPoint contactPoint in climbNormals)
+            {
+                if (normal.Equals(collision.GetContact(i).normal))
+                {
+                    alreadyEvaluated = true;
+                    break;
+                }
+            }
+            if (alreadyEvaluated)
+            {
+                continue;
+            }
+
+            climbNormals.Add(point);
             float upDot = Vector3.Dot(stateMachine.upAxis, normal);
             if (upDot >= minDot)
             {
@@ -203,7 +221,6 @@ public abstract class PlayerBaseState : State
                         stateMachine.connectedBody = collision.rigidbody;
                     }
                 }
-                int layerPrint = 1 << layer;
                 if (upDot >= stateMachine.minClimbDotProduct && (stateMachine.climbMask & (1 << layer)) == 0)
                 {
                     stateMachine.climbContactCount += 1;
@@ -212,6 +229,16 @@ public abstract class PlayerBaseState : State
                     stateMachine.connectedBody = collision.rigidbody;
                 }
             }
+        }
+    }
+
+    public override void ExitCollision(Collision collision)
+    {
+        int layer = collision.gameObject.layer;
+
+        if((stateMachine.climbMask & (1 << layer)) == 0)
+        {
+            stateMachine.SwitchState(new PlayerFallState(stateMachine));
         }
     }
 
@@ -311,7 +338,6 @@ public abstract class PlayerBaseState : State
 
     protected void CalcVelocity(float acceleration, float speed, Vector3 xAxisIn, Vector3 zAxisIn)
     {
-        Debug.Log("before calc velocity " + stateMachine.velocity);
         Vector3 zAxis, xAxis;
 
         xAxis = xAxisIn;
@@ -322,18 +348,18 @@ public abstract class PlayerBaseState : State
 
         Vector3 relativeVelocity = stateMachine.velocity - stateMachine.connectionVelocity;
 
-        Debug.Log("relative velocity " + relativeVelocity);
+        //Debug.Log("relative velocity " + relativeVelocity);
 
         Vector3 adjustment;
         adjustment.x = playerInput.x * speed - Vector3.Dot(relativeVelocity, xAxis);
         adjustment.z = playerInput.z * speed - Vector3.Dot(relativeVelocity, zAxis);
         adjustment.y = Swimming ? playerInput.y * speed - Vector3.Dot(relativeVelocity, stateMachine.upAxis) : 0f;
-        Debug.Log("adjustment before clamp " + adjustment);
+        //Debug.Log("adjustment before clamp " + adjustment);
         adjustment = Vector3.ClampMagnitude(adjustment, acceleration * Time.deltaTime);
-        Debug.Log("adjustment " + adjustment);
+        //Debug.Log("adjustment " + adjustment);
         stateMachine.velocity += xAxis * adjustment.x + zAxis * adjustment.z;
 
-        Debug.Log("after calc velocity " + stateMachine.velocity);
+        //Debug.Log("after calc velocity " + stateMachine.velocity);
         if (Swimming)
         {
             stateMachine.velocity += stateMachine.upAxis * adjustment.y;

@@ -25,11 +25,17 @@ public abstract class StateMachine : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
+        Debug.Log("on collision enter");
         currentState?.EvaluateCollision(collision);
     }
     private void OnCollisionStay(Collision collision)
     {
         currentState?.EvaluateCollision(collision);
+    }
+
+    private void OnCollisionExit(Collision collision)
+    {
+        currentState?.ExitCollision(collision);
     }
 
     private void OnTriggerEnter(Collider other)

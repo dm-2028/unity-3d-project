@@ -62,7 +62,7 @@ public class PlayerJumpState : PlayerBaseState
         Debug.Log("velocity of jump " + stateMachine.velocity);
         stateMachine.body.velocity = stateMachine.velocity;
         stateMachine.animator.CrossFadeInFixedTime(jumpHash, crossFadeDuration);
-
+        stateMachine.jumpFromSwim = false;
     }
 
 
