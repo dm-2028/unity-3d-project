@@ -45,7 +45,8 @@ public class PlayerStateMachine : StateMachine
         probeMask = -1,
         stairsMask = -1,
         climbMask = -1,
-        waterMask = -1;
+        waterMask = -1,
+        pitMask = -1;
     [Range(90, 180)]
     public float maxClimbAngle = 140f;
 
@@ -94,12 +95,15 @@ public class PlayerStateMachine : StateMachine
     public Vector3 forwardAxis;
     public Vector3 connectionWorldPosition { get; set; }
     public Vector3 connectionLocalPosition { get; set; }
+    public Vector3 lastGroundPosition { get; set; }
+    public Quaternion lastGroundRotation { get; set; }
     public float minGroundDotProduct { get; private set; }
     public float minStairsDotProduct { get; private set; }
     public float minClimbDotProduct { get; private set; }
     public float submergence { get; set; }
 
     public bool jumpFromSwim { get; set; }
+    
 
 
     public Rigidbody connectedBody { get; set; }

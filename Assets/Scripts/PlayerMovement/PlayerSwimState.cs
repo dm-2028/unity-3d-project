@@ -34,7 +34,7 @@ public class PlayerSwimState : PlayerBaseState
         playerInput.y = stateMachine.inputReader.verticalMovement;
         playerInput = Vector3.ClampMagnitude(playerInput, 1f);
         FaceMoveDirection();
-
+        SetPosition();
 
         stateMachine.animator.SetFloat(moveSpeedHash, stateMachine.inputReader.movement.sqrMagnitude > 0f ? 1f : 0f, animationDampTime, Time.deltaTime);
         stateMachine.animator.speed = stateMachine.inputReader.movement.sqrMagnitude > 0f ? .5f : .25f;

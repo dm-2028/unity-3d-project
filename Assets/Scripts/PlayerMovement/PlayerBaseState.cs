@@ -69,6 +69,11 @@ public abstract class PlayerBaseState : State
         stateMachine.stepsSinceLastGrounded += 1;
         stateMachine.stepsSinceLastJump += 1;
         stateMachine.velocity = stateMachine.body.velocity;
+            
+        if(OnGround && !OnSteep)
+        {
+            SetPosition();
+        }
         if (CheckClimbing())
         {
             stateMachine.SwitchState(new PlayerClimbState(stateMachine));
@@ -182,7 +187,9 @@ public abstract class PlayerBaseState : State
             return;
         }
         int layer = collision.gameObject.layer;
+
         float minDot = GetMinDot(layer);
+        
 
         for (int i = 0; i < collision.contactCount; i++)
         {
@@ -244,7 +251,16 @@ public abstract class PlayerBaseState : State
 
     public override void EvaluateSubmergence(Collider other)
     {
-        if ((stateMachine.waterMask & (1 << other.gameObject.layer)) != 0)
+
+        if ((stateMachine.pitMask & (1 << other.gameObject.layer)) != 0)
+        {
+            Debug.Log("layer is pit layer");
+            stateMachine.transform.position = stateMachine.lastGroundPosition;
+            stateMachine.transform.rotation = stateMachine.lastGroundRotation;
+            stateMachine.body.velocity = new(0f, 0f, 0f);
+            return;
+        }
+        else if ((stateMachine.waterMask & (1 << other.gameObject.layer)) != 0)
         {
             if (Physics.Raycast(
             stateMachine.body.position + stateMachine.upAxis * stateMachine.submergenceOffset,
@@ -326,6 +342,14 @@ public abstract class PlayerBaseState : State
         if (stateMachine.maxAirJumps > 0 && stateMachine.jumpPhase <= stateMachine.maxAirJumps)
         {
             stateMachine.SwitchState(new PlayerJumpState(stateMachine));
+        }
+    }
+    protected void SetPosition()
+    {if (OnGround && !OnSteep)
+        {
+            Debug.Log("setting position");
+            stateMachine.lastGroundPosition = stateMachine.transform.position;
+            stateMachine.lastGroundRotation = stateMachine.transform.rotation;
         }
     }
 
