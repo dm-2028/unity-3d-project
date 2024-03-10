@@ -2,11 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
+using System.Linq;
 
 public class MainManager : MonoBehaviour
 {
     [SerializeField]
-    int shipSelection, highScore;
+    public int beans;
+    public string saveFileName;
+    public CoffeeBean[] coffeeBeanList;
 
     public static MainManager Instance { get; private set; }
 
@@ -20,38 +23,44 @@ public class MainManager : MonoBehaviour
         }
         Instance = this;
         DontDestroyOnLoad(gameObject);
-
-        LoadPlayerInfo();
     }
 
-    [System.Serializable]
-    class SaveData
+    public void SavePlayerInfo(SaveData data)
     {
-        public int selection;
-        public int highScore;
-    }
-
-    public void SavePlayerInfo()
-    {
-        SaveData data = new SaveData();
-
-        data.selection = shipSelection;
-        data.highScore = highScore;
-
         string json = JsonUtility.ToJson(data);
-        File.WriteAllText(Application.persistentDataPath + "/savedata.json", json);
+        File.WriteAllText(Application.persistentDataPath + "/" + data.saveFileName + ".json", json);
     }
 
-    public void LoadPlayerInfo()
+    public void LoadMostRecent()
     {
-        string path = Application.persistentDataPath + "/savedata.json";
+        string path = Application.persistentDataPath;
+
+        DirectoryInfo dirInfo = new DirectoryInfo(path);
+        FileInfo[] allFiles = dirInfo.GetFiles("*.json", SearchOption.TopDirectoryOnly);
+        FileInfo lastModifiedFile = allFiles.OrderBy(fi => fi.LastWriteTime).LastOrDefault();
+
+        LoadPlayerInfo(lastModifiedFile.FullName);
+        if (File.Exists(lastModifiedFile.FullName)){
+
+        }
+    }
+
+    public FileInfo[] GetAllFiles()
+    {
+        DirectoryInfo dirInfo = new DirectoryInfo(Application.persistentDataPath);
+        return dirInfo.GetFiles("*.json", SearchOption.TopDirectoryOnly);
+    }
+
+    public void LoadPlayerInfo(string path)
+    {
         if (File.Exists(path))
         {
             string json = File.ReadAllText(path);
             SaveData data = JsonUtility.FromJson<SaveData>(json);
 
-            highScore = data.highScore;
-            shipSelection = data.selection;
+            beans = data.beans;
+            saveFileName = data.saveFileName;
+            coffeeBeanList = data.coffeeBeanList;
         }
     }
 }

@@ -5,6 +5,7 @@ using UnityEngine;
 [System.Serializable]
 public class SaveData
 {
-    public string name;
-
+    public string saveFileName;
+    public int beans;
+    public CoffeeBean[] coffeeBeanList;
 }

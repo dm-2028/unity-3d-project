@@ -64,7 +64,7 @@ public abstract class StateMachine : MonoBehaviour
         Debug.Log("start coroutine");
         float i = 0f;
         float rate = 1.0f / 3.0f;
-
+            
         while(transform.position != collectable.transform.position)
         {
             i += Time.deltaTime / rate;

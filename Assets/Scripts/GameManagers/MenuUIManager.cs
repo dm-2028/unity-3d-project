@@ -4,6 +4,7 @@ using TMPro;
 using UnityEditor;
 using UnityEngine.UI;
 using System.IO;
+using System.Collections.Generic;
 
 public class MenuUIManager : MonoBehaviour
 {
@@ -13,12 +14,17 @@ public class MenuUIManager : MonoBehaviour
     Button[] buttons;
     Button[][] keyboard;
 
+    [SerializeField]
+    GameObject buttonPrefab;
+    List<Button> saveFileButtons = new List<Button>();
+
     private int selectionIndex, rowIndex, keyIndex = 0;
+    private int saveSelectionIndex = 0;
     string nameString = "";
     bool enterPressed;
 
     [SerializeField]
-    GameObject mainMenu, enterName;
+    GameObject mainMenu, enterName, saveList;
 
     [SerializeField]
     Button Qbutton, Wbutton, Ebutton, Rbutton, Tbutton, Ybutton, Ubutton, Ibutton, Obutton, Pbutton,
@@ -34,7 +40,7 @@ public class MenuUIManager : MonoBehaviour
     {
         enterName.SetActive(false);
         mainMenu.SetActive(true);
-        //highScoreText.text = "High Score: " + MainManager.Instance.highScore;
+        saveList.SetActive(false);
         buttons = new[] { newGameButton, continueButton, loadGameButton };
         keyboard = new Button[][] { new[] { Qbutton, Wbutton, Ebutton, Rbutton, Tbutton, Ybutton, Ubutton, Ibutton, Obutton, Pbutton },
                              new[]{ Abutton, Sbutton, Dbutton, Fbutton, Gbutton, Hbutton, Jbutton, Kbutton, Lbutton },
@@ -60,6 +66,9 @@ public class MenuUIManager : MonoBehaviour
             else if (enterName.activeInHierarchy)
             {
                 keyboard[rowIndex][keyIndex].onClick.Invoke();
+            }else if (saveList.activeInHierarchy)
+            {
+                saveFileButtons[saveSelectionIndex].onClick.Invoke();
             }
             enterPressed = false;
             return;
@@ -108,7 +117,21 @@ public class MenuUIManager : MonoBehaviour
             }
 
             keyboard[rowIndex][keyIndex].Select();
+        }else if (saveList.activeInHierarchy){
+            if(directionVertical < 0)
+            {
+                saveSelectionIndex = (saveSelectionIndex + 1) % saveFileButtons.Count;
+            }
+            else if (directionVertical > 0)
+            {
+                saveSelectionIndex = (saveSelectionIndex - 1) < 0 ? saveFileButtons.Count - 1 : saveSelectionIndex - 1;
+            }
+            Debug.Log("selecting " + saveSelectionIndex);
+            Debug.Log(saveFileButtons[saveSelectionIndex].transform.GetChild(0).GetComponent<TextMeshProUGUI>().text);
+            //saveFileButtons[saveSelectionIndex].Select();
+            saveList.transform.GetChild(0).transform.GetChild(saveSelectionIndex).GetComponent<Button>().Select();
         }
+      
     }
 
     public void StartGame()
@@ -124,12 +147,21 @@ public class MenuUIManager : MonoBehaviour
     
     public void ContinueGame()
     {
-
+        MainManager.Instance.LoadMostRecent();
+        SceneManager.LoadScene(1);
     }
 
     public void LoadGame()
     {
-        
+        mainMenu.SetActive(false);
+        saveList.SetActive(true);
+        BuildLoadMenu();
+    }
+
+    public void LoadSelectedFile(string path)
+    {
+        MainManager.Instance.LoadPlayerInfo(path);
+        SceneManager.LoadScene(1);
     }
 
     public void AddLetter(string letter)
@@ -144,14 +176,43 @@ public class MenuUIManager : MonoBehaviour
         nameText.text = nameString;
     }
 
+    public void BuildLoadMenu()
+    {
+        FileInfo[] files = MainManager.Instance.GetAllFiles();
+        GameObject content = saveList.transform.GetChild(0).gameObject;
+        Debug.Log("content " + content);
+        for(int i = 0; i < files.Length; i++)
+        {
+            Debug.Log(files[i].Name);
+            GameObject newObject = GameObject.Instantiate(buttonPrefab);
+            newObject.transform.SetParent(content.transform);
+            RectTransform objectRect = (RectTransform)newObject.transform;
+            TextMeshProUGUI fileText = newObject.transform.GetChild(0).GetComponent<TextMeshProUGUI>();
+            Button fileButton = newObject.GetComponent<Button>();
+            fileText.text = files[i].Name;
+            saveFileButtons.Add(fileButton);
+            objectRect.sizeDelta = new(700, 200);
+            objectRect.anchoredPosition = new(0, 150-(200 * i));
+            fileButton.onClick.AddListener(delegate () { this.LoadSelectedFile(files[i].FullName); });
+            if (saveSelectionIndex == i)
+            {
+                fileButton.Select();
+            }
+        }
+        for(int i = 0; i < saveFileButtons.Count; i++)
+        {
+            Debug.Log(i + "save file buttons " + saveFileButtons[i].ToString());
+        }
+    }
+
     public void EnterClicked()
     {
         SaveData data = new SaveData();
 
-        data.name = nameString;
+        data.saveFileName = nameString + Time.time;
 
-        string json = JsonUtility.ToJson(data);
-        File.WriteAllText(Application.persistentDataPath + "/" + name + Time.time + ".json", json);
+        Debug.Log(data.saveFileName + " is the file name");
+        MainManager.Instance.SavePlayerInfo(data);
 
         SceneManager.LoadScene(1);
     }
