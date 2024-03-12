@@ -1,7 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
@@ -9,6 +11,13 @@ public class GameManager : MonoBehaviour
     public GameObject collectibleReward;
     public GameObject challengeSpawner;
 
+    public GameObject pauseMenu;
+
+    public TextMeshProUGUI beansText;
+
+    public Slider healthBar;
+
+    private bool gamePaused = false;
     private bool challengeStarted = false;
     private bool challengeAchieved = false;
 
@@ -32,12 +41,21 @@ public class GameManager : MonoBehaviour
                 break;
             }
             collectable.collected = savedCollectables[i].collected;
+            
+          
         }
+
+        pauseMenu.gameObject.SetActive(false);
+        beansText.text = "Beans: " + MainManager.Instance.beans.ToString();
     }
 
     // Update is called once per frame
     void Update()
     {
+        if (Input.GetKeyDown(KeyCode.P))
+        {
+            TogglePause();
+        }
         if (challengeStarted)
         {
             bool challengeComplete = true;
@@ -81,5 +99,45 @@ public class GameManager : MonoBehaviour
             challengeSpawner.SetActive(true);
             hoopsObject.SetActive(false);
         }
+    }
+
+    public static void SaveData()
+    {
+        IEnumerable<Collectable> collectables = Collectable.FindAll();
+
+        Collectable[] collectablesArray = collectables.ToArray();
+        MainManager.Instance.coffeeBeanList = collectablesArray;
+        MainManager.Instance.SavePlayerInfo();
+
+    }
+
+    private void TogglePause()
+    {
+        if (!gamePaused)
+        {
+            gamePaused = true;
+            pauseMenu.gameObject.SetActive(true);
+            Time.timeScale = 0;
+        }
+        else
+        {
+            gamePaused = false;
+            pauseMenu.gameObject.SetActive(false);
+            Time.timeScale = 1;
+        }
+    }
+
+    public void UpdateHealth(int health)
+    {
+        healthBar.value = health;
+        MainManager.Instance.health = health;
+        MainManager.Instance.SavePlayerInfo();
+    }
+
+    public void IncrementBeans()
+    {
+        MainManager.Instance.beans++;
+        beansText.text = "Beans: " + MainManager.Instance.beans.ToString();
+        MainManager.Instance.SavePlayerInfo();
     }
 }

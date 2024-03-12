@@ -9,7 +9,8 @@ public class MainManager : MonoBehaviour
     [SerializeField]
     public int beans;
     public string saveFileName;
-    public CoffeeBean[] coffeeBeanList;
+    public Collectable[] coffeeBeanList;
+    public int health = 10;
 
     public static MainManager Instance { get; private set; }
 
@@ -30,6 +31,16 @@ public class MainManager : MonoBehaviour
         string json = JsonUtility.ToJson(data);
         File.WriteAllText(Application.persistentDataPath + "/" + data.saveFileName + ".json", json);
     }
+    public void SavePlayerInfo()
+    {
+        SaveData data = new();
+        data.beans = beans;
+        data.coffeeBeanList = coffeeBeanList;
+        data.saveFileName = saveFileName;
+        data.health = health;
+
+        SavePlayerInfo(data);
+    }
 
     public void LoadMostRecent()
     {
@@ -39,8 +50,8 @@ public class MainManager : MonoBehaviour
         FileInfo[] allFiles = dirInfo.GetFiles("*.json", SearchOption.TopDirectoryOnly);
         FileInfo lastModifiedFile = allFiles.OrderBy(fi => fi.LastWriteTime).LastOrDefault();
 
-        LoadPlayerInfo(lastModifiedFile.FullName);
         if (File.Exists(lastModifiedFile.FullName)){
+            LoadPlayerInfo(lastModifiedFile.FullName);
 
         }
     }
@@ -61,6 +72,7 @@ public class MainManager : MonoBehaviour
             beans = data.beans;
             saveFileName = data.saveFileName;
             coffeeBeanList = data.coffeeBeanList;
+            health = data.health;
         }
     }
 }

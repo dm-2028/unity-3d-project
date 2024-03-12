@@ -14,13 +14,15 @@ public class CoffeeBean : Collectable
     // Update is called once per frame
     void Update()
     {
-        var newRotation = Quaternion.Euler(0.0f, transform.rotation.eulerAngles.y + 30.0f, 0.0f);
+        Debug.Log("loading " + serializationId + " " + collected);
+        var newRotation = Quaternion.Euler(0.0f, transform.rotation.eulerAngles.y + 60.0f, 0.0f);
         transform.rotation = Quaternion.Lerp(transform.rotation, newRotation, Time.deltaTime);
     }
 
     private void Awake()
     {
         UpdateVisibility();
+        Debug.Log("loading " + serializationId + " " + collected);
     }
 
     void Loaded()
@@ -31,7 +33,11 @@ public class CoffeeBean : Collectable
     private void UpdateVisibility()
     {
         if (collected)
-            this.enabled = false;
-        else this.enabled = true;
+        {
+            gameObject.SetActive(false);
+
+        }
+        else gameObject.SetActive(true);
+        
     }
 }

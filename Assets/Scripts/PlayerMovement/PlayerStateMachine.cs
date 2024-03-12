@@ -17,6 +17,8 @@ public class PlayerStateMachine : StateMachine
     public InputReader inputReader { get; private set; }
     public Animator animator { get; private set; }
 
+    public GameManager gameManager;
+
     [Range(0f, 100f)]
     public float
         maxSpeed = 10f,
@@ -113,6 +115,9 @@ public class PlayerStateMachine : StateMachine
 
     MeshRenderer meshRenderer;
 
+    private int health = 10;
+    private int maxHealth = 10;
+
 
     private void OnValidate()
     {
@@ -123,6 +128,8 @@ public class PlayerStateMachine : StateMachine
 
     private void Start()
     {
+        gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
+      
         mainCamera = Camera.main.transform;
         inputReader = GetComponent<InputReader>();
         animator = GetComponentInChildren<Animator>();
@@ -138,4 +145,64 @@ public class PlayerStateMachine : StateMachine
         OnValidate();
     }
 
+    public void DecrementHealth(int damage)
+    {
+        health -= damage;
+        gameManager.UpdateHealth(health);
+    }
+
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        Debug.Log("on collision enter");
+        currentState?.EvaluateCollision(collision);
+    }
+    private void OnCollisionStay(Collision collision)
+    {
+        currentState?.EvaluateCollision(collision);
+    }
+
+    private void OnCollisionExit(Collision collision)
+    {
+        currentState?.ExitCollision(collision);
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        Debug.Log("on trigger enter " + other.gameObject.tag);
+        if (other.gameObject.tag == ("Collectable"))
+        {
+            Debug.Log("trigger is tagged");
+            Collectable collectable = other.gameObject.GetComponent<Collectable>();
+            StartCoroutine(PullCollectable(collectable));
+        }
+        else
+        {
+            currentState?.EvaluateSubmergence(other);
+        }
+
+    }
+
+    private void OnTriggerStay(Collider other)
+    {
+        currentState?.EvaluateSubmergence(other);
+    }
+
+    IEnumerator PullCollectable(Collectable collectable)
+    {
+        Debug.Log("start coroutine");
+        float i = 0f;
+        float rate = 1.0f / 3.0f;
+
+        while (transform.position != collectable.transform.position)
+        {
+            i += Time.deltaTime / rate;
+            collectable.transform.position = Vector3.Lerp(collectable.transform.position, transform.position, i);
+            yield return null;
+        }
+        collectable.collected = true;
+        collectable.gameObject.SetActive(false);
+        gameManager.IncrementBeans();
+        GameManager.SaveData();
+    }
 }

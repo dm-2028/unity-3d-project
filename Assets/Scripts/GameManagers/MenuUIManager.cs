@@ -22,9 +22,10 @@ public class MenuUIManager : MonoBehaviour
     private int saveSelectionIndex = 0;
     string nameString = "";
     bool enterPressed;
+    FileInfo[] files;
 
     [SerializeField]
-    GameObject mainMenu, enterName, saveList;
+    GameObject mainMenu, enterName, saveList, scrollContent;
 
     [SerializeField]
     Button Qbutton, Wbutton, Ebutton, Rbutton, Tbutton, Ybutton, Ubutton, Ibutton, Obutton, Pbutton,
@@ -48,6 +49,7 @@ public class MenuUIManager : MonoBehaviour
         keyboard[rowIndex][keyIndex].Select();
         Debug.Log(keyboard[0].Length + keyboard[1].Length + keyboard[2].Length);
         buttons[selectionIndex].Select();
+        files = MainManager.Instance.GetAllFiles();
     }
 
     // Update is called once per frame
@@ -80,58 +82,89 @@ public class MenuUIManager : MonoBehaviour
         }
         if (mainMenu.activeInHierarchy)
         {
+            bool indexChanged = false;
             if (directionVertical < 0)
             {
                 selectionIndex = (selectionIndex + 1) % buttons.Length;
+                indexChanged = true;
+
             }
             else if (directionVertical > 0)
             {
                 selectionIndex = (selectionIndex - 1) < 0 ? buttons.Length - 1 : selectionIndex - 1;
+                indexChanged = true;
+
             }
-            buttons[selectionIndex].Select();
-        }else if (enterName.activeInHierarchy)
+            if (indexChanged)
+            {
+                buttons[selectionIndex].Select();
+            }
+        }
+        else if (enterName.activeInHierarchy)
         {
+            bool indexChanged = false;
             if (directionVertical < 0)
             {
                 rowIndex = (rowIndex + 1) % buttons.Length;
-                if(keyIndex >= keyboard[rowIndex].Length)
+                if (keyIndex >= keyboard[rowIndex].Length)
                 {
                     keyIndex = keyboard[rowIndex].Length - 1;
                 }
+                indexChanged = true;
+
             }
             else if (directionVertical > 0)
             {
                 rowIndex = (rowIndex - 1) < 0 ? keyboard.Length - 1 : rowIndex - 1;
+                indexChanged = true;
+
             }
-            if(directionHorizontal < 0)
+            if (directionHorizontal < 0)
             {
                 keyIndex = (keyIndex - 1) < 0 ? keyboard[rowIndex].Length - 1 : keyIndex - 1;
+                indexChanged = true;
+
             }
-            else if(directionHorizontal > 0)
+            else if (directionHorizontal > 0)
             {
                 keyIndex = (keyIndex + 1) % keyboard[rowIndex].Length;
+                indexChanged = true;
+
             }
             if (keyIndex >= keyboard[rowIndex].Length)
             {
                 keyIndex = keyboard[rowIndex].Length - 1;
-            }
+                indexChanged = true;
 
-            keyboard[rowIndex][keyIndex].Select();
-        }else if (saveList.activeInHierarchy){
-            if(directionVertical < 0)
+            }
+            if (indexChanged)
+            {
+                keyboard[rowIndex][keyIndex].Select();
+            }
+        }
+        else if (saveList.activeInHierarchy)
+        {
+            bool indexChanged = false;
+            if (directionVertical < 0)
             {
                 saveSelectionIndex = (saveSelectionIndex + 1) % saveFileButtons.Count;
+                indexChanged = true;
             }
             else if (directionVertical > 0)
             {
                 saveSelectionIndex = (saveSelectionIndex - 1) < 0 ? saveFileButtons.Count - 1 : saveSelectionIndex - 1;
+                indexChanged = true;
             }
-            Debug.Log("selecting " + saveSelectionIndex);
-            Debug.Log(saveFileButtons[saveSelectionIndex].transform.GetChild(0).GetComponent<TextMeshProUGUI>().text);
-            //saveFileButtons[saveSelectionIndex].Select();
-            saveList.transform.GetChild(0).transform.GetChild(saveSelectionIndex).GetComponent<Button>().Select();
+
+            if (indexChanged) 
+            {
+                Debug.Log("selecting " + saveSelectionIndex);
+                Debug.Log(saveFileButtons[saveSelectionIndex].transform.GetChild(0).GetComponent<TextMeshProUGUI>().text);
+                saveFileButtons[saveSelectionIndex].Select();
+            }
+
         }
-      
+
     }
 
     public void StartGame()
@@ -178,22 +211,22 @@ public class MenuUIManager : MonoBehaviour
 
     public void BuildLoadMenu()
     {
-        FileInfo[] files = MainManager.Instance.GetAllFiles();
-        GameObject content = saveList.transform.GetChild(0).gameObject;
-        Debug.Log("content " + content);
         for(int i = 0; i < files.Length; i++)
         {
             Debug.Log(files[i].Name);
-            GameObject newObject = GameObject.Instantiate(buttonPrefab);
-            newObject.transform.SetParent(content.transform);
+            GameObject newObject = GameObject.Instantiate(buttonPrefab, scrollContent.transform);
             RectTransform objectRect = (RectTransform)newObject.transform;
             TextMeshProUGUI fileText = newObject.transform.GetChild(0).GetComponent<TextMeshProUGUI>();
             Button fileButton = newObject.GetComponent<Button>();
+            Debug.Log("file button " + fileButton);
             fileText.text = files[i].Name;
             saveFileButtons.Add(fileButton);
             objectRect.sizeDelta = new(700, 200);
             objectRect.anchoredPosition = new(0, 150-(200 * i));
-            fileButton.onClick.AddListener(delegate () { this.LoadSelectedFile(files[i].FullName); });
+            string fileName = files[i].FullName;
+            fileButton.onClick.AddListener(() => 
+                LoadSelectedFile(fileName)
+            );
             if (saveSelectionIndex == i)
             {
                 fileButton.Select();
