@@ -242,8 +242,8 @@ public class MenuUIManager : MonoBehaviour
     {
         SaveData data = new SaveData();
 
-        data.saveFileName = nameString + Time.time;
-
+        data.saveFileName = nameString + Time.time + ".json";
+        MainManager.Instance.saveFileName = data.saveFileName;
         Debug.Log(data.saveFileName + " is the file name");
         MainManager.Instance.SavePlayerInfo(data);
 

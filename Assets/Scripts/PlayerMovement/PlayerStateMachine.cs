@@ -169,12 +169,11 @@ public class PlayerStateMachine : StateMachine
 
     private void OnTriggerEnter(Collider other)
     {
-        Debug.Log("on trigger enter " + other.gameObject.tag);
-        if (other.gameObject.tag == ("Collectable"))
+
+
+        if (other.transform.parent.tag == ("Collectable"))
         {
-            Debug.Log("trigger is tagged");
-            Collectable collectable = other.gameObject.GetComponent<Collectable>();
-            StartCoroutine(PullCollectable(collectable));
+            StartCoroutine(PullCollectable(other.transform.parent.gameObject));
         }
         else
         {
@@ -188,7 +187,7 @@ public class PlayerStateMachine : StateMachine
         currentState?.EvaluateSubmergence(other);
     }
 
-    IEnumerator PullCollectable(Collectable collectable)
+    IEnumerator PullCollectable(GameObject collectable)
     {
         Debug.Log("start coroutine");
         float i = 0f;
@@ -200,8 +199,10 @@ public class PlayerStateMachine : StateMachine
             collectable.transform.position = Vector3.Lerp(collectable.transform.position, transform.position, i);
             yield return null;
         }
-        collectable.collected = true;
-        collectable.gameObject.SetActive(false);
+        Collectable bean = collectable.transform.GetComponent<Collectable>();
+        collectable.gameObject.transform.GetChild(0).gameObject.SetActive(false);
+        bean.collected = true;
+        MainManager.Instance.coffeeBeanCollected[bean.serializationId] = true;
         gameManager.IncrementBeans();
         GameManager.SaveData();
     }

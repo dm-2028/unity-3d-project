@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
@@ -27,7 +28,11 @@ public class GameManager : MonoBehaviour
         IEnumerable<Collectable> collectables = Collectable.FindAll();
 
         Collectable[] collectablesArray = collectables.ToArray();
-        Collectable[] savedCollectables = MainManager.Instance.coffeeBeanList;
+        if (MainManager.Instance.coffeeBeanCollected == null || MainManager.Instance.coffeeBeanCollected.Length == 0)
+        {
+            MainManager.Instance.coffeeBeanCollected = new bool[collectablesArray.Length];
+        }
+        bool[] collected = MainManager.Instance.coffeeBeanCollected;
 
         for (int i = 0, j = 0; j < collectablesArray.Length; j++)
         {
@@ -36,15 +41,14 @@ public class GameManager : MonoBehaviour
             {
                 i++;
             }
-            if (i >= savedCollectables.Length)
+            if (i >= collected.Length)
             {
                 break;
             }
-            collectable.collected = savedCollectables[i].collected;
-            
-          
+            collectable.collected = collected[i];
+            collectable.gameObject.transform.GetChild(0).gameObject.SetActive(!collectable.collected);
         }
-
+        Debug.Log("finished setting collectables ");
         pauseMenu.gameObject.SetActive(false);
         beansText.text = "Beans: " + MainManager.Instance.beans.ToString();
     }
@@ -103,10 +107,22 @@ public class GameManager : MonoBehaviour
 
     public static void SaveData()
     {
-        IEnumerable<Collectable> collectables = Collectable.FindAll();
+        //IEnumerable<Collectable> collectables = Collectable.FindAll();
 
-        Collectable[] collectablesArray = collectables.ToArray();
-        MainManager.Instance.coffeeBeanList = collectablesArray;
+        //Collectable[] collectablesArray = collectables.ToArray();
+        //for(int i = 0; i < collectablesArray.Length; i++)
+        //{
+        //    Debug.Log("collectable " + collectablesArray[i].serializationId + " " + collectablesArray[i].collected);
+        //}
+        //Debug.Log("lenth " + collectablesArray.Length.ToString());
+        //bool[] asArray = new bool[collectablesArray.Length];
+        //foreach(Collectable collectable in collectablesArray)
+        //{
+        //    Debug.Log("array length " + asArray.Length.ToString());
+        //    Debug.Log("serialization " + collectable.serializationId.ToString());
+        //    asArray[collectable.serializationId] = collectable.collected;
+        //}
+        //MainManager.Instance.coffeeBeanCollected = asArray;
         MainManager.Instance.SavePlayerInfo();
 
     }

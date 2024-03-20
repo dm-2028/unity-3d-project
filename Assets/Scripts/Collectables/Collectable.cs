@@ -1,7 +1,9 @@
 using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
+[Serializable]
 public abstract class Collectable : MonoBehaviour
 {
 
@@ -9,8 +11,15 @@ public abstract class Collectable : MonoBehaviour
 
     public static IEnumerable<Collectable> FindAll()
     {
-        return GameObject.FindGameObjectsWithTag(Tag)
-            .Select(o => o.GetComponent<Collectable>())
+        GameObject[] objects = GameObject.FindGameObjectsWithTag(Tag);
+        for(int i = 0; i < objects.Length; i++)
+        {
+            Debug.Log(i + " " + objects[i].transform.GetComponent<Collectable>().serializationId);
+             
+        }
+
+        return objects
+            .Select(o => o.transform.GetComponent<Collectable>())
             .Where(o => o != null)
             .OrderBy(o => o.serializationId);
     }

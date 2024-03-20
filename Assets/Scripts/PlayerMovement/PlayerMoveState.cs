@@ -20,7 +20,7 @@ public class PlayerMoveState : PlayerBaseState
 
     public override void Tick()
     {
-        Debug.Log("steps since last grounded: " + stateMachine.stepsSinceLastGrounded + "\n" + "ground contact count " + stateMachine.groundContactCount + "\ncontact normal: " + stateMachine.contactNormal);
+        //Debug.Log("steps since last grounded: " + stateMachine.stepsSinceLastGrounded + "\n" + "ground contact count " + stateMachine.groundContactCount + "\ncontact normal: " + stateMachine.contactNormal);
         if (!OnGround && stateMachine.stepsSinceLastGrounded > 2)
         {
             Debug.Log("switch to fall state move");

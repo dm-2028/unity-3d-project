@@ -9,8 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5818710788144046927}
-  - component: {fileID: 5818710788144046925}
-  - component: {fileID: 5818710788144046924}
+  - component: {fileID: 787789734942620591}
   m_Layer: 0
   m_Name: Coffee Bean
   m_TagString: Collectable
@@ -26,7 +25,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5818710788144046920}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -291.663, y: 0.64, z: -2.0011535}
+  m_LocalPosition: {x: -291.663, y: 0.49999863, z: -2.0011535}
   m_LocalScale: {x: 0.1, y: 0.1, z: 0.1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -34,20 +33,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!135 &5818710788144046925
-SphereCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5818710788144046920}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 1
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 6
-  m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &5818710788144046924
+--- !u!114 &787789734942620591
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -59,7 +45,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d1571f0703df52045b5ebfa80bf5409f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  serializationId: 1
+  serializationId: -1
   collected: 0
 --- !u!1001 &5818710788262016402
 PrefabInstance:
@@ -131,3 +117,21 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 35593bd0d5c68114ba9bd57d1466f399, type: 3}
   m_PrefabInstance: {fileID: 5818710788262016402}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &6629685078104082627 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 35593bd0d5c68114ba9bd57d1466f399, type: 3}
+  m_PrefabInstance: {fileID: 5818710788262016402}
+  m_PrefabAsset: {fileID: 0}
+--- !u!135 &7524433279507909138
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6629685078104082627}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 6
+  m_Center: {x: 0, y: 0, z: 0}

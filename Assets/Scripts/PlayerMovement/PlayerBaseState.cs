@@ -144,7 +144,7 @@ public abstract class PlayerBaseState : State
 
     protected bool CheckSwimming()
     {
-        Debug.Log("check swimming " + Swimming);
+        //Debug.Log("check swimming " + Swimming);
         if (Swimming)
         {
             stateMachine.groundContactCount = 0;
@@ -347,7 +347,7 @@ public abstract class PlayerBaseState : State
     protected void SetPosition()
     {if (OnGround && !OnSteep)
         {
-            Debug.Log("setting position");
+            //Debug.Log("setting position");
             stateMachine.lastGroundPosition = stateMachine.transform.position;
             stateMachine.lastGroundRotation = stateMachine.transform.rotation;
         }

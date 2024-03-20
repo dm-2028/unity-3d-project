@@ -7,6 +7,6 @@ public class SaveData
 {
     public string saveFileName;
     public int beans;
-    public Collectable[] coffeeBeanList;
+    public bool[] coffeeBeanCollected;
     public int health;
 }

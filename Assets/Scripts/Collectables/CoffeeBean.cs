@@ -1,8 +1,9 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-
+[Serializable]
 public class CoffeeBean : Collectable
 {
     // Start is called before the first frame update
@@ -14,9 +15,11 @@ public class CoffeeBean : Collectable
     // Update is called once per frame
     void Update()
     {
-        Debug.Log("loading " + serializationId + " " + collected);
+        if (!collected) 
+        { 
         var newRotation = Quaternion.Euler(0.0f, transform.rotation.eulerAngles.y + 60.0f, 0.0f);
         transform.rotation = Quaternion.Lerp(transform.rotation, newRotation, Time.deltaTime);
+        }
     }
 
     private void Awake()
@@ -32,12 +35,12 @@ public class CoffeeBean : Collectable
 
     private void UpdateVisibility()
     {
+        Debug.Log("updating visibility in " + serializationId);
         if (collected)
         {
-            gameObject.SetActive(false);
+            transform.GetChild(0).gameObject.SetActive(false);
 
         }
-        else gameObject.SetActive(true);
-        
+        else transform.GetChild(0).gameObject.SetActive(true);
     }
 }

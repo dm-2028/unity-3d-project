@@ -9,7 +9,7 @@ public class MainManager : MonoBehaviour
     [SerializeField]
     public int beans;
     public string saveFileName;
-    public Collectable[] coffeeBeanList;
+    public bool[] coffeeBeanCollected;
     public int health = 10;
 
     public static MainManager Instance { get; private set; }
@@ -29,13 +29,16 @@ public class MainManager : MonoBehaviour
     public void SavePlayerInfo(SaveData data)
     {
         string json = JsonUtility.ToJson(data);
-        File.WriteAllText(Application.persistentDataPath + "/" + data.saveFileName + ".json", json);
+        Debug.Log("saving " + data.saveFileName);
+        string path = Path.Combine(Application.persistentDataPath, data.saveFileName);
+        File.WriteAllText(path, json);
     }
     public void SavePlayerInfo()
     {
         SaveData data = new();
+        Debug.Log("Collectibles " + coffeeBeanCollected);
+        data.coffeeBeanCollected = coffeeBeanCollected;
         data.beans = beans;
-        data.coffeeBeanList = coffeeBeanList;
         data.saveFileName = saveFileName;
         data.health = health;
 
@@ -58,6 +61,7 @@ public class MainManager : MonoBehaviour
 
     public FileInfo[] GetAllFiles()
     {
+        Debug.Log(Application.persistentDataPath);
         DirectoryInfo dirInfo = new DirectoryInfo(Application.persistentDataPath);
         return dirInfo.GetFiles("*.json", SearchOption.TopDirectoryOnly);
     }
@@ -71,7 +75,7 @@ public class MainManager : MonoBehaviour
 
             beans = data.beans;
             saveFileName = data.saveFileName;
-            coffeeBeanList = data.coffeeBeanList;
+            coffeeBeanCollected = data.coffeeBeanCollected;
             health = data.health;
         }
     }
