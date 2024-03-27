@@ -23,12 +23,11 @@ public abstract class PlayerBaseState : State
 
 
     public float offsetFromWall = 0.3f;
-    protected Transform helper = new GameObject().transform;
+
     protected List<ContactPoint> climbNormals = new List<ContactPoint>();
 
     protected PlayerBaseState(PlayerStateMachine stateMachine)
     {
-        helper.name = "Climb Helper";
         this.stateMachine = stateMachine;
 
     }
@@ -180,7 +179,7 @@ public abstract class PlayerBaseState : State
         climbNormals.Clear();
     }
 
-    public override void EvaluateCollision(Collision collision)
+    public void EvaluateCollision(Collision collision)
     {
         if (Swimming)
         {
@@ -239,7 +238,7 @@ public abstract class PlayerBaseState : State
         }
     }
 
-    public override void ExitCollision(Collision collision)
+    public void ExitCollision(Collision collision)
     {
         int layer = collision.gameObject.layer;
 
@@ -249,7 +248,7 @@ public abstract class PlayerBaseState : State
         }
     }
 
-    public override void EvaluateSubmergence(Collider other)
+    public void EvaluateSubmergence(Collider other)
     {
 
         if ((stateMachine.pitMask & (1 << other.gameObject.layer)) != 0)

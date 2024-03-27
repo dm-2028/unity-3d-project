@@ -11,6 +11,7 @@ TagManager:
   - Vines
   - FrogBoundary
   - Collectable
+  - EnemySpawn
   layers:
   - Default
   - TransparentFX

@@ -155,16 +155,16 @@ public class PlayerStateMachine : StateMachine
     private void OnCollisionEnter(Collision collision)
     {
         Debug.Log("on collision enter");
-        currentState?.EvaluateCollision(collision);
+        ((PlayerBaseState)currentState)?.EvaluateCollision(collision);
     }
     private void OnCollisionStay(Collision collision)
     {
-        currentState?.EvaluateCollision(collision);
+        ((PlayerBaseState)currentState)?.EvaluateCollision(collision);
     }
 
     private void OnCollisionExit(Collision collision)
     {
-        currentState?.ExitCollision(collision);
+        ((PlayerBaseState)currentState)?.ExitCollision(collision);
     }
 
     private void OnTriggerEnter(Collider other)
@@ -177,14 +177,14 @@ public class PlayerStateMachine : StateMachine
         }
         else
         {
-            currentState?.EvaluateSubmergence(other);
+            ((PlayerBaseState)currentState)?.EvaluateSubmergence(other);
         }
 
     }
 
     private void OnTriggerStay(Collider other)
     {
-        currentState?.EvaluateSubmergence(other);
+        ((PlayerBaseState)currentState)?.EvaluateSubmergence(other);
     }
 
     IEnumerator PullCollectable(GameObject collectable)
