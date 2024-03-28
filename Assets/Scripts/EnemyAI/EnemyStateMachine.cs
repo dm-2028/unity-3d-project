@@ -8,10 +8,10 @@ public class EnemyStateMachine : StateMachine
 {
     public Animator animator { get; private set; }
     public NavMeshAgent agent { get; private set; }
-    private void Start()
-    {
-        animator = GetComponentInChildren<Animator>();
-        agent = GetComponent<NavMeshAgent>();
-        SwitchState(new EnemyMoveState(this));
-    }
+
+    public EnemySpawn enemySpawn { get; set; }
+
+
+    int health = 2;
+
 }
