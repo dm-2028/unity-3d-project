@@ -13,59 +13,85 @@ public class EnemySpawn : MonoBehaviour
 
     private bool sceneShown = false;
     private bool activeSpawning = false;
+    private bool playerInTrigger = false;
     private int enemiesActive = 0;
     private int enemiesSpawned = 0;
     private int enemiesKilled = 0;
+    private int spawnIndex;
 
     // Start is called before the first frame update
     void Start()
     {
         activeEnemies = new List<GameObject>(spawnLimit);
-        
+        int spawnIndex = Random.Range(0, spawnPositions.Length);
     }
 
     // Update is called once per frame
     void Update()
     {
-        
-    }
-
-    private void OnTriggerEnter(Collider other)
-    {
-
-    }
-
-    private void OnTriggerStay(Collider other)
-    {
-        if (other.CompareTag("Player"))
+        Debug.Log("sceneshown: " + sceneShown + " activespawning: " + activeSpawning + " playerintrigger: " + playerInTrigger);
+        if (playerInTrigger)
         {
-            if (!sceneShown) {
-                PlayerStateMachine player = GetComponent<PlayerStateMachine>();
-                if (player.groundContactCount > 0)
-                {
-                    CameraStart();
-                }
-            } 
-            else if (activeSpawning)
+
+            if (activeSpawning)
             {
-                while(enemiesActive < spawnLimit && enemiesSpawned < enemyCount)
+                while (enemiesActive < spawnLimit && enemiesSpawned < enemyCount)
                 {
-                    int spawnIndex = Random.Range(0, spawnPositions.Length);
+
                     GameObject enemy = Instantiate(enemyPrefab, spawnPositions[spawnIndex], spawnRotations[spawnIndex]);
-                    enemy.GetComponent<EnemyStateMachine>().enemySpawn = this;
+                    EnemyStateMachine enemyStateMachine = enemy.GetComponent<EnemyStateMachine>();
+                    enemyStateMachine.enemySpawn = this;
                     activeEnemies.Add(enemy);
+                    
+                    enemiesActive++;
+                    enemiesSpawned++;
+                    spawnIndex = (spawnIndex + 1) % spawnPositions.Length;
                 }
             }
         }
     }
-    private void OnTriggerExit(Collider other)
+
+    private void OnTriggerEnter(Collider other)
     {
+        Debug.Log("collider enter");
         if (other.CompareTag("Player"))
         {
+            playerInTrigger = true;
+        Debug.Log("set in trigger true");
+
+        }
+    }
+    private void OnTriggerStay(Collider other)
+    {
+        Debug.Log("collider stay");
+
+        if (!sceneShown && other.CompareTag("Player"))
+        {
+            Debug.Log("stay player");
+
+            PlayerStateMachine player = other.gameObject.GetComponent<PlayerStateMachine>();
+            Debug.Log(player.groundContactCount + " is the contact count");
+            //if (player.groundContactCount > 0)
+            //{
+                Debug.Log("camera start");
+
+                StartCoroutine(CameraStart());
+            //}
+        }
+        
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        Debug.Log("collider exit");
+
+        if (other.CompareTag("Player"))
+        {
+            playerInTrigger = false;
             foreach(GameObject enemy in activeEnemies)
             {
                 EnemyStateMachine enemyStateMachine = enemy.GetComponent<EnemyStateMachine>();
-                enemyStateMachine.SwitchState(new EnemyMoveState(enemyStateMachine));
+                enemyStateMachine.SwitchState(new EnemyWanderState(enemyStateMachine));
             }
         }
     }
@@ -74,21 +100,31 @@ public class EnemySpawn : MonoBehaviour
     {
         enemiesKilled++;
         activeEnemies.Remove(enemy);
+        enemiesActive--;
         if(enemiesKilled == enemyCount)
         {
             activeSpawning = false;
+            StartCoroutine(CameraFinish());
         }
     }
 
     IEnumerator CameraStart()
     {
-        yield return null;
+        Debug.Log("camera starting");
+        while (false)
+        {
+            yield return null;
+        }
+        Debug.Log("setting scenshown");
         sceneShown = true;
         activeSpawning = true;
     }
 
     IEnumerator CameraFinish()
     {
-        yield return null;
+        while (false)
+        {
+            yield return null;
+        }
     }
 }
