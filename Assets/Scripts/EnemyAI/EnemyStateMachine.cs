@@ -30,6 +30,7 @@ public class EnemyStateMachine : StateMachine
     }
     void resetCooldown()
     {
+        Debug.Log("resetting cooldown");
         inCooldown = false;
     }
 

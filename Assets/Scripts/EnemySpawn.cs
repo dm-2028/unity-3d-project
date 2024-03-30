@@ -29,7 +29,6 @@ public class EnemySpawn : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Debug.Log("sceneshown: " + sceneShown + " activespawning: " + activeSpawning + " playerintrigger: " + playerInTrigger);
         if (playerInTrigger)
         {
 
@@ -53,7 +52,6 @@ public class EnemySpawn : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        Debug.Log("collider enter");
         if (other.CompareTag("Player"))
         {
             playerInTrigger = true;
@@ -63,11 +61,9 @@ public class EnemySpawn : MonoBehaviour
     }
     private void OnTriggerStay(Collider other)
     {
-        Debug.Log("collider stay");
 
         if (!sceneShown && other.CompareTag("Player"))
         {
-            Debug.Log("stay player");
 
             PlayerStateMachine player = other.gameObject.GetComponent<PlayerStateMachine>();
             Debug.Log(player.groundContactCount + " is the contact count");

@@ -23,18 +23,23 @@ public class EnemyPursueState : EnemyBaseState
 
     public override void Tick()
     {
-        if ((stateMachine.transform.position - stateMachine.player.transform.position).magnitude > 1) 
+        float distance = (stateMachine.transform.position - stateMachine.player.transform.position).magnitude;
+        Debug.Log(distance + "is the distance");
+        if (distance > 1) 
         {
             stateMachine.agent.isStopped = false;
             stateMachine.agent.SetDestination(stateMachine.player.transform.position);
-            Debug.Log(stateMachine.agent.destination + " is the destination");
+            //Debug.Log(stateMachine.agent.destination + " Sis the destination");
         }
         else
         {
+            Debug.Log("switch state attack");
             stateMachine.SwitchState(new EnemyAttackState(stateMachine));
         }
         if (!CanSeePlayer())
         {
+            Debug.Log("switch state wander");
+
             stateMachine.SwitchState(new EnemyWanderState(stateMachine));
         }
     }

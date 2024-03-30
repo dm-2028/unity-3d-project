@@ -12,16 +12,20 @@ public abstract class EnemyBaseState : State
 
     protected bool CanSeePlayer()
     {
-        Vector3 rayToTarget = stateMachine.player.transform.position - stateMachine.transform.position;
-        float lookAngle = Vector3.Angle(stateMachine.transform.forward, rayToTarget);
-
-        if (lookAngle < 60 && Physics.Raycast(stateMachine.transform.position, rayToTarget.normalized * stateMachine.seeDistance, out RaycastHit hit))
+        Vector3 position = stateMachine.transform.position + new Vector3(0, .5f, 0);
+        Vector3 rayToTarget = stateMachine.player.transform.position - position;
+        float lookAngle = Vector3.Angle(stateMachine.transform.forward + new Vector3(0, .5f, 0), rayToTarget);
+        if (lookAngle < 60 && Physics.Raycast(position, rayToTarget.normalized * stateMachine.seeDistance, out RaycastHit hit))
         {
-            if (hit.transform.gameObject.tag == "Player")
+            Debug.DrawRay(position, rayToTarget.normalized * stateMachine.seeDistance, Color.green);
+            Debug.Log("raycast hitting " + hit.transform.gameObject.tag);
+            if (hit.transform.gameObject.CompareTag("Player"))
             {
                 return true;
             }
         }
+        Debug.DrawRay(position, rayToTarget.normalized * stateMachine.seeDistance, Color.red);
+        Debug.Log("can't see player");
         return false;
     }
 }

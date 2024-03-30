@@ -16,6 +16,7 @@ public class EnemyAttackState : EnemyBaseState
 
     public override void Enter()
     {
+        Debug.Log("enter attack state");
         stateMachine.animator.speed = stateMachine.baseSpeed;
         stateMachine.agent.speed = stateMachine.baseSpeed;
         stateMachine.agent.isStopped = true;
