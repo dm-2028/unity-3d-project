@@ -11,6 +11,7 @@ public class InputReader : MonoBehaviour, PlayerControls.IControlsActions
     public Vector2 cameraMovement;
 
     public Action OnJumpPerformed;
+    public Action OnAttackPerformed;
 
 
     private PlayerControls controls;
@@ -39,6 +40,11 @@ public class InputReader : MonoBehaviour, PlayerControls.IControlsActions
         if (!context.performed) return;
 
         OnJumpPerformed?.Invoke();
+    }
+
+    public void OnAttack(InputAction.CallbackContext context)
+    {
+        OnAttackPerformed?.Invoke();
     }
 
     public void OnMovement(InputAction.CallbackContext context)

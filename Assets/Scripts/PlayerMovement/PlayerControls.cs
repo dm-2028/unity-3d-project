@@ -62,6 +62,15 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Attack"",
+                    ""type"": ""Button"",
+                    ""id"": ""63b40c5b-9f76-464b-ad3f-e80c8c3ebf0a"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -266,7 +275,7 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                 {
                     ""name"": ""negative"",
                     ""id"": ""ccf52018-715a-4ec3-8a7d-231869961b7f"",
-                    ""path"": ""<Keyboard>/shift"",
+                    ""path"": ""<Keyboard>/leftShift"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""Keyboard"",
@@ -284,6 +293,28 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                     ""action"": ""Vertical"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""43764830-b965-4356-94a0-53af74a016e0"",
+                    ""path"": ""<Gamepad>/buttonWest"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Controller"",
+                    ""action"": ""Attack"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""cd15328d-b9b2-4541-b273-77b6c5a34488"",
+                    ""path"": ""<Keyboard>/rightShift"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard"",
+                    ""action"": ""Attack"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -319,6 +350,7 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
         m_Controls_Camera = m_Controls.FindAction("Camera", throwIfNotFound: true);
         m_Controls_Jump = m_Controls.FindAction("Jump", throwIfNotFound: true);
         m_Controls_Vertical = m_Controls.FindAction("Vertical", throwIfNotFound: true);
+        m_Controls_Attack = m_Controls.FindAction("Attack", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -382,6 +414,7 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
     private readonly InputAction m_Controls_Camera;
     private readonly InputAction m_Controls_Jump;
     private readonly InputAction m_Controls_Vertical;
+    private readonly InputAction m_Controls_Attack;
     public struct ControlsActions
     {
         private @PlayerControls m_Wrapper;
@@ -390,6 +423,7 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
         public InputAction @Camera => m_Wrapper.m_Controls_Camera;
         public InputAction @Jump => m_Wrapper.m_Controls_Jump;
         public InputAction @Vertical => m_Wrapper.m_Controls_Vertical;
+        public InputAction @Attack => m_Wrapper.m_Controls_Attack;
         public InputActionMap Get() { return m_Wrapper.m_Controls; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -411,6 +445,9 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                 @Vertical.started -= m_Wrapper.m_ControlsActionsCallbackInterface.OnVertical;
                 @Vertical.performed -= m_Wrapper.m_ControlsActionsCallbackInterface.OnVertical;
                 @Vertical.canceled -= m_Wrapper.m_ControlsActionsCallbackInterface.OnVertical;
+                @Attack.started -= m_Wrapper.m_ControlsActionsCallbackInterface.OnAttack;
+                @Attack.performed -= m_Wrapper.m_ControlsActionsCallbackInterface.OnAttack;
+                @Attack.canceled -= m_Wrapper.m_ControlsActionsCallbackInterface.OnAttack;
             }
             m_Wrapper.m_ControlsActionsCallbackInterface = instance;
             if (instance != null)
@@ -427,6 +464,9 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                 @Vertical.started += instance.OnVertical;
                 @Vertical.performed += instance.OnVertical;
                 @Vertical.canceled += instance.OnVertical;
+                @Attack.started += instance.OnAttack;
+                @Attack.performed += instance.OnAttack;
+                @Attack.canceled += instance.OnAttack;
             }
         }
     }
@@ -455,5 +495,6 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
         void OnCamera(InputAction.CallbackContext context);
         void OnJump(InputAction.CallbackContext context);
         void OnVertical(InputAction.CallbackContext context);
+        void OnAttack(InputAction.CallbackContext context);
     }
 }

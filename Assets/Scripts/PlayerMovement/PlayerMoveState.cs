@@ -16,6 +16,7 @@ public class PlayerMoveState : PlayerBaseState
         stateMachine.animator.CrossFadeInFixedTime(moveBlendTreeHash, crossFadeDuration);
 
         stateMachine.inputReader.OnJumpPerformed += SwitchToJumpState;
+        stateMachine.inputReader.OnAttackPerformed += SwitchToAttackState;
     }
 
     public override void Tick()
@@ -60,5 +61,6 @@ public class PlayerMoveState : PlayerBaseState
         stateMachine.animator.speed = 1f;
         Debug.Log("exit move state");
         stateMachine.inputReader.OnJumpPerformed -= SwitchToJumpState;
+        stateMachine.inputReader.OnAttackPerformed -= SwitchToAttackState;
     }
 }

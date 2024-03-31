@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(InputReader))]
-public class PlayerStateMachine : StateMachine
+public class PlayerStateMachine : StateMachine, IHitboxResponder
 {
     //public Vector3 velocity;
     //public float movementSpeed { get; private set; } = 5f;
@@ -18,6 +18,8 @@ public class PlayerStateMachine : StateMachine
     public Animator animator { get; private set; }
 
     public GameManager gameManager;
+
+    public HitBox hitbox { get; set; }
 
     [Range(0f, 100f)]
     public float
@@ -133,6 +135,8 @@ public class PlayerStateMachine : StateMachine
         mainCamera = Camera.main.transform;
         inputReader = GetComponent<InputReader>();
         animator = GetComponentInChildren<Animator>();
+        hitbox = GetComponentInChildren<HitBox>();
+        hitbox.useResponder(this);
         
         SwitchState(new PlayerMoveState(this));
     }
@@ -205,5 +209,14 @@ public class PlayerStateMachine : StateMachine
         MainManager.Instance.coffeeBeanCollected[bean.serializationId] = true;
         gameManager.IncrementBeans();
         GameManager.SaveData();
+    }
+
+    public void CollidedWith(Collider collider)
+    {
+        Debug.Log("hitbox collided with " + collider.ToString() + collider.gameObject.tag.ToString());
+        if (collider.gameObject.CompareTag("Enemy"))
+        {
+            Debug.Log("hitbox attacking enemy");
+        }
     }
 }

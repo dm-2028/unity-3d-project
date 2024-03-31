@@ -12,6 +12,7 @@ TagManager:
   - FrogBoundary
   - Collectable
   - EnemySpawn
+  - Enemy
   layers:
   - Default
   - TransparentFX

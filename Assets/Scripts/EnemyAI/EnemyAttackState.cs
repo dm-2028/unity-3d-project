@@ -7,8 +7,6 @@ public class EnemyAttackState : EnemyBaseState
     private readonly int attackLHash = Animator.StringToHash("Attack L");
     private readonly int attackRHash = Animator.StringToHash("Attack R");
 
-    private readonly int moveBlendTreeHash = Animator.StringToHash("EnemhyMoveBlendTree");
-    private const float animationDampTime = 0.1f;
     private const float crossFadeDuration = 0.1f;
 
     private bool attackL;

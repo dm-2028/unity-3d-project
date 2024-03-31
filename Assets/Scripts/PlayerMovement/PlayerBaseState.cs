@@ -359,6 +359,12 @@ public abstract class PlayerBaseState : State
         stateMachine.SwitchState(new PlayerJumpState(stateMachine));
     }
 
+    protected void SwitchToAttackState()
+    {
+        Debug.Log("attacking");
+        stateMachine.SwitchState(new PlayerAttackState(stateMachine));
+    }
+
     protected void CalcVelocity(float acceleration, float speed, Vector3 xAxisIn, Vector3 zAxisIn)
     {
         Vector3 zAxis, xAxis;

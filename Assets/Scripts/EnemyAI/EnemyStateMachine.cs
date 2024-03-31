@@ -34,4 +34,8 @@ public class EnemyStateMachine : StateMachine
         inCooldown = false;
     }
 
+    void receiveDamage()
+    {
+        SwitchState(new EnemyHitState(this));
+    }
 }
