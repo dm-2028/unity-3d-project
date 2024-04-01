@@ -12,6 +12,7 @@ public class PlayerAttackState : PlayerBaseState
 
     public override void Enter()
     {
+        stateMachine.animator.speed = stateMachine.baseAnimationSpeed * 1.5f;
         stateMachine.animator.CrossFadeInFixedTime(attackHash, crossFadeDuration);
         stateMachine.hitbox.StartCheckingCollision();
     }
@@ -29,7 +30,7 @@ public class PlayerAttackState : PlayerBaseState
         }
         else
         {
-            stateMachine.hitbox.hitboxUpdate();
+            stateMachine.hitbox.HitboxUpdate();
         }
     }
 

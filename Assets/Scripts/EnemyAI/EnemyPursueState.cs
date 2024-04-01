@@ -24,7 +24,6 @@ public class EnemyPursueState : EnemyBaseState
     public override void Tick()
     {
         float distance = (stateMachine.transform.position - stateMachine.player.transform.position).magnitude;
-        Debug.Log(distance + "is the distance");
         if (distance > 1) 
         {
             stateMachine.agent.isStopped = false;

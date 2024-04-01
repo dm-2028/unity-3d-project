@@ -14,7 +14,7 @@ public class EnemyStateMachine : StateMachine
     public float cooldownTime = 1f;
 
     public bool inCooldown { get; set; } = false;
-
+    public bool isDead { get; set; }
     public GameObject player;
     public float seeDistance = 10f;
     int health = 2;
@@ -28,14 +28,27 @@ public class EnemyStateMachine : StateMachine
 
         SwitchState(new EnemyWanderState(this));
     }
-    void resetCooldown()
+    void ResetCooldown()
     {
         Debug.Log("resetting cooldown");
         inCooldown = false;
     }
 
-    void receiveDamage()
+    private void DestroyEnemy()
     {
-        SwitchState(new EnemyHitState(this));
+        Destroy(gameObject);
+    }
+    public void ReceiveDamage()
+    {
+        health--;
+        if (health == 0)
+        {
+            enemySpawn.incrementKilled(gameObject);
+            SwitchState(new EnemyDeadState(this));
+        }
+        else if(health > 0)
+        {
+            SwitchState(new EnemyHitState(this));
+        }
     }
 }

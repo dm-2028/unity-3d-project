@@ -71,6 +71,7 @@ public class PlayerStateMachine : StateMachine, IHitboxResponder
     public float
         ballAirRotation = 0.5f,
         ballSwimRotation = 2f;
+    public float baseAnimationSpeed = 1;
 
     public Transform
         playerInputSpace = default,
@@ -217,6 +218,7 @@ public class PlayerStateMachine : StateMachine, IHitboxResponder
         if (collider.gameObject.CompareTag("Enemy"))
         {
             Debug.Log("hitbox attacking enemy");
+            collider.gameObject.GetComponent<EnemyStateMachine>().ReceiveDamage();
         }
     }
 }

@@ -27,7 +27,7 @@ public class HitBox : MonoBehaviour
     private ColliderState _state= ColliderState.Closed;
     private IHitboxResponder _responder = null;
 
-    public void hitboxUpdate()
+    public void HitboxUpdate()
     {
         Debug.Log("hitbox update");
         if(_state == ColliderState.Closed)
@@ -35,7 +35,7 @@ public class HitBox : MonoBehaviour
             return;
         }
         Debug.Log("hitbox checking colliders");
-        Collider[] colliders = useSphere ? Physics.OverlapBox(transform.position, hitboxSize, transform.rotation, mask) : Physics.OverlapSphere(transform.position, radius);
+        Collider[] colliders = useSphere ?  Physics.OverlapSphere(transform.position, radius) : Physics.OverlapBox(transform.position, hitboxSize, transform.rotation, mask);
 
         for(int i = 0; i < colliders.Length; i++)
         {

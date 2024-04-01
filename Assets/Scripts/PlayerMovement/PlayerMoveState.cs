@@ -13,6 +13,7 @@ public class PlayerMoveState : PlayerBaseState
 
     public override void Enter()
     {
+        stateMachine.animator.speed = stateMachine.baseAnimationSpeed;
         stateMachine.animator.CrossFadeInFixedTime(moveBlendTreeHash, crossFadeDuration);
 
         stateMachine.inputReader.OnJumpPerformed += SwitchToJumpState;
