@@ -40,6 +40,7 @@ public class EnemyStateMachine : StateMachine
     }
     public void ReceiveDamage()
     {
+        Debug.Log("Receive damage " + health);
         health--;
         if (health == 0)
         {

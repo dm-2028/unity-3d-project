@@ -26,6 +26,7 @@ public class HitBox : MonoBehaviour
 
     private ColliderState _state= ColliderState.Closed;
     private IHitboxResponder _responder = null;
+    private List<Collider> detectedColliders = new();
 
     public void HitboxUpdate()
     {
@@ -41,7 +42,11 @@ public class HitBox : MonoBehaviour
         {
             Debug.Log("there is a collider");
             Collider collider = colliders[i];
-            _responder.CollidedWith(collider);
+            if (!detectedColliders.Contains(collider))
+            {
+                detectedColliders.Add(collider);
+                _responder.CollidedWith(collider);
+            }
         }
 
         _state = colliders.Length > 0 ? ColliderState.Colliding : ColliderState.Open;
@@ -89,6 +94,7 @@ public class HitBox : MonoBehaviour
 
     public void StopCheckingCollision()
     {
+        detectedColliders.Clear();
         _state = ColliderState.Closed;
     }
 }
