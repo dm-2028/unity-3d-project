@@ -18,14 +18,16 @@ public abstract class EnemyBaseState : State
         if (lookAngle < 60 && Physics.Raycast(position, rayToTarget.normalized * stateMachine.seeDistance, out RaycastHit hit))
         {
             Debug.DrawRay(position, rayToTarget.normalized * stateMachine.seeDistance, Color.green);
-            Debug.Log("raycast hitting " + hit.transform.gameObject.tag);
             if (hit.transform.gameObject.CompareTag("Player"))
             {
                 return true;
             }
         }
         Debug.DrawRay(position, rayToTarget.normalized * stateMachine.seeDistance, Color.red);
-        Debug.Log("can't see player");
         return false;
+    }
+    public virtual void ContinueAnimation()
+    {
+
     }
 }

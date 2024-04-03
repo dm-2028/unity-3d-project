@@ -6,6 +6,10 @@ using UnityEngine.AI;
 [RequireComponent(typeof(NavMeshAgent))]
 public class EnemyStateMachine : StateMachine
 {
+    private readonly int hitHash = Animator.StringToHash("Hit");
+
+    private const float crossFadeDuration = 0.1f;
+
     public Animator animator { get; private set; }
     public NavMeshAgent agent { get; private set; }
     public EnemySpawn enemySpawn { get; set; }
@@ -14,11 +18,13 @@ public class EnemyStateMachine : StateMachine
     public float cooldownTime = 1f;
 
     public bool inCooldown { get; set; } = false;
-    public bool isDead { get; set; }
+    public bool isDead { get; set; } = false;
+    public bool takingDamage { get; set; } = false;
     public GameObject player;
     public float seeDistance = 10f;
-    int health = 2;
+    public int health = 2;
     public float baseSpeed = 1f;
+
 
     private void Start()
     {
@@ -30,7 +36,6 @@ public class EnemyStateMachine : StateMachine
     }
     void ResetCooldown()
     {
-        Debug.Log("resetting cooldown");
         inCooldown = false;
     }
 
@@ -40,16 +45,26 @@ public class EnemyStateMachine : StateMachine
     }
     public void ReceiveDamage()
     {
-        Debug.Log("Receive damage " + health);
+        Debug.Log("Receiving damage");
         health--;
-        if (health == 0)
+        takingDamage = true;
+        if (health <= 0)
         {
             enemySpawn.incrementKilled(gameObject);
             SwitchState(new EnemyDeadState(this));
         }
-        else if(health > 0)
+        else
         {
-            SwitchState(new EnemyHitState(this));
+            animator.speed = baseSpeed * 1.5f;
+            agent.speed = baseSpeed * 1.5f;
+            agent.isStopped = true;
+            animator.CrossFadeInFixedTime(hitHash, crossFadeDuration);
         }
+    }
+
+    public void ResetHurt()
+    {
+        takingDamage = false;
+        ((EnemyBaseState)currentState)?.ContinueAnimation();
     }
 }

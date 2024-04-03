@@ -44,6 +44,8 @@ public class InputReader : MonoBehaviour, PlayerControls.IControlsActions
 
     public void OnAttack(InputAction.CallbackContext context)
     {
+        if (!context.performed) return;
+
         OnAttackPerformed?.Invoke();
     }
 

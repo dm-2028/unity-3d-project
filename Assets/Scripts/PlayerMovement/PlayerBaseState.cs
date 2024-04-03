@@ -5,7 +5,6 @@ using UnityEngine;
 public abstract class PlayerBaseState : State
 {
     protected readonly PlayerStateMachine stateMachine;
-    // Start is called before the first frame update
 
     protected bool jumping;
 
@@ -25,6 +24,10 @@ public abstract class PlayerBaseState : State
     public float offsetFromWall = 0.3f;
 
     protected List<ContactPoint> climbNormals = new List<ContactPoint>();
+
+    private readonly int attackHash = Animator.StringToHash("Attack");
+    private const float crossFadeDuration = 0.1f;
+
 
     protected PlayerBaseState(PlayerStateMachine stateMachine)
     {
@@ -359,11 +362,18 @@ public abstract class PlayerBaseState : State
         stateMachine.SwitchState(new PlayerJumpState(stateMachine));
     }
 
-    protected void SwitchToAttackState()
+    protected void Attack()
     {
-        Debug.Log("attacking");
-        stateMachine.SwitchState(new PlayerAttackState(stateMachine));
+        if (!stateMachine.isAttacking)
+        {
+            Debug.Log("starting attack");
+            stateMachine.isAttacking = true;
+            stateMachine.animator.speed = stateMachine.baseAnimationSpeed * 1.5f;
+            stateMachine.animator.CrossFadeInFixedTime(attackHash, crossFadeDuration);
+        }
     }
+
+
 
     protected void CalcVelocity(float acceleration, float speed, Vector3 xAxisIn, Vector3 zAxisIn)
     {
@@ -393,5 +403,10 @@ public abstract class PlayerBaseState : State
         {
             stateMachine.velocity += stateMachine.upAxis * adjustment.y;
         }
+    }
+
+    public virtual void ContinueAnimation()
+    {
+
     }
 }

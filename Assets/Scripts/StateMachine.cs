@@ -13,7 +13,7 @@ public abstract class StateMachine : MonoBehaviour
         currentState.Enter();
     }
     // Update is called once per frame
-    void Update()
+    public virtual void Update()
     {
         currentState?.Tick();
     }

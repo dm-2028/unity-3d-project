@@ -25,7 +25,7 @@ public class EnemyAttackState : EnemyBaseState
     void Attack()
     {
         stateMachine.inCooldown = true;
-        stateMachine.Invoke("resetCooldown", stateMachine.cooldownTime);
+        stateMachine.Invoke("ResetCooldown", stateMachine.cooldownTime);
         stateMachine.animator.CrossFadeInFixedTime(attackL ? attackLHash : attackRHash, crossFadeDuration);
         attackL = !attackL;
     }
@@ -40,7 +40,7 @@ public class EnemyAttackState : EnemyBaseState
             }
             else
             {
-                stateMachine.SwitchState(new EnemyWanderState(stateMachine));
+                stateMachine.SwitchState(new EnemyPursueState(stateMachine));
             }
         }
     }

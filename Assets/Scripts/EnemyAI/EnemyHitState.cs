@@ -13,8 +13,8 @@ public class EnemyHitState : EnemyBaseState
 
     public override void Enter()
     {
-        stateMachine.animator.speed = stateMachine.baseSpeed;
-        stateMachine.agent.speed = stateMachine.baseSpeed;
+        stateMachine.animator.speed = stateMachine.baseSpeed*.03f;
+        stateMachine.agent.speed = stateMachine.baseSpeed * .03f;
         stateMachine.agent.isStopped = true;
         stateMachine.animator.CrossFadeInFixedTime(hitHash, crossFadeDuration);
     }
@@ -37,7 +37,9 @@ public class EnemyHitState : EnemyBaseState
 
     bool AnimatorIsPlaying()
     {
+        Debug.Log("length " + stateMachine.animator.GetCurrentAnimatorStateInfo(0).length + " normalized time " + stateMachine.animator.GetCurrentAnimatorStateInfo(0).normalizedTime);
         return stateMachine.animator.GetCurrentAnimatorStateInfo(0).length >
                stateMachine.animator.GetCurrentAnimatorStateInfo(0).normalizedTime;
     }
+
 }

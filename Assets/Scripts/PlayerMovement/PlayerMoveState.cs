@@ -13,11 +13,9 @@ public class PlayerMoveState : PlayerBaseState
 
     public override void Enter()
     {
-        stateMachine.animator.speed = stateMachine.baseAnimationSpeed;
-        stateMachine.animator.CrossFadeInFixedTime(moveBlendTreeHash, crossFadeDuration);
-
+        ContinueAnimation();
         stateMachine.inputReader.OnJumpPerformed += SwitchToJumpState;
-        stateMachine.inputReader.OnAttackPerformed += SwitchToAttackState;
+        stateMachine.inputReader.OnAttackPerformed += Attack;
     }
 
     public override void Tick()
@@ -31,9 +29,11 @@ public class PlayerMoveState : PlayerBaseState
         CalculateMoveDirection();
         FaceMoveDirection();
 
-        stateMachine.animator.SetFloat(moveSpeedHash, stateMachine.inputReader.movement.sqrMagnitude > 0f ? 1f : 0f, animationDampTime, Time.deltaTime);
-        stateMachine.animator.speed = stateMachine.inputReader.movement.sqrMagnitude > 0f ? 2f : 1f;
-
+        if (!stateMachine.isAttacking)
+        {
+            stateMachine.animator.SetFloat(moveSpeedHash, stateMachine.inputReader.movement.sqrMagnitude > 0f ? 1f : 0f, animationDampTime, Time.deltaTime);
+            stateMachine.animator.speed = stateMachine.inputReader.movement.sqrMagnitude > 0f ? 2f : 1f;
+        }
     }
     public override void TickFixed()
     {
@@ -62,6 +62,12 @@ public class PlayerMoveState : PlayerBaseState
         stateMachine.animator.speed = 1f;
         Debug.Log("exit move state");
         stateMachine.inputReader.OnJumpPerformed -= SwitchToJumpState;
-        stateMachine.inputReader.OnAttackPerformed -= SwitchToAttackState;
+        stateMachine.inputReader.OnAttackPerformed -= Attack;
+    }
+
+    public override void ContinueAnimation()
+    {
+        stateMachine.animator.speed = stateMachine.baseAnimationSpeed;
+        stateMachine.animator.CrossFadeInFixedTime(moveBlendTreeHash, crossFadeDuration);
     }
 }

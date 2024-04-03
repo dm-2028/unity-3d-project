@@ -108,6 +108,7 @@ public class PlayerStateMachine : StateMachine, IHitboxResponder
     public float submergence { get; set; }
 
     public bool jumpFromSwim { get; set; }
+    public bool isAttacking { get; set; } = false;
     
 
 
@@ -141,6 +142,16 @@ public class PlayerStateMachine : StateMachine, IHitboxResponder
         
         SwitchState(new PlayerMoveState(this));
     }
+
+    public override void Update()
+    {
+        base.Update();
+        if (isAttacking)
+        {
+            hitbox.HitboxUpdate();
+        }
+    }
+
 
     private void Awake()
     {
@@ -220,5 +231,10 @@ public class PlayerStateMachine : StateMachine, IHitboxResponder
             Debug.Log("hitbox attacking enemy");
             collider.gameObject.GetComponent<EnemyStateMachine>().ReceiveDamage();
         }
+    }
+
+    public void ContinueAnimation()
+    {
+        ((PlayerBaseState)currentState)?.ContinueAnimation();
     }
 }
