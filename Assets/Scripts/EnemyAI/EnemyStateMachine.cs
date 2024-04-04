@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.AI;
 
 [RequireComponent(typeof(NavMeshAgent))]
-public class EnemyStateMachine : StateMachine
+public class EnemyStateMachine : StateMachine, IHitboxResponder
 {
     private readonly int hitHash = Animator.StringToHash("Hit");
 
@@ -18,8 +18,10 @@ public class EnemyStateMachine : StateMachine
     public float cooldownTime = 1f;
 
     public bool inCooldown { get; set; } = false;
-    public bool isDead { get; set; } = false;
+    public bool IsDead { get; set; } = false;
     public bool takingDamage { get; set; } = false;
+
+
     public GameObject player;
     public float seeDistance = 10f;
     public int health = 2;
@@ -31,6 +33,8 @@ public class EnemyStateMachine : StateMachine
         player = GameObject.FindGameObjectWithTag("Player");
         agent = GetComponent<NavMeshAgent>();
         animator = GetComponentInChildren<Animator>();
+        hitbox = GetComponentInChildren<HitBox>();
+        hitbox.UseResponder(this);
 
         SwitchState(new EnemyWanderState(this));
     }
@@ -45,11 +49,14 @@ public class EnemyStateMachine : StateMachine
     }
     public void ReceiveDamage()
     {
-        Debug.Log("Receiving damage");
+        if (IsDead) return;
+        Debug.Log("Receiving damage " + health);
         health--;
+        Debug.Log("health " + health);
         takingDamage = true;
         if (health <= 0)
         {
+            IsDead = true;
             enemySpawn.incrementKilled(gameObject);
             SwitchState(new EnemyDeadState(this));
         }
@@ -66,5 +73,15 @@ public class EnemyStateMachine : StateMachine
     {
         takingDamage = false;
         ((EnemyBaseState)currentState)?.ContinueAnimation();
+    }
+
+    public void CollidedWith(Collider collider)
+    {
+        Debug.Log("hitbox collided with " + collider.ToString() + collider.gameObject.tag.ToString());
+        if (collider.gameObject.CompareTag("Player"))
+        {
+            Debug.Log("hitbox attacking player");
+            collider.gameObject.GetComponent<PlayerStateMachine>().ReceiveDamage();
+        }
     }
 }

@@ -19,8 +19,6 @@ public class PlayerStateMachine : StateMachine, IHitboxResponder
 
     public GameManager gameManager;
 
-    public HitBox hitbox { get; set; }
-
     [Range(0f, 100f)]
     public float
         maxSpeed = 10f,
@@ -108,9 +106,6 @@ public class PlayerStateMachine : StateMachine, IHitboxResponder
     public float submergence { get; set; }
 
     public bool jumpFromSwim { get; set; }
-    public bool isAttacking { get; set; } = false;
-    
-
 
     public Rigidbody connectedBody { get; set; }
     public Rigidbody previousConnectedBody { get; set; }
@@ -138,18 +133,9 @@ public class PlayerStateMachine : StateMachine, IHitboxResponder
         inputReader = GetComponent<InputReader>();
         animator = GetComponentInChildren<Animator>();
         hitbox = GetComponentInChildren<HitBox>();
-        hitbox.useResponder(this);
+        hitbox.UseResponder(this);
         
         SwitchState(new PlayerMoveState(this));
-    }
-
-    public override void Update()
-    {
-        base.Update();
-        if (isAttacking)
-        {
-            hitbox.HitboxUpdate();
-        }
     }
 
 
@@ -233,8 +219,24 @@ public class PlayerStateMachine : StateMachine, IHitboxResponder
         }
     }
 
-    public void ContinueAnimation()
+    public override void ContinueAnimation()
     {
         ((PlayerBaseState)currentState)?.ContinueAnimation();
+    }
+
+    public void ReceiveDamage()
+    {
+
+        if (health <= 0)
+        {
+            //player is dead
+            //isDead = true;
+            //enemySpawn.incrementKilled(gameObject);
+            //SwitchState(new EnemyDeadState(this));
+        }
+        else
+        {
+            DecrementHealth(1);
+        }
     }
 }

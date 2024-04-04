@@ -24,6 +24,7 @@ public class EnemyAttackState : EnemyBaseState
 
     void Attack()
     {
+        stateMachine.isAttacking = true;
         stateMachine.inCooldown = true;
         stateMachine.Invoke("ResetCooldown", stateMachine.cooldownTime);
         stateMachine.animator.CrossFadeInFixedTime(attackL ? attackLHash : attackRHash, crossFadeDuration);

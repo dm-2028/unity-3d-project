@@ -12,7 +12,7 @@ public class EnemySpawn : MonoBehaviour
     public List<GameObject> activeEnemies;
 
     public GameObject animateObject;
-    private Animation animation;
+    private Animation mAnimation;
 
     private bool sceneShown = false;
     private bool activeSpawning = false;
@@ -25,7 +25,7 @@ public class EnemySpawn : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        animation = animateObject.GetComponent<Animation>();
+        mAnimation = animateObject.GetComponent<Animation>();
         activeEnemies = new List<GameObject>(spawnLimit);
         int spawnIndex = Random.Range(0, spawnPositions.Length);
     }
@@ -104,7 +104,7 @@ public class EnemySpawn : MonoBehaviour
         if(enemiesKilled == enemyCount)
         {
             activeSpawning = false;
-            animation.Play();
+            mAnimation.Play();
             StartCoroutine(CameraFinish());
         }
     }

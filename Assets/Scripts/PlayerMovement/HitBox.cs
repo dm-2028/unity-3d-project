@@ -52,7 +52,7 @@ public class HitBox : MonoBehaviour
         _state = colliders.Length > 0 ? ColliderState.Colliding : ColliderState.Open;
     }
 
-    public void useResponder(IHitboxResponder responder)
+    public void UseResponder(IHitboxResponder responder)
     {
         _responder = responder;
     }

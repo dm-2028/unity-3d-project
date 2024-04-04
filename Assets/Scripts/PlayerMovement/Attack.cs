@@ -4,26 +4,26 @@ using UnityEngine;
 
 public class Attack : MonoBehaviour
 {
-    PlayerStateMachine psm;
+    StateMachine stateMachine;
 
     // Start is called before the first frame update
     void Start()
     {
-        psm = GetComponentInParent<PlayerStateMachine>();
+        stateMachine = GetComponentInParent<StateMachine>();
     }
 
     public void EndAttack()
     {
         Debug.Log("ending attack");
-        psm.isAttacking = false;
-        psm.hitbox.StopCheckingCollision();
-        psm.ContinueAnimation();
+        stateMachine.isAttacking = false;
+        stateMachine.hitbox.StopCheckingCollision();
+        stateMachine.ContinueAnimation();
 
     }
 
     public void StartHitbox()
     {
         Debug.Log("start collision");
-        psm.hitbox.StartCheckingCollision();
+        stateMachine.hitbox.StartCheckingCollision();
     }
 }
