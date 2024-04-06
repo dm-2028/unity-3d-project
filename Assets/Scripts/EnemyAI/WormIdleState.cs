@@ -4,23 +4,35 @@ using UnityEngine;
 
 public class WormIdleState : WormBaseState
 {
+    private readonly int idleHash = Animator.StringToHash("WormIdle");
+    private const float animationDampTime = 0.1f;
+    private const float crossFadeDuration = 0.1f;
+
+    public WormIdleState(WormStateMachine stateMachine) : base(stateMachine) { }
     public override void Enter()
     {
-        throw new System.NotImplementedException();
+        Debug.Log("enter idle state");
+        ContinueAnimation();
     }
 
     public override void Exit()
     {
-        throw new System.NotImplementedException();
     }
 
     public override void Tick()
     {
-        throw new System.NotImplementedException();
+        RotateTowardsPlayer();
+
     }
 
     public override void TickFixed()
     {
-        throw new System.NotImplementedException();
+    }
+
+    public override void ContinueAnimation()
+    {
+        stateMachine.animator.CrossFadeInFixedTime(idleHash, crossFadeDuration);
+        stateMachine.animator.speed = stateMachine.baseSpeed;
+
     }
 }

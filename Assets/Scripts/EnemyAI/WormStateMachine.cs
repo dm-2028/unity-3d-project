@@ -56,14 +56,12 @@ public class WormStateMachine : StateMachine, IHitboxResponder
         {
             IsDead = true;
             enemySpawn.incrementKilled(gameObject);
-            SwitchState(new EnemyDeadState(this));
+            //SwitchState(new EnemyDeadState(this));
         }
         else
         {
             animator.speed = baseSpeed * 1.5f;
-            agent.speed = baseSpeed * 1.5f;
-            agent.isStopped = true;
-            animator.CrossFadeInFixedTime(hitHash, crossFadeDuration);
+            //animator.CrossFadeInFixedTime(hitHash, crossFadeDuration);
         }
     }
 

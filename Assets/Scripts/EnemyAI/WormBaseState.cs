@@ -12,11 +12,16 @@ public abstract class WormBaseState : State
 
     public void RotateTowardsPlayer()
     {
-        Vector3 position = stateMachine.transform.position;
+        Vector3 position = stateMachine.transform.position + new Vector3(0, .5f, 0);
         Vector3 rayToTarget = stateMachine.player.transform.position - position;
         float lookAngle = Vector3.Angle(stateMachine.transform.forward, rayToTarget);
-
+        Debug.DrawRay(position, rayToTarget.normalized * stateMachine.seeDistance, Color.green);
         Quaternion lookRotation = Quaternion.LookRotation(rayToTarget.normalized);
         stateMachine.worm.transform.rotation = Quaternion.Slerp(stateMachine.worm.transform.rotation, lookRotation, 5f * Time.deltaTime);
+    }
+
+    public virtual void ContinueAnimation()
+    {
+
     }
 }
