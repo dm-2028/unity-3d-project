@@ -48,10 +48,10 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 0
   useSphere: 1
-  hitboxSize: {x: 1, y: 1, z: 1}
-  radius: 1
-  inactiveColor: {r: 0.9351655, g: 1, b: 0, a: 0}
-  collisionOpenColor: {r: 0, g: 0.93333334, b: 0.10277672, a: 0}
+  hitboxSize: {x: 0.5, y: 0.5, z: 0.5}
+  radius: 0.5
+  inactiveColor: {r: 0.9797381, g: 1, b: 0, a: 0}
+  collisionOpenColor: {r: 0.09119902, g: 0.93333334, b: 0, a: 0}
   collidingColor: {r: 1, g: 0, b: 0, a: 0}
 --- !u!1 &7568703474669444069
 GameObject:

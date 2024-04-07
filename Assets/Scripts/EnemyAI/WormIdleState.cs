@@ -5,6 +5,7 @@ using UnityEngine;
 public class WormIdleState : WormBaseState
 {
     private readonly int idleHash = Animator.StringToHash("WormIdle");
+    private readonly int attackHash = Animator.StringToHash("WormAttack");
     private const float animationDampTime = 0.1f;
     private const float crossFadeDuration = 0.1f;
 
@@ -15,6 +16,13 @@ public class WormIdleState : WormBaseState
         ContinueAnimation();
     }
 
+    void Attack()
+    {
+        stateMachine.isAttacking = true;
+        stateMachine.inCooldown = true;
+        stateMachine.Invoke("ResetCooldown", stateMachine.cooldownTime + Random.Range(-1.0f, 1.0f));
+        stateMachine.animator.CrossFadeInFixedTime(attackHash, crossFadeDuration);
+    }
     public override void Exit()
     {
     }
@@ -22,6 +30,13 @@ public class WormIdleState : WormBaseState
     public override void Tick()
     {
         RotateTowardsPlayer();
+        if (!stateMachine.inCooldown)
+        {
+            if ((stateMachine.transform.position - stateMachine.player.transform.position).magnitude < 1)
+            {
+                Attack();
+            }
+        }
 
     }
 

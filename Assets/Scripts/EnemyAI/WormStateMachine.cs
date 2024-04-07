@@ -12,7 +12,7 @@ public class WormStateMachine : StateMachine, IHitboxResponder
     public EnemySpawn enemySpawn { get; set; }
 
     [Range(0f, 5.0f)]
-    public float cooldownTime = 1f;
+    public float cooldownTime = 4f;
 
     public bool inCooldown { get; set; } = false;
     public bool IsDead { get; set; } = false;
@@ -29,7 +29,6 @@ public class WormStateMachine : StateMachine, IHitboxResponder
     private void Start()
     {
         player = GameObject.FindGameObjectWithTag("Player");
-        worm = transform.GetChild(0).GetChild(0).gameObject;
         animator = GetComponentInChildren<Animator>();
         hitbox = GetComponentInChildren<HitBox>();
         hitbox.UseResponder(this);
@@ -79,5 +78,10 @@ public class WormStateMachine : StateMachine, IHitboxResponder
             Debug.Log("hitbox attacking player");
             collider.gameObject.GetComponent<PlayerStateMachine>().ReceiveDamage();
         }
+    }
+
+    public override void ContinueAnimation()
+    {
+        ((WormBaseState)currentState)?.ContinueAnimation();
     }
 }
