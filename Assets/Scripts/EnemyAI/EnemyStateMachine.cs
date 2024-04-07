@@ -1,19 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.AI;
 
-[RequireComponent(typeof(NavMeshAgent))]
-public class EnemyStateMachine : StateMachine, IHitboxResponder
+public abstract class EnemyStateMachine : StateMachine
 {
-    private readonly int hitHash = Animator.StringToHash("Hit");
+    protected const float crossFadeDuration = 0.1f;
 
-    private const float crossFadeDuration = 0.1f;
-
-    public Animator animator { get; private set; }
-    public NavMeshAgent agent { get; private set; }
-    public EnemySpawn enemySpawn { get; set; }
-
+    public Animator animator { get; protected set; }
     [Range(0f, 5.0f)]
     public float cooldownTime = 1f;
 
@@ -27,17 +20,6 @@ public class EnemyStateMachine : StateMachine, IHitboxResponder
     public int health = 2;
     public float baseSpeed = 1f;
 
-
-    private void Start()
-    {
-        player = GameObject.FindGameObjectWithTag("Player");
-        agent = GetComponent<NavMeshAgent>();
-        animator = GetComponentInChildren<Animator>();
-        hitbox = GetComponentInChildren<HitBox>();
-        hitbox.UseResponder(this);
-
-        SwitchState(new EnemyWanderState(this));
-    }
     void ResetCooldown()
     {
         inCooldown = false;
@@ -47,33 +29,10 @@ public class EnemyStateMachine : StateMachine, IHitboxResponder
     {
         Destroy(gameObject);
     }
-    public void ReceiveDamage()
-    {
-        if (IsDead) return;
-        Debug.Log("Receiving damage " + health);
-        health--;
-        Debug.Log("health " + health);
-        takingDamage = true;
-        if (health <= 0)
-        {
-            IsDead = true;
-            enemySpawn.incrementKilled(gameObject);
-            SwitchState(new EnemyDeadState(this));
-        }
-        else
-        {
-            animator.speed = baseSpeed * 1.5f;
-            agent.speed = baseSpeed * 1.5f;
-            agent.isStopped = true;
-            animator.CrossFadeInFixedTime(hitHash, crossFadeDuration);
-        }
-    }
 
-    public void ResetHurt()
-    {
-        takingDamage = false;
-        ((EnemyBaseState)currentState)?.ContinueAnimation();
-    }
+    public abstract void ResetHurt();
+
+    public abstract void ReceiveDamage();
 
     public void CollidedWith(Collider collider)
     {

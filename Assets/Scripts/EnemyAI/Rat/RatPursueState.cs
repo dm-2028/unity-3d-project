@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EnemyPursueState : EnemyBaseState
+public class RatPursueState : RatBaseState
 {
     private readonly int moveSpeedHash = Animator.StringToHash("Movement");
     private readonly int moveHash = Animator.StringToHash("Move");
@@ -11,7 +11,7 @@ public class EnemyPursueState : EnemyBaseState
 
     private float seeCooldown = 0;
 
-    public EnemyPursueState(EnemyStateMachine stateMachine) : base(stateMachine) { }
+    public RatPursueState(RatStateMachine stateMachine) : base(stateMachine) { }
 
     public override void Enter()
     {
@@ -32,15 +32,15 @@ public class EnemyPursueState : EnemyBaseState
             else
             {
                 Debug.Log("switch state attack");
-                stateMachine.SwitchState(new EnemyAttackState(stateMachine));
+                stateMachine.SwitchState(new RatAttackState(stateMachine));
             }
             if (!CanSeePlayer())
             {
                 seeCooldown += Time.fixedDeltaTime;
-                Debug.Log("switch state wander");
+                //Debug.Log("switch state wander");
                 if (seeCooldown > 5)
                 {
-                    stateMachine.SwitchState(new EnemyWanderState(stateMachine));
+                    stateMachine.SwitchState(new RatWanderState(stateMachine));
                 }
             }
             else

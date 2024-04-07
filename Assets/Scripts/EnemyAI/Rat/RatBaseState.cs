@@ -2,10 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class EnemyBaseState : State
+public abstract class RatBaseState : State
 {
-    protected readonly EnemyStateMachine stateMachine;
-    protected EnemyBaseState(EnemyStateMachine stateMachine)
+    protected readonly RatStateMachine stateMachine;
+    protected RatBaseState(RatStateMachine stateMachine)
     {
         this.stateMachine = stateMachine;
     }

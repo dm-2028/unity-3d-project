@@ -40,8 +40,9 @@ public class HitBox : MonoBehaviour
 
         for(int i = 0; i < colliders.Length; i++)
         {
-            //Debug.Log("there is a collider");
             Collider collider = colliders[i];
+            Debug.Log("there is a collider" + collider.ToString() + " " + collider.tag + " " + collider.gameObject.name);
+            Debug.Log("responder " + _responder.ToString());
             if (!detectedColliders.Contains(collider))
             {
                 detectedColliders.Add(collider);

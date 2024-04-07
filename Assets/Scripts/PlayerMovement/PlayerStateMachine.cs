@@ -215,7 +215,7 @@ public class PlayerStateMachine : StateMachine, IHitboxResponder
         if (collider.gameObject.CompareTag("Enemy"))
         {
             Debug.Log("hitbox attacking enemy");
-            collider.gameObject.GetComponent<EnemyStateMachine>().ReceiveDamage();
+            collider.gameObject.GetComponentInParent<EnemyStateMachine>().ReceiveDamage();
         }
     }
 

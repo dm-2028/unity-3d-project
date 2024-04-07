@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EnemyWanderState : EnemyBaseState
+public class RatWanderState : RatBaseState
 {
     private readonly int moveSpeedHash = Animator.StringToHash("Movement");
     private readonly int moveHash = Animator.StringToHash("Move");
@@ -14,7 +14,7 @@ public class EnemyWanderState : EnemyBaseState
     public float wanderJitter = 1;
     Vector3 wanderTarget = Vector3.zero;
 
-    public EnemyWanderState(EnemyStateMachine stateMachine) : base(stateMachine) { }
+    public RatWanderState(RatStateMachine stateMachine) : base(stateMachine) { }
 
     public override void Enter()
     {
@@ -36,7 +36,7 @@ public class EnemyWanderState : EnemyBaseState
             stateMachine.agent.isStopped = false;
             if (CanSeePlayer())
             {
-                stateMachine.SwitchState(new EnemyPursueState(stateMachine));
+                stateMachine.SwitchState(new RatPursueState(stateMachine));
             }
         }
     }

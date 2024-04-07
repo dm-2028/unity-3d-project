@@ -67,7 +67,7 @@ GameObject:
   - component: {fileID: 3870146254489517054}
   m_Layer: 12
   m_Name: Worm
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -118,10 +118,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cooldownTime: 3
   player: {fileID: 0}
-  worm: {fileID: 154816310894605969}
   seeDistance: 10
-  health: 2
+  health: 3
   baseSpeed: 1
+  worm: {fileID: 154816310894605969}
 --- !u!208 &3870146254489517054
 NavMeshObstacle:
   m_ObjectHideFlags: 0
@@ -150,7 +150,7 @@ GameObject:
   - component: {fileID: 220446449775139742}
   m_Layer: 12
   m_Name: Collider
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -362,6 +362,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 0c50ab43924cea947a5f7608db964e73, type: 3}
       propertyPath: m_Layer
       value: 12
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 0c50ab43924cea947a5f7608db964e73, type: 3}
+      propertyPath: m_TagString
+      value: Enemy
       objectReference: {fileID: 0}
     - target: {fileID: 1402247763768377278, guid: 0c50ab43924cea947a5f7608db964e73, type: 3}
       propertyPath: m_Layer

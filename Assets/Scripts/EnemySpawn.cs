@@ -42,10 +42,10 @@ public class EnemySpawn : MonoBehaviour
                 while (enemiesActive < spawnLimit && enemiesSpawned < enemyCount)
                 {
                     GameObject worm = Instantiate(wormPrefab, spawnPositions[spawnIndex] + new Vector3(-12,0,1), spawnRotations[spawnIndex]);
-                    GameObject enemy = Instantiate(enemyPrefab, spawnPositions[spawnIndex], spawnRotations[spawnIndex]);
-                    EnemyStateMachine enemyStateMachine = enemy.GetComponent<EnemyStateMachine>();
-                    enemyStateMachine.enemySpawn = this;
-                    activeEnemies.Add(enemy);
+                    //GameObject enemy = Instantiate(enemyPrefab, spawnPositions[spawnIndex], spawnRotations[spawnIndex]);
+                    //RatStateMachine enemyStateMachine = enemy.GetComponent<RatStateMachine>();
+                    //enemyStateMachine.enemySpawn = this;
+                    //activeEnemies.Add(enemy);
                     
                     enemiesActive++;
                     enemiesSpawned++;
@@ -91,8 +91,8 @@ public class EnemySpawn : MonoBehaviour
             playerInTrigger = false;
             foreach(GameObject enemy in activeEnemies)
             {
-                EnemyStateMachine enemyStateMachine = enemy.GetComponent<EnemyStateMachine>();
-                enemyStateMachine.SwitchState(new EnemyWanderState(enemyStateMachine));
+                RatStateMachine enemyStateMachine = enemy.GetComponent<RatStateMachine>();
+                enemyStateMachine.SwitchState(new RatWanderState(enemyStateMachine));
             }
         }
     }

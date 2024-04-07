@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EnemyAttackState : EnemyBaseState
+public class RatAttackState : RatBaseState
 {
     private readonly int attackLHash = Animator.StringToHash("Attack L");
     private readonly int attackRHash = Animator.StringToHash("Attack R");
@@ -10,7 +10,7 @@ public class EnemyAttackState : EnemyBaseState
     private const float crossFadeDuration = 0.1f;
 
     private bool attackL;
-    public EnemyAttackState(EnemyStateMachine stateMachine) : base(stateMachine) { }
+    public RatAttackState(RatStateMachine stateMachine) : base(stateMachine) { }
 
     public override void Enter()
     {
@@ -41,7 +41,7 @@ public class EnemyAttackState : EnemyBaseState
             }
             else
             {
-                stateMachine.SwitchState(new EnemyPursueState(stateMachine));
+                stateMachine.SwitchState(new RatPursueState(stateMachine));
             }
         }
     }

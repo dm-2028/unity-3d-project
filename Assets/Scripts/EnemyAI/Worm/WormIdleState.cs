@@ -32,7 +32,7 @@ public class WormIdleState : WormBaseState
         RotateTowardsPlayer();
         if (!stateMachine.inCooldown)
         {
-            if ((stateMachine.transform.position - stateMachine.player.transform.position).magnitude < 1)
+            if ((stateMachine.transform.position - stateMachine.player.transform.position).magnitude < 2)
             {
                 Attack();
             }
