@@ -6,6 +6,7 @@ public class WormIdleState : WormBaseState
 {
     private readonly int idleHash = Animator.StringToHash("WormIdle");
     private readonly int attackHash = Animator.StringToHash("WormAttack");
+    private readonly int slamHash = Animator.StringToHash("WormSlam");
     private const float animationDampTime = 0.1f;
     private const float crossFadeDuration = 0.1f;
 
@@ -22,6 +23,15 @@ public class WormIdleState : WormBaseState
         stateMachine.inCooldown = true;
         stateMachine.Invoke("ResetCooldown", stateMachine.cooldownTime + Random.Range(-1.0f, 1.0f));
         stateMachine.animator.CrossFadeInFixedTime(attackHash, crossFadeDuration);
+
+    }
+    void SlamAttack()
+    {
+        Debug.Log("slam attack");
+        stateMachine.isAttacking = true;
+        stateMachine.inCooldown = true;
+        stateMachine.Invoke("ResetCooldown", stateMachine.cooldownTime + Random.Range(-1.0f, 1.0f));
+        stateMachine.animator.CrossFadeInFixedTime(slamHash, crossFadeDuration);
     }
     public override void Exit()
     {
@@ -32,9 +42,13 @@ public class WormIdleState : WormBaseState
         RotateTowardsPlayer();
         if (!stateMachine.inCooldown)
         {
-            if ((stateMachine.transform.position - stateMachine.player.transform.position).magnitude < 2)
+            float distance = (stateMachine.transform.position - stateMachine.player.transform.position).magnitude;
+            if (distance < 2)
             {
                 Attack();
+            }else if(distance < 10)
+            {
+                SlamAttack();
             }
         }
 

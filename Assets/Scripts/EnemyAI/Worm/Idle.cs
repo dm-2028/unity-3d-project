@@ -15,4 +15,9 @@ public class Idle : MonoBehaviour
     {
         wsm.SwitchState(new WormIdleState(wsm));
     }
+
+    public void StartSlamAttack()
+    {
+        wsm.StartCoroutine("SlamAttack");
+    }
 }

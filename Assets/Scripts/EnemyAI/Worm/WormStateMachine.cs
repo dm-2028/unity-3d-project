@@ -10,6 +10,8 @@ public class WormStateMachine : EnemyStateMachine, IHitboxResponder
     public EnemySpawn enemySpawn { get; set; }
 
     public GameObject worm;
+    public GameObject slamAttack;
+    private GameObject _slam;
     private void Start()
     {
         player = GameObject.FindGameObjectWithTag("Player");
@@ -49,5 +51,40 @@ public class WormStateMachine : EnemyStateMachine, IHitboxResponder
     public override void ContinueAnimation()
     {
         ((WormBaseState)currentState)?.ContinueAnimation();
+    }
+    public IEnumerator SlamAttack()
+    {
+        Vector3 slamPosition = transform.position + worm.transform.up;
+        PlayerStateMachine psm = player.GetComponent<PlayerStateMachine>();
+        _slam = GameObject.Instantiate(slamAttack, transform.position + worm.transform.up + new Vector3(0, .1f, 0), Quaternion.identity);
+        Renderer renderer = _slam.GetComponent<Renderer>();
+
+        float innerRadius = 0;
+        float outerRadius = .25f;
+        float maxRadius = renderer.bounds.extents.x;
+        float movementSpeed = 2f;
+        Debug.Log("renderer size" + maxRadius);
+        while(outerRadius < maxRadius)
+        {
+            renderer.material.SetFloat("_Timer", innerRadius * .051f);
+            Vector3 distance = player.transform.position - slamPosition;
+            float magnitude = distance.magnitude;
+            Debug.Log("inner radius " + innerRadius + " outerradius " + outerRadius + " " + magnitude);
+
+            if (magnitude < outerRadius && magnitude > innerRadius && psm.isGrounded)
+            {
+                psm.ReceiveDamage();
+            }
+            Vector3 point = slamPosition + (distance.normalized * innerRadius);
+            Vector3 pointTwo = slamPosition + (distance.normalized * outerRadius);
+
+            Debug.DrawLine(point, pointTwo, Color.red, .01f);
+
+            innerRadius += Time.deltaTime*movementSpeed;
+            outerRadius += Time.deltaTime*movementSpeed;
+            yield return null;
+        }
+        GameObject.Destroy(_slam);
+
     }
 }

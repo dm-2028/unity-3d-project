@@ -106,6 +106,7 @@ public class PlayerStateMachine : StateMachine, IHitboxResponder
     public float submergence { get; set; }
 
     public bool jumpFromSwim { get; set; }
+    public bool isGrounded { get; set; }
 
     public Rigidbody connectedBody { get; set; }
     public Rigidbody previousConnectedBody { get; set; }
@@ -116,6 +117,8 @@ public class PlayerStateMachine : StateMachine, IHitboxResponder
 
     private int health = 10;
     private int maxHealth = 10;
+
+    private float damageCooldown = 2f;
 
 
     private void OnValidate()

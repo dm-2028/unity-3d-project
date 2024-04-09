@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.18028352, g: 0.22571376, b: 0.30692244, a: 1}
+  m_IndirectSpecularColor: {r: 0, g: 0, b: 0, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -419,7 +419,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -498,8 +498,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxSpeed: 10
+  maxClimbSpeed: 2
+  maxSwimSpeed: 5
   maxAcceleration: 10
   maxAirAcceleration: 1
+  maxClimbAcceleration: 20
+  maxSwimAcceleration: 5
   jumpHeight: 5
   maxAirJumps: 1
   maxGroundAngle: 25
@@ -512,7 +516,27 @@ MonoBehaviour:
   stairsMask:
     serializedVersion: 2
     m_Bits: 4294967295
+  climbMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  waterMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  maxClimbAngle: 140
+  normalMaterial: {fileID: 0}
+  climbingMaterial: {fileID: 0}
+  swimmingMaterial: {fileID: 0}
+  submergenceOffset: 0.5
+  submergenceRange: 1
+  waterDrag: 1
+  bouyancy: 1
+  swimThreshold: 0.5
+  ballRadius: 0.5
+  ballAlignSpeed: 180
+  ballAirRotation: 0.5
+  ballSwimRotation: 2
   playerInputSpace: {fileID: 979350277}
+  ball: {fileID: 0}
 --- !u!135 &1590877255
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -675,7 +699,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

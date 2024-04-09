@@ -166,6 +166,7 @@ public abstract class PlayerBaseState : State
 
     protected void ClearState()
     {
+        stateMachine.isGrounded = OnGround;
         stateMachine.lastContactNormal = stateMachine.contactNormal;
         stateMachine.lastSteepNormal = stateMachine.steepNormal;
         stateMachine.lastConnectionVelocity = stateMachine.connectionVelocity;
