@@ -48,8 +48,24 @@ public abstract class PlayerBaseState : State
 
     protected void CalculateMoveDirection()
     {
-        playerInput.x = stateMachine.inputReader.movement.x;
-        playerInput.z = stateMachine.inputReader.movement.y;
+        const float e = 0.01f;
+        if(stateMachine.inputReader.movement.x > e || stateMachine.inputReader.movement.x < -e)
+        {
+            playerInput.x = stateMachine.inputReader.movement.x;
+        }
+        else
+        {
+            playerInput.x = 0;
+        }
+
+        if (stateMachine.inputReader.movement.y > e || stateMachine.inputReader.movement.y < -e)
+        {
+            playerInput.z = stateMachine.inputReader.movement.y;
+        }
+        else
+        {
+            playerInput.z = 0;
+        }
         playerInput.y = 0f;
 
         playerInput = Vector3.ClampMagnitude(playerInput, 1f);

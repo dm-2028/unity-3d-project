@@ -43,6 +43,8 @@ public class OrbitCamera : MonoBehaviour
 
     Camera regularCamera;
 
+    public InputReader inputReader { get; private set; }
+
     Quaternion gravityAlignment = Quaternion.identity;
     Quaternion orbitRotation;
 
@@ -65,6 +67,11 @@ public class OrbitCamera : MonoBehaviour
         regularCamera = GetComponent<Camera>();
         focusPoint = focus.position;
         transform.localRotation = orbitRotation = Quaternion.Euler(orbitAngles);
+    }
+
+    private void Start()
+    {
+        inputReader = GetComponent<InputReader>();
     }
 
     private void OnValidate()
@@ -156,11 +163,8 @@ public class OrbitCamera : MonoBehaviour
 
     bool ManualRotation()
     {
-        Vector2 input = new Vector2(
-            Input.GetAxis("CameraVertical"),
-            Input.GetAxis("CameraHorizontal")
-        );
-        const float e = 0.001f;
+        Vector2 input = new(inputReader.cameraMovement.y, inputReader.cameraMovement.x);
+        const float e = 0.01f;
         if (input.x < -e || input.x > e || input.y < -e || input.y > e)
         {
             orbitAngles += rotationSpeed * Time.deltaTime * input;

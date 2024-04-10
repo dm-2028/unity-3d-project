@@ -118,7 +118,7 @@ public class PlayerStateMachine : StateMachine, IHitboxResponder
     private int health = 10;
     private int maxHealth = 10;
 
-    private float damageCooldown = 2f;
+    private bool damageCooldown = false;
 
 
     private void OnValidate()
@@ -154,6 +154,8 @@ public class PlayerStateMachine : StateMachine, IHitboxResponder
     {
         health -= damage;
         gameManager.UpdateHealth(health);
+        damageCooldown = true;
+        Invoke("ResetDamageCooldown", 2.0f);
     }
 
 
@@ -227,19 +229,26 @@ public class PlayerStateMachine : StateMachine, IHitboxResponder
         ((PlayerBaseState)currentState)?.ContinueAnimation();
     }
 
+    public void ResetDamageCooldown()
+    {
+        damageCooldown = false;
+    }
+
     public void ReceiveDamage()
     {
-
-        if (health <= 0)
+        if (!damageCooldown)
         {
-            //player is dead
-            //isDead = true;
-            //enemySpawn.incrementKilled(gameObject);
-            //SwitchState(new EnemyDeadState(this));
-        }
-        else
-        {
-            DecrementHealth(1);
+            if (health <= 0)
+            {
+                //player is dead
+                //isDead = true;
+                //enemySpawn.incrementKilled(gameObject);
+                //SwitchState(new EnemyDeadState(this));
+            }
+            else
+            {
+                DecrementHealth(1);
+            }
         }
     }
 }

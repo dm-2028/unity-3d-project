@@ -146,8 +146,8 @@ public class GameManager : MonoBehaviour
     public void UpdateHealth(int health)
     {
         healthBar.value = health;
-        MainManager.Instance.health = health;
-        MainManager.Instance.SavePlayerInfo();
+        //MainManager.Instance.health = health;
+        //MainManager.Instance.SavePlayerInfo();
     }
 
     public void IncrementBeans()

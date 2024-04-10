@@ -11,7 +11,6 @@ public class WormStateMachine : EnemyStateMachine, IHitboxResponder
 
     public GameObject worm;
     public GameObject slamAttack;
-    private GameObject _slam;
     private void Start()
     {
         player = GameObject.FindGameObjectWithTag("Player");
@@ -56,7 +55,7 @@ public class WormStateMachine : EnemyStateMachine, IHitboxResponder
     {
         Vector3 slamPosition = transform.position + worm.transform.up;
         PlayerStateMachine psm = player.GetComponent<PlayerStateMachine>();
-        _slam = GameObject.Instantiate(slamAttack, transform.position + worm.transform.up + new Vector3(0, .1f, 0), Quaternion.identity);
+        GameObject _slam = Instantiate(slamAttack, transform.position + worm.transform.up + new Vector3(0, .01f, 0), Quaternion.identity);
         Renderer renderer = _slam.GetComponent<Renderer>();
 
         float innerRadius = 0;
