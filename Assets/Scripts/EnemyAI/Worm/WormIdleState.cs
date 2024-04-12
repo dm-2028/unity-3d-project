@@ -13,7 +13,6 @@ public class WormIdleState : WormBaseState
     public WormIdleState(WormStateMachine stateMachine) : base(stateMachine) { }
     public override void Enter()
     {
-        Debug.Log("enter idle state");
         ContinueAnimation();
     }
 

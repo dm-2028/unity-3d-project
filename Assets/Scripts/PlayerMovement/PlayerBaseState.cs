@@ -81,7 +81,7 @@ public abstract class PlayerBaseState : State
             stateMachine.forwardAxis = ProjectDirectionOnPlane(Vector3.forward, stateMachine.upAxis);
         }
     }
-
+    
     protected void UpdateState()
     {
         stateMachine.stepsSinceLastGrounded += 1;
