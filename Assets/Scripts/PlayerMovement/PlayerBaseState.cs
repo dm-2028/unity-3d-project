@@ -374,9 +374,16 @@ public abstract class PlayerBaseState : State
 
     protected void SwitchToJumpState()
     {
-        jumping = true;
-        Debug.Log("switch to jump state move");
-        stateMachine.SwitchState(new PlayerJumpState(stateMachine));
+        if (stateMachine.inTalkProximity)
+        {
+            stateMachine.SwitchState(new PlayerTalkState(stateMachine));
+        }
+        else
+        {
+            jumping = true;
+            Debug.Log("switch to jump state move");
+            stateMachine.SwitchState(new PlayerJumpState(stateMachine));
+        }
     }
 
     protected void Attack()
