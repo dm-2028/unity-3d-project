@@ -333,7 +333,6 @@ public abstract class PlayerBaseState : State
         {
             return false;
         }
-        Debug.Log("snapping to ground");
         stateMachine.groundContactCount = 1;
         stateMachine.contactNormal = hit.normal;
         float dot = Vector3.Dot(stateMachine.velocity, hit.normal);
@@ -374,7 +373,7 @@ public abstract class PlayerBaseState : State
 
     protected void SwitchToJumpState()
     {
-        if (stateMachine.inTalkProximity)
+        if (stateMachine.nearbyNPC != null)
         {
             stateMachine.SwitchState(new PlayerTalkState(stateMachine));
         }

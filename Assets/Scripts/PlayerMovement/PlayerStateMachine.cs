@@ -107,7 +107,6 @@ public class PlayerStateMachine : StateMachine, IHitboxResponder
 
     public bool jumpFromSwim { get; set; }
     public bool isGrounded { get; set; }
-    public bool inTalkProximity { get; set; }
 
     public Rigidbody connectedBody { get; set; }
     public Rigidbody previousConnectedBody { get; set; }
@@ -120,6 +119,8 @@ public class PlayerStateMachine : StateMachine, IHitboxResponder
     private int maxHealth = 10;
 
     private bool damageCooldown = false;
+
+    public GameObject nearbyNPC;
 
 
     private void OnValidate()

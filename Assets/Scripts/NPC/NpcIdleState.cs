@@ -34,4 +34,3 @@ public class NpcIdleState : NpcBaseState
 
     }
 }
-Fpl

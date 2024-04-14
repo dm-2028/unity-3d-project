@@ -20,10 +20,8 @@ public class PlayerMoveState : PlayerBaseState
 
     public override void Tick()
     {
-        //Debug.Log("steps since last grounded: " + stateMachine.stepsSinceLastGrounded + "\n" + "ground contact count " + stateMachine.groundContactCount + "\ncontact normal: " + stateMachine.contactNormal);
         if (!OnGround && stateMachine.stepsSinceLastGrounded > 2)
         {
-            Debug.Log("switch to fall state move");
             stateMachine.SwitchState(new PlayerFallState(stateMachine));
         }
         CalculateMoveDirection();
@@ -37,6 +35,26 @@ public class PlayerMoveState : PlayerBaseState
     }
     public override void TickFixed()
     {
+        Collider[] nearbyObjects = Physics.OverlapSphere(stateMachine.transform.position, 2.0f);
+        bool npcFound = false;
+        foreach (Collider collider in nearbyObjects)
+        {
+            if (collider.transform.CompareTag("NPC"))
+            {
+                Debug.Log("found NPC");
+                float dot = -Vector3.Dot(stateMachine.transform.forward, (collider.transform.position - stateMachine.transform.position).normalized);
+                Debug.Log("dot " + dot);
+                if (dot > 0.7f)
+                {
+                    stateMachine.nearbyNPC = collider.gameObject;
+                npcFound = true;
+                }
+            }
+        }
+        if (!npcFound)
+        {
+            stateMachine.nearbyNPC = null;
+        }
         stateMachine.upAxis = -Physics.gravity.normalized;
         Vector3 gravity = CustomGravity.GetGravity(stateMachine.body.position, out stateMachine.upAxis);
         UpdateState();
