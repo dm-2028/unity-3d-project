@@ -253,4 +253,23 @@ public class PlayerStateMachine : StateMachine, IHitboxResponder
             }
         }
     }
+
+    public void SetNPCToTalkTo(GameObject npc)
+    {
+        if(nearbyNPC != null && nearbyNPC != npc)
+        {
+            nearbyNPC.GetComponent<NpcStateMachine>().OutOfTalkingRange();
+        }
+        nearbyNPC = npc;
+        nearbyNPC.GetComponent<NpcStateMachine>().InTalkingRange();
+    }
+
+    public void RemoveNPCFromRange()
+    {
+        if(nearbyNPC != null)
+        {
+            nearbyNPC.GetComponent<NpcStateMachine>().OutOfTalkingRange();
+            nearbyNPC = null;
+        }
+    }
 }

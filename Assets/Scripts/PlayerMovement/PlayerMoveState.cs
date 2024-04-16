@@ -43,17 +43,16 @@ public class PlayerMoveState : PlayerBaseState
             {
                 Debug.Log("found NPC");
                 float dot = -Vector3.Dot(stateMachine.transform.forward, (collider.transform.position - stateMachine.transform.position).normalized);
-                Debug.Log("dot " + dot);
                 if (dot > 0.7f)
                 {
-                    stateMachine.nearbyNPC = collider.gameObject;
-                npcFound = true;
+                    stateMachine.SetNPCToTalkTo(collider.gameObject);
+                    npcFound = true;
                 }
             }
         }
         if (!npcFound)
         {
-            stateMachine.nearbyNPC = null;
+            stateMachine.RemoveNPCFromRange();
         }
         stateMachine.upAxis = -Physics.gravity.normalized;
         Vector3 gravity = CustomGravity.GetGravity(stateMachine.body.position, out stateMachine.upAxis);

@@ -4,8 +4,7 @@ using UnityEngine;
 
 public class PlayerTalkState : PlayerBaseState
 {
-    private readonly int moveSpeedHash = Animator.StringToHash("MoveSpeed");
-    private readonly int moveBlendTreeHash = Animator.StringToHash("MoveBlendTree");
+    private readonly int idleHash = Animator.StringToHash("Idle");
     private const float animationDampTime = 0.1f;
     private const float crossFadeDuration = 0.1f;
 
@@ -19,6 +18,9 @@ public class PlayerTalkState : PlayerBaseState
 
     public override void Enter()
     {
+        stateMachine.velocity = new(0f, 0f, 0f);
+        stateMachine.body.velocity = stateMachine.velocity;
+
         ContinueAnimation();
         subject = stateMachine.nearbyNPC;
         subject.GetComponent<NpcStateMachine>().RotateTowardsplayer(stateMachine.transform.position);
@@ -51,6 +53,6 @@ public class PlayerTalkState : PlayerBaseState
     public override void ContinueAnimation()
     {
         stateMachine.animator.speed = stateMachine.baseAnimationSpeed;
-        stateMachine.animator.CrossFadeInFixedTime(moveBlendTreeHash, crossFadeDuration);
+        stateMachine.animator.CrossFadeInFixedTime(idleHash, crossFadeDuration);
     }
 }

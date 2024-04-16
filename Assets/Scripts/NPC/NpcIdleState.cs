@@ -27,7 +27,7 @@ public class NpcIdleState : NpcBaseState
     {
     }
 
-    public void ContinueAnimation()
+    public override void ContinueAnimation()
     {
         stateMachine.animator.CrossFadeInFixedTime(idleHash, crossFadeDuration);
         stateMachine.animator.speed = stateMachine.baseSpeed;

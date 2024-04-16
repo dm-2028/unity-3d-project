@@ -380,7 +380,6 @@ public abstract class PlayerBaseState : State
         else
         {
             jumping = true;
-            Debug.Log("switch to jump state move");
             stateMachine.SwitchState(new PlayerJumpState(stateMachine));
         }
     }

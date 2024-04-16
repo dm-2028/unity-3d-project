@@ -9,5 +9,8 @@ public abstract class NpcBaseState : State
     {
         this.stateMachine = stateMachine;
     }
+    public virtual void ContinueAnimation()
+    {
 
+    }
 }
