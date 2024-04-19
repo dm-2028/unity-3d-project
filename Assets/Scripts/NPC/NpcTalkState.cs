@@ -14,7 +14,9 @@ public class NpcTalkState : NpcBaseState
 
     public override void Enter()
     {
+        Debug.Log("enter talking state");
         ContinueAnimation();
+        GameObject.FindGameObjectWithTag("Menu").GetComponent<MainUIManager>().DisplayText(stateMachine.dialog);
     }
 
     public override void Exit()

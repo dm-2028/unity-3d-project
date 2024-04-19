@@ -35,15 +35,14 @@ public class PlayerMoveState : PlayerBaseState
     }
     public override void TickFixed()
     {
-        Collider[] nearbyObjects = Physics.OverlapSphere(stateMachine.transform.position, 2.0f);
+        Collider[] nearbyObjects = Physics.OverlapSphere(stateMachine.transform.position, 1.0f);
         bool npcFound = false;
         foreach (Collider collider in nearbyObjects)
         {
             if (collider.transform.CompareTag("NPC"))
             {
-                Debug.Log("found NPC");
                 float dot = -Vector3.Dot(stateMachine.transform.forward, (collider.transform.position - stateMachine.transform.position).normalized);
-                if (dot > 0.7f)
+                if (dot > 0.6f)
                 {
                     stateMachine.SetNPCToTalkTo(collider.gameObject);
                     npcFound = true;

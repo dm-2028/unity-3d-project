@@ -18,6 +18,7 @@ public class PlayerTalkState : PlayerBaseState
 
     public override void Enter()
     {
+        stateMachine.inputReader.controls.Controls.Disable();
         stateMachine.velocity = new(0f, 0f, 0f);
         stateMachine.body.velocity = stateMachine.velocity;
 
@@ -29,6 +30,7 @@ public class PlayerTalkState : PlayerBaseState
 
     public override void Exit()
     {
+        stateMachine.inputReader.controls.Controls.Enable();
     }
 
     public override void Tick()

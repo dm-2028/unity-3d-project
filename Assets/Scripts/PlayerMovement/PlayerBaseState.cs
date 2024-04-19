@@ -373,6 +373,7 @@ public abstract class PlayerBaseState : State
 
     protected void SwitchToJumpState()
     {
+        Debug.Log("Switch to jump state");
         if (stateMachine.nearbyNPC != null)
         {
             stateMachine.SwitchState(new PlayerTalkState(stateMachine));

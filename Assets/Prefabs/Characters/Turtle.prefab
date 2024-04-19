@@ -80,6 +80,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   baseSpeed: 1
+  dialog: {fileID: 11400000, guid: c92a60d021accc441a6d432869138d56, type: 2}
 --- !u!1 &3388988491593526199
 GameObject:
   m_ObjectHideFlags: 0

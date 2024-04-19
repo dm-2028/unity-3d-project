@@ -272,4 +272,11 @@ public class PlayerStateMachine : StateMachine, IHitboxResponder
             nearbyNPC = null;
         }
     }
+
+    public void StopTalking()
+    {
+        SwitchState(new PlayerMoveState(this));
+        nearbyNPC.GetComponent<NpcStateMachine>().StopTalking();
+
+    }
 }

@@ -13,6 +13,8 @@ public class NpcStateMachine : StateMachine
 
     private GameObject mainCamera;
 
+    public DialogObject dialog;
+
     GameObject player;
     // Start is called before the first frame update
     void Start()
@@ -75,5 +77,10 @@ public class NpcStateMachine : StateMachine
         }
 
         SwitchState(new NpcTalkState(this));
+    }
+
+    public void StopTalking()
+    {
+        SwitchState(new NpcIdleState(this));
     }
 }
