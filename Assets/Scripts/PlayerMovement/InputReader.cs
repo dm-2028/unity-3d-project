@@ -36,11 +36,7 @@ public class InputReader : MonoBehaviour, PlayerControls.IControlsActions
 
     public void OnJump(InputAction.CallbackContext context)
     {
-        Debug.Log("on jump " + context.ToString());
         if (!context.performed) return;
-        Debug.Log("on jump performed" + context.ToString());
-        Debug.Log("jump function " + OnJumpPerformed?.ToString());
-        Debug.Log("instance " + this.GetInstanceID().ToString());
         OnJumpPerformed?.Invoke();
     }
 
