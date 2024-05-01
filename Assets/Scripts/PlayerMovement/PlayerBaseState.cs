@@ -346,7 +346,7 @@ public abstract class PlayerBaseState : State
     protected void FaceMoveDirection()
     {
         Vector3 faceDirection = new(stateMachine.body.velocity.x, 0f, stateMachine.body.velocity.z);
-        if (faceDirection == Vector3.zero) return;
+        if (Mathf.Abs(faceDirection.x) < .001 && Mathf.Abs(faceDirection.z) < .001) return;
         stateMachine.transform.rotation = Quaternion.Slerp(stateMachine.transform.rotation, Quaternion.LookRotation(-faceDirection), stateMachine.lookRotationDampFactor * Time.deltaTime);
     }
 
@@ -407,21 +407,15 @@ public abstract class PlayerBaseState : State
 
         xAxis = ProjectDirectionOnPlane(xAxis, stateMachine.contactNormal);
         zAxis = ProjectDirectionOnPlane(zAxis, stateMachine.contactNormal);
-
         Vector3 relativeVelocity = stateMachine.velocity - stateMachine.connectionVelocity;
-
-        //Debug.Log("relative velocity " + relativeVelocity);
 
         Vector3 adjustment;
         adjustment.x = playerInput.x * speed - Vector3.Dot(relativeVelocity, xAxis);
         adjustment.z = playerInput.z * speed - Vector3.Dot(relativeVelocity, zAxis);
         adjustment.y = Swimming ? playerInput.y * speed - Vector3.Dot(relativeVelocity, stateMachine.upAxis) : 0f;
-        //Debug.Log("adjustment before clamp " + adjustment);
         adjustment = Vector3.ClampMagnitude(adjustment, acceleration * Time.deltaTime);
-        //Debug.Log("adjustment " + adjustment);
         stateMachine.velocity += xAxis * adjustment.x + zAxis * adjustment.z;
 
-        //Debug.Log("after calc velocity " + stateMachine.velocity);
         if (Swimming)
         {
             stateMachine.velocity += stateMachine.upAxis * adjustment.y;
