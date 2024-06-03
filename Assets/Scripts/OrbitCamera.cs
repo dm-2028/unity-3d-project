@@ -164,7 +164,7 @@ public class OrbitCamera : MonoBehaviour
     bool ManualRotation()
     {
         Vector2 input = new(inputReader.cameraMovement.y, inputReader.cameraMovement.x);
-        const float e = 0.01f;
+        const float e = 0.1f;
         if (input.x < -e || input.x > e || input.y < -e || input.y > e)
         {
             orbitAngles += rotationSpeed * Time.deltaTime * input;

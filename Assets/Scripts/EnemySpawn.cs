@@ -7,7 +7,7 @@ public class EnemySpawn : MonoBehaviour
     public Vector3[] spawnPositions;
     public Quaternion[] spawnRotations;
     public GameObject enemyPrefab;
-    public GameObject wormPrefab;
+    //public GameObject wormPrefab;
     public int spawnLimit = 2;
     public int enemyCount = 4;
     public List<GameObject> activeEnemies;
@@ -41,12 +41,12 @@ public class EnemySpawn : MonoBehaviour
             {
                 while (enemiesActive < spawnLimit && enemiesSpawned < enemyCount)
                 {
-                    GameObject worm = Instantiate(wormPrefab, spawnPositions[spawnIndex] + new Vector3(-12,0,1), spawnRotations[spawnIndex]);
-                    //GameObject enemy = Instantiate(enemyPrefab, spawnPositions[spawnIndex], spawnRotations[spawnIndex]);
-                    //RatStateMachine enemyStateMachine = enemy.GetComponent<RatStateMachine>();
-                    //enemyStateMachine.enemySpawn = this;
-                    //activeEnemies.Add(enemy);
-                    
+                    //GameObject worm = Instantiate(wormPrefab, spawnPositions[spawnIndex] + new Vector3(-12,0,1), spawnRotations[spawnIndex]);
+                    GameObject enemy = Instantiate(enemyPrefab, spawnPositions[spawnIndex], spawnRotations[spawnIndex]);
+                    RatStateMachine enemyStateMachine = enemy.GetComponent<RatStateMachine>();
+                    enemyStateMachine.enemySpawn = this;
+                    activeEnemies.Add(enemy);
+
                     enemiesActive++;
                     enemiesSpawned++;
                     spawnIndex = (spawnIndex + 1) % spawnPositions.Length;

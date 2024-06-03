@@ -32,7 +32,7 @@ public class RatStateMachine : EnemyStateMachine, IHitboxResponder
         if (health <= 0)
         {
             IsDead = true;
-            //enemySpawn.incrementKilled(gameObject);
+            enemySpawn.incrementKilled(gameObject);
             SwitchState(new RatDeadState(this));
         }
         else
