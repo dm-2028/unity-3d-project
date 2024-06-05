@@ -25,6 +25,15 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        SceneManager.LoadScene("Intro Level", LoadSceneMode.Additive);
+        SceneManager.LoadScene("Intro Level Section 1", LoadSceneMode.Additive);
+
+        pauseMenu.gameObject.SetActive(false);
+        beansText.text = "Beans: " + MainManager.Instance.beans.ToString();
+    }
+
+    public void SetCollectibles()
+    {
         IEnumerable<Collectable> collectables = Collectable.FindAll();
 
         Collectable[] collectablesArray = collectables.ToArray();
@@ -49,10 +58,7 @@ public class GameManager : MonoBehaviour
             collectable.gameObject.transform.GetChild(0).gameObject.SetActive(!collectable.collected);
         }
         Debug.Log("finished setting collectables ");
-        pauseMenu.gameObject.SetActive(false);
-        beansText.text = "Beans: " + MainManager.Instance.beans.ToString();
     }
-
     // Update is called once per frame
     void Update()
     {

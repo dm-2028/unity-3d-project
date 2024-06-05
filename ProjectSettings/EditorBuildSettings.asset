@@ -11,4 +11,19 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/My Game.unity
     guid: 9fc0d4010bbf28b4594072e72b8655ab
+  - enabled: 1
+    path: Assets/Scenes/Intro Level/Intro Level.unity
+    guid: dea1919c06971bf4682b8fedd691c3fe
+  - enabled: 1
+    path: Assets/Scenes/Intro Level/Intro Level Section 1.unity
+    guid: d0f43c6ddc023f24a9aecb50fb16b1b4
+  - enabled: 1
+    path: Assets/Scenes/Intro Level/Intro Level Section 2.unity
+    guid: 8f1514981cf2d744ca292eda1227a0bf
+  - enabled: 1
+    path: Assets/Scenes/Intro Level/Intro Level Section 3.unity
+    guid: 50cb3b4140ea70f408af2aa7be83d25c
+  - enabled: 1
+    path: Assets/Scenes/Intro Level/Intro Level Section 4.unity
+    guid: 4214e864c35d73446bc00e41c95a436e
   m_configObjects: {}

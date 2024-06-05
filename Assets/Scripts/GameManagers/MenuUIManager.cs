@@ -49,6 +49,7 @@ public class MenuUIManager : MonoBehaviour
         keyboard[rowIndex][keyIndex].Select();
         Debug.Log(keyboard[0].Length + keyboard[1].Length + keyboard[2].Length);
         buttons[selectionIndex].Select();
+        buttons[selectionIndex].GetComponentInChildren<TextMeshProUGUI>().color = Color.red;
         files = MainManager.Instance.GetAllFiles();
     }
 
@@ -85,12 +86,14 @@ public class MenuUIManager : MonoBehaviour
             bool indexChanged = false;
             if (directionVertical < 0)
             {
+                buttons[selectionIndex].GetComponentInChildren<TextMeshProUGUI>().color = Color.black;
                 selectionIndex = (selectionIndex + 1) % buttons.Length;
                 indexChanged = true;
 
             }
             else if (directionVertical > 0)
             {
+                buttons[selectionIndex].GetComponentInChildren<TextMeshProUGUI>().color = Color.black;
                 selectionIndex = (selectionIndex - 1) < 0 ? buttons.Length - 1 : selectionIndex - 1;
                 indexChanged = true;
 
@@ -98,6 +101,7 @@ public class MenuUIManager : MonoBehaviour
             if (indexChanged)
             {
                 buttons[selectionIndex].Select();
+                buttons[selectionIndex].GetComponentInChildren<TextMeshProUGUI>().color = Color.red;
             }
         }
         else if (enterName.activeInHierarchy)
@@ -147,11 +151,13 @@ public class MenuUIManager : MonoBehaviour
             bool indexChanged = false;
             if (directionVertical < 0)
             {
+                saveFileButtons[saveSelectionIndex].GetComponentInChildren<TextMeshProUGUI>().color = Color.black;
                 saveSelectionIndex = (saveSelectionIndex + 1) % saveFileButtons.Count;
                 indexChanged = true;
             }
             else if (directionVertical > 0)
             {
+                saveFileButtons[saveSelectionIndex].GetComponentInChildren<TextMeshProUGUI>().color = Color.black;
                 saveSelectionIndex = (saveSelectionIndex - 1) < 0 ? saveFileButtons.Count - 1 : saveSelectionIndex - 1;
                 indexChanged = true;
             }
@@ -159,8 +165,9 @@ public class MenuUIManager : MonoBehaviour
             if (indexChanged) 
             {
                 Debug.Log("selecting " + saveSelectionIndex);
-                Debug.Log(saveFileButtons[saveSelectionIndex].transform.GetChild(0).GetComponent<TextMeshProUGUI>().text);
+                Debug.Log(saveFileButtons[saveSelectionIndex].GetComponentInChildren<TextMeshProUGUI>().text);
                 saveFileButtons[saveSelectionIndex].Select();
+                saveFileButtons[saveSelectionIndex].GetComponentInChildren<TextMeshProUGUI>().color = Color.red;
             }
 
         }
@@ -169,7 +176,7 @@ public class MenuUIManager : MonoBehaviour
 
     public void StartGame()
     {
-        SceneManager.LoadScene(1);
+        SceneManager.LoadScene("My Game");
     }
 
     public void NewGame()
@@ -219,10 +226,10 @@ public class MenuUIManager : MonoBehaviour
             TextMeshProUGUI fileText = newObject.transform.GetChild(0).GetComponent<TextMeshProUGUI>();
             Button fileButton = newObject.GetComponent<Button>();
             Debug.Log("file button " + fileButton);
-            fileText.text = files[i].Name;
+            fileText.text = "Name: " + files[i].Name.Replace(".json", "");
             saveFileButtons.Add(fileButton);
-            objectRect.sizeDelta = new(700, 200);
-            objectRect.anchoredPosition = new(0, 150-(200 * i));
+            objectRect.sizeDelta = new(700, 100);
+            objectRect.anchoredPosition = new(0, 150-(100 * i));
             string fileName = files[i].FullName;
             fileButton.onClick.AddListener(() => 
                 LoadSelectedFile(fileName)

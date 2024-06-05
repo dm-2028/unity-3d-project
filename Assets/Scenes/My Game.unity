@@ -3090,6 +3090,11 @@ MonoBehaviour:
   movement: {x: 0, y: 0}
   verticalMovement: 0
   cameraMovement: {x: 0, y: 0}
+--- !u!4 &896901827 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 2389992658095732611, guid: 94a401645e5ee5241b185fe1072ff13d, type: 3}
+  m_PrefabInstance: {fileID: 664422707674812936}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &903892716
 GameObject:
   m_ObjectHideFlags: 0
@@ -3555,7 +3560,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 56ec2e99429a8624baacbde183073593, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  focus: {fileID: 0}
+  focus: {fileID: 896901827}
   distance: 6
   focusRadius: 1
   focusCentering: 0.5
@@ -6013,7 +6018,7 @@ PrefabInstance:
     - target: {fileID: 2040343450, guid: 94a401645e5ee5241b185fe1072ff13d, type: 3}
       propertyPath: gameManager
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 265946009}
     - target: {fileID: 2040343450, guid: 94a401645e5ee5241b185fe1072ff13d, type: 3}
       propertyPath: climbMask.m_Bits
       value: 6207
@@ -6021,7 +6026,7 @@ PrefabInstance:
     - target: {fileID: 2040343450, guid: 94a401645e5ee5241b185fe1072ff13d, type: 3}
       propertyPath: playerInputSpace
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 963194228}
     - target: {fileID: 2040343453, guid: 94a401645e5ee5241b185fe1072ff13d, type: 3}
       propertyPath: m_Enabled
       value: 0

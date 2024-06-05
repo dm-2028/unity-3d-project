@@ -37,7 +37,7 @@ public class OrbitCamera : MonoBehaviour
 
     Vector3 focusPoint, previousFocusPoint;
 
-    Vector2 orbitAngles = new Vector2(45f, 0f);
+    Vector2 orbitAngles = new(45f, 0f);
 
     float lastManualRotationTime;
 
