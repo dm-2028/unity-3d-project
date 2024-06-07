@@ -2022,7 +2022,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh1494206
+  m_Name: pb_Mesh85154
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -5426,6 +5426,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sceneToLoad: Intro Level Section 2
+  gameManager: {fileID: 0}
 --- !u!4 &1024104944 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5277546821827398571, guid: 39dffaeccc057c64597f4ca81c69f1c5, type: 3}

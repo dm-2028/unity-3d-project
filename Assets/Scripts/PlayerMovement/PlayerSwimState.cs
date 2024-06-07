@@ -19,7 +19,7 @@ public class PlayerSwimState : PlayerBaseState
     public override void Enter()
     {
         Debug.Log("enter swim state");
-
+        stateMachine.particles.Play();
         waterSurface = stateMachine.body.position.y;
         Debug.Log("enter state body position " + stateMachine.body.position.y + "\nwater surface " + waterSurface);
         stateMachine.velocity = new Vector3(stateMachine.velocity.x, 0f, stateMachine.velocity.z);

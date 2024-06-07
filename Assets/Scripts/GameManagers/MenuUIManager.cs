@@ -35,6 +35,14 @@ public class MenuUIManager : MonoBehaviour
     [SerializeField]
     TextMeshProUGUI nameText;
 
+    int buttonHeight = 100;
+
+    private bool verticalAxisDown = false, horizontalAxisDown = false;
+    private float previousVerticalAxis = 0, previousHorizontalAxis = 0;
+   
+
+    Vector2 scrollBasePosition;
+
 
     // Start is called before the first frame update
     void Start()
@@ -47,9 +55,12 @@ public class MenuUIManager : MonoBehaviour
                              new[]{ Abutton, Sbutton, Dbutton, Fbutton, Gbutton, Hbutton, Jbutton, Kbutton, Lbutton },
                              new[]{ Zbutton, Xbutton, Cbutton, Vbutton, Bbutton, Nbutton, Mbutton, BackButton, EnterButton} };
         keyboard[rowIndex][keyIndex].Select();
+        keyboard[rowIndex][keyIndex].GetComponentInChildren<TextMeshProUGUI>().color = Color.red;
+
         Debug.Log(keyboard[0].Length + keyboard[1].Length + keyboard[2].Length);
         buttons[selectionIndex].Select();
         buttons[selectionIndex].GetComponentInChildren<TextMeshProUGUI>().color = Color.red;
+        scrollBasePosition = ((RectTransform)scrollContent.transform).anchoredPosition;
         files = MainManager.Instance.GetAllFiles();
     }
 
@@ -76,11 +87,29 @@ public class MenuUIManager : MonoBehaviour
             enterPressed = false;
             return;
         }
-        if (Input.anyKeyDown) 
+        float verticalAxis = Input.GetAxis("Vertical");
+        float horizontalAxis = Input.GetAxis("Horizontal");
+
+        if (Mathf.Abs(verticalAxis) > Mathf.Abs(previousVerticalAxis))
         {
-            directionVertical = Input.GetAxis("Vertical");
-            directionHorizontal = Input.GetAxis("Horizontal");
+            if (!verticalAxisDown)
+            {
+                verticalAxisDown = true;
+                directionVertical = verticalAxis;
+            }
         }
+        if (Mathf.Abs(horizontalAxis) > Mathf.Abs(previousHorizontalAxis))
+        {
+            if (!horizontalAxisDown)
+            {
+                horizontalAxisDown = true;
+                directionHorizontal = horizontalAxis;
+
+            }
+        }
+
+
+        Debug.Log("vertical " + Input.GetAxis("Vertical") + " horizontal " + Input.GetAxis("Horizontal"));
         if (mainMenu.activeInHierarchy)
         {
             bool indexChanged = false;
@@ -109,6 +138,7 @@ public class MenuUIManager : MonoBehaviour
             bool indexChanged = false;
             if (directionVertical < 0)
             {
+                keyboard[rowIndex][keyIndex].GetComponentInChildren<TextMeshProUGUI>().color = Color.black;
                 rowIndex = (rowIndex + 1) % buttons.Length;
                 if (keyIndex >= keyboard[rowIndex].Length)
                 {
@@ -119,24 +149,28 @@ public class MenuUIManager : MonoBehaviour
             }
             else if (directionVertical > 0)
             {
+                keyboard[rowIndex][keyIndex].GetComponentInChildren<TextMeshProUGUI>().color = Color.black;
                 rowIndex = (rowIndex - 1) < 0 ? keyboard.Length - 1 : rowIndex - 1;
                 indexChanged = true;
 
             }
             if (directionHorizontal < 0)
             {
+                keyboard[rowIndex][keyIndex].GetComponentInChildren<TextMeshProUGUI>().color = Color.black;
                 keyIndex = (keyIndex - 1) < 0 ? keyboard[rowIndex].Length - 1 : keyIndex - 1;
                 indexChanged = true;
 
             }
             else if (directionHorizontal > 0)
             {
+                keyboard[rowIndex][keyIndex].GetComponentInChildren<TextMeshProUGUI>().color = Color.black;
                 keyIndex = (keyIndex + 1) % keyboard[rowIndex].Length;
                 indexChanged = true;
 
             }
             if (keyIndex >= keyboard[rowIndex].Length)
             {
+                keyboard[rowIndex][keyIndex].GetComponentInChildren<TextMeshProUGUI>().color = Color.black;
                 keyIndex = keyboard[rowIndex].Length - 1;
                 indexChanged = true;
 
@@ -144,6 +178,7 @@ public class MenuUIManager : MonoBehaviour
             if (indexChanged)
             {
                 keyboard[rowIndex][keyIndex].Select();
+                keyboard[rowIndex][keyIndex].GetComponentInChildren<TextMeshProUGUI>().color = Color.red;
             }
         }
         else if (saveList.activeInHierarchy)
@@ -160,17 +195,41 @@ public class MenuUIManager : MonoBehaviour
                 saveFileButtons[saveSelectionIndex].GetComponentInChildren<TextMeshProUGUI>().color = Color.black;
                 saveSelectionIndex = (saveSelectionIndex - 1) < 0 ? saveFileButtons.Count - 1 : saveSelectionIndex - 1;
                 indexChanged = true;
+
             }
 
             if (indexChanged) 
             {
-                Debug.Log("selecting " + saveSelectionIndex);
-                Debug.Log(saveFileButtons[saveSelectionIndex].GetComponentInChildren<TextMeshProUGUI>().text);
+                if (saveSelectionIndex < 3)
+                {
+                    ((RectTransform)scrollContent.transform).anchoredPosition = scrollBasePosition;
+                }
+                else if (saveSelectionIndex < saveFileButtons.Count - 2)
+                {
+                    ((RectTransform)scrollContent.transform).anchoredPosition = new Vector2(0, scrollBasePosition.y + (buttonHeight * (saveSelectionIndex-2)));
+                }
+                else
+                {
+                    ((RectTransform)scrollContent.transform).anchoredPosition = new Vector2(0, scrollBasePosition.y + (buttonHeight * (saveFileButtons.Count - 4)));
+                }
                 saveFileButtons[saveSelectionIndex].Select();
                 saveFileButtons[saveSelectionIndex].GetComponentInChildren<TextMeshProUGUI>().color = Color.red;
             }
 
         }
+
+        if (Mathf.Abs(verticalAxis) < Mathf.Abs(previousVerticalAxis))
+        {
+            verticalAxisDown = false;
+        }
+        if (Mathf.Abs(horizontalAxis) < Mathf.Abs(previousHorizontalAxis))
+        {
+            horizontalAxisDown = false;
+        }
+        previousVerticalAxis = verticalAxis;
+        previousHorizontalAxis = horizontalAxis;
+
+
 
     }
 
@@ -220,16 +279,15 @@ public class MenuUIManager : MonoBehaviour
     {
         for(int i = 0; i < files.Length; i++)
         {
-            Debug.Log(files[i].Name);
             GameObject newObject = GameObject.Instantiate(buttonPrefab, scrollContent.transform);
             RectTransform objectRect = (RectTransform)newObject.transform;
             TextMeshProUGUI fileText = newObject.transform.GetChild(0).GetComponent<TextMeshProUGUI>();
             Button fileButton = newObject.GetComponent<Button>();
-            Debug.Log("file button " + fileButton);
+
             fileText.text = "Name: " + files[i].Name.Replace(".json", "");
             saveFileButtons.Add(fileButton);
-            objectRect.sizeDelta = new(700, 100);
-            objectRect.anchoredPosition = new(0, 150-(100 * i));
+            objectRect.sizeDelta = new(700, buttonHeight);
+            objectRect.anchoredPosition = new(0, 150-(buttonHeight * i));
             string fileName = files[i].FullName;
             fileButton.onClick.AddListener(() => 
                 LoadSelectedFile(fileName)
@@ -237,11 +295,8 @@ public class MenuUIManager : MonoBehaviour
             if (saveSelectionIndex == i)
             {
                 fileButton.Select();
+                saveFileButtons[saveSelectionIndex].GetComponentInChildren<TextMeshProUGUI>().color = Color.red;
             }
-        }
-        for(int i = 0; i < saveFileButtons.Count; i++)
-        {
-            Debug.Log(i + "save file buttons " + saveFileButtons[i].ToString());
         }
     }
 
