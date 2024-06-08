@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerSwimState : PlayerBaseState
+public class PlayerSubmergedSwimState : PlayerBaseState
 {
 
     private readonly int swimBlendTreeHash = Animator.StringToHash("SwimBlendTree");
@@ -10,19 +10,17 @@ public class PlayerSwimState : PlayerBaseState
     private const float animationDampTime = 0.1f;
     private const float crossFadeDuration = 0.1f;
 
-    float waterSurface;
-
     int stepsSinceLastSwimming;
 
 
-    public PlayerSwimState(PlayerStateMachine stateMachine) : base(stateMachine) { }
+    public PlayerSubmergedSwimState(PlayerStateMachine stateMachine) : base(stateMachine) { }
     public override void Enter()
     {
         Debug.Log("enter swim state");
         stateMachine.splashParticles.Play();
         stateMachine.waveParticles.Play();
-        waterSurface = stateMachine.body.position.y;
-        Debug.Log("enter state body position " + stateMachine.body.position.y + "\nwater surface " + waterSurface);
+
+        Debug.Log("enter state body position " + stateMachine.body.position.y);
         stateMachine.velocity = new Vector3(stateMachine.velocity.x, 0f, stateMachine.velocity.z);
         stateMachine.body.velocity = stateMachine.velocity;
         stateMachine.inputReader.OnJumpPerformed += EvaluateJump;
@@ -75,7 +73,7 @@ public class PlayerSwimState : PlayerBaseState
             }
         }
 
-        stateMachine.velocity *= 1f - stateMachine.waterDrag * stateMachine.submergence * Time.deltaTime; 
+        stateMachine.velocity *= 1f - stateMachine.waterDrag * stateMachine.submergence * Time.deltaTime;
         float swimFactor = Mathf.Min(1f, stateMachine.submergence / stateMachine.swimThreshold);
         float speed = Mathf.LerpUnclamped(stateMachine.maxSpeed, stateMachine.maxSwimSpeed, swimFactor);
         CalcVelocity(Mathf.LerpUnclamped(

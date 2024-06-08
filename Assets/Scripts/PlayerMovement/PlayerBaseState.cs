@@ -96,7 +96,7 @@ public abstract class PlayerBaseState : State
         {
             stateMachine.SwitchState(new PlayerClimbState(stateMachine));
         }else if(CheckSwimming() && !jumping){
-            stateMachine.SwitchState(new PlayerSwimState(stateMachine));
+            stateMachine.SwitchState(new PlayerSurfaceSwimState(stateMachine));
         }
         if (!jumping && (OnGround || SnapToGround() || CheckSteepContacts()))
         {
@@ -169,6 +169,7 @@ public abstract class PlayerBaseState : State
             stateMachine.contactNormal = stateMachine.upAxis;
             return true;
         }
+        else stateMachine.bodyOfWaterSurface = null;
         return false;
     }
 
@@ -289,6 +290,8 @@ public abstract class PlayerBaseState : State
             stateMachine.waterMask,
             QueryTriggerInteraction.Collide))
             {
+                Debug.Log("the point is " + hit.point);
+                stateMachine.bodyOfWaterSurface = hit.point.y;
                 stateMachine.submergence = 1f - hit.distance / stateMachine.submergenceRange;
             }
             else
@@ -297,6 +300,19 @@ public abstract class PlayerBaseState : State
             }
             if (Swimming)
             {
+                if(Physics.Raycast(
+                    stateMachine.body.position + stateMachine.upAxis * stateMachine.submergenceOffset + new Vector3(0, 1, 0),
+                    stateMachine.upAxis,
+                    out RaycastHit hitWithin,
+                    stateMachine.submergenceRange + 1f,
+                    stateMachine.waterMask,
+                    QueryTriggerInteraction.Collide))
+                {
+                    Debug.Log("the point from within is " + hitWithin.point);
+                    stateMachine.bodyOfWaterSurface = hitWithin.point.y;
+
+
+                }
                 stateMachine.connectedBody = other.attachedRigidbody;
             }
         }

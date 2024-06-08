@@ -92,6 +92,8 @@ public class PlayerStateMachine : StateMachine, IHitboxResponder
     public Vector3 lastContactNormal { get; set; }
     public Vector3 lastSteepNormal { get; set; }
 
+    public float? bodyOfWaterSurface { get; set; }
+
     public Vector3 velocity {get; set;}
     public Vector3 connectionVelocity { get; set; }
     public Vector3 lastConnectionVelocity { get; set; }
