@@ -16,7 +16,8 @@ public class PlayerStateMachine : StateMachine, IHitboxResponder
     public Transform mainCamera { get; private set; }
     public InputReader inputReader { get; private set; }
     public Animator animator { get; private set; }
-    public ParticleSystem particles { get; private set; }
+    public ParticleSystem splashParticles { get; private set; }
+    public ParticleSystem waveParticles { get; private set; }
 
     public GameManager gameManager;
 
@@ -138,7 +139,8 @@ public class PlayerStateMachine : StateMachine, IHitboxResponder
         mainCamera = Camera.main.transform;
         inputReader = GetComponent<InputReader>();
         animator = GetComponentInChildren<Animator>();
-        particles = GetComponent<ParticleSystem>();
+        splashParticles = GetComponent<ParticleSystem>();
+        waveParticles = GetComponentInChildren<ParticleSystem>(); 
         hitbox = GetComponentInChildren<HitBox>();
         hitbox.UseResponder(this);
         

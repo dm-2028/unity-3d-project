@@ -19,7 +19,8 @@ public class PlayerSwimState : PlayerBaseState
     public override void Enter()
     {
         Debug.Log("enter swim state");
-        stateMachine.particles.Play();
+        stateMachine.splashParticles.Play();
+        stateMachine.waveParticles.Play();
         waterSurface = stateMachine.body.position.y;
         Debug.Log("enter state body position " + stateMachine.body.position.y + "\nwater surface " + waterSurface);
         stateMachine.velocity = new Vector3(stateMachine.velocity.x, 0f, stateMachine.velocity.z);
@@ -112,6 +113,7 @@ public class PlayerSwimState : PlayerBaseState
         Debug.Log("exiting swim state");
         stateMachine.jumpFromSwim = true;
         stateMachine.contactNormal = stateMachine.upAxis;
+        stateMachine.waveParticles.Stop();
         stateMachine.inputReader.OnJumpPerformed -= EvaluateJump;
     }
 
