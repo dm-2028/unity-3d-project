@@ -20,11 +20,14 @@ public class PlayerSurfaceSwimState : PlayerBaseState
         Debug.Log("enter swim state");
         stateMachine.splashParticles.Play();
         stateMachine.waveParticles.Play();
-        stateMachine.body.position = new(stateMachine.body.position.x, stateMachine.bodyOfWaterSurface.Value, stateMachine.body.position.z);
-        Debug.Log("enter state body position " + stateMachine.body.position.y);
-        stateMachine.velocity = new Vector3(stateMachine.velocity.x, 0f, stateMachine.velocity.z + stateMachine.submergenceOffset);
+        stateMachine.waveParticles.gameObject.transform.position = new(stateMachine.waveParticles.transform.position.x, stateMachine.bodyOfWaterSurface.Value + .01f, stateMachine.waveParticles.transform.position.z);
+        stateMachine.velocity = new Vector3(stateMachine.velocity.x, 0f, stateMachine.velocity.z);
+
+        stateMachine.velocity = new Vector3(stateMachine.velocity.x, 0f, stateMachine.velocity.z);
+        Debug.Log("state machine wave" + stateMachine.waveParticles.gameObject.transform.position);
         stateMachine.body.velocity = stateMachine.velocity;
-        stateMachine.inputReader.OnJumpPerformed += EvaluateJump;
+
+        stateMachine.inputReader.OnJumpPerformed += Jump;
         stateMachine.animator.CrossFadeInFixedTime(swimBlendTreeHash, crossFadeDuration);
     }
 
@@ -33,6 +36,12 @@ public class PlayerSurfaceSwimState : PlayerBaseState
         CalculateMoveDirection();
         FaceMoveDirection();
         SetPosition();
+        Debug.Log("body position " + stateMachine.body.position.y);
+
+        stateMachine.transform.position = new(stateMachine.transform.position.x, Mathf.Lerp(stateMachine.transform.position.y, stateMachine.bodyOfWaterSurface.Value, Time.deltaTime*100), stateMachine.transform.position.z);
+        stateMachine.waveParticles.transform.position = new(stateMachine.waveParticles.transform.position.x, Mathf.Lerp(stateMachine.waveParticles.transform.position.y, stateMachine.bodyOfWaterSurface.Value + .01f, Time.deltaTime*100), stateMachine.waveParticles.transform.position.z);
+        Debug.Log("state machine wave" + stateMachine.waveParticles.transform.position);
+        Debug.Log("enter state body position " + stateMachine.transform.position.y);
 
         stateMachine.animator.SetFloat(moveSpeedHash, stateMachine.inputReader.movement.sqrMagnitude > 0f ? 1f : 0f, animationDampTime, Time.deltaTime);
         stateMachine.animator.speed = stateMachine.inputReader.movement.sqrMagnitude > 0f ? .5f : .25f;
@@ -96,13 +105,10 @@ public class PlayerSurfaceSwimState : PlayerBaseState
 
         ClearState();
     }
-    void EvaluateJump()
+    void Jump()
     {
-        if (!Swimming)
-        {
-            jumping = true;
-            stateMachine.SwitchState(new PlayerJumpState(stateMachine));
-        }
+        jumping = true;
+        stateMachine.SwitchState(new PlayerJumpState(stateMachine));
     }
 
     public override void Exit()
@@ -111,7 +117,7 @@ public class PlayerSurfaceSwimState : PlayerBaseState
         stateMachine.jumpFromSwim = true;
         stateMachine.contactNormal = stateMachine.upAxis;
         stateMachine.waveParticles.Stop();
-        stateMachine.inputReader.OnJumpPerformed -= EvaluateJump;
+        stateMachine.inputReader.OnJumpPerformed -= Jump;
     }
 
 }
