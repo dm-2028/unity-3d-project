@@ -6,7 +6,7 @@ using UnityEngine;
 public class OrbitCamera : MonoBehaviour
 {
     [SerializeField]
-    Transform focus = default;
+    public Transform focus = default;
 
     [SerializeField, Range(1f, 20f)]
     float distance = 5f;
@@ -37,7 +37,7 @@ public class OrbitCamera : MonoBehaviour
 
     Vector3 focusPoint, previousFocusPoint;
 
-    Vector2 orbitAngles = new(45f, 0f);
+    public Vector2 orbitAngles;
 
     float lastManualRotationTime;
 
@@ -159,6 +159,12 @@ public class OrbitCamera : MonoBehaviour
         {
             focusPoint = targetPoint;
         }
+    }
+
+    public void SetAngle(float x, float y)
+    {
+        orbitAngles = new Vector2(x, y);
+        transform.localRotation = orbitRotation = Quaternion.Euler(orbitAngles);
     }
 
     bool ManualRotation()

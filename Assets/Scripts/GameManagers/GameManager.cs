@@ -22,13 +22,26 @@ public class GameManager : MonoBehaviour
     private bool challengeStarted = false;
     private bool challengeAchieved = false;
 
+    public GameObject playerPrefab;
     // Start is called before the first frame update
     void Start()
     {
         SceneManager.LoadScene("Intro Level", LoadSceneMode.Additive);
         SceneManager.LoadScene("Intro Level Section 1", LoadSceneMode.Additive);
-
         pauseMenu.gameObject.SetActive(false);
+
+        if(MainManager.Instance.playerCheckpointPosition == Vector3.zero || MainManager.Instance.playerCheckpointRotation == new Quaternion(0, 0, 0, 0))
+        {
+            MainManager.Instance.SaveCheckpoint(new Vector3(-321.3381f, -0.35f, 15.29987f), new Quaternion(0, -0.560115397f, 0, 0.828414619f));
+        }
+        Debug.Log("game manager player checkpoint " + MainManager.Instance.playerCheckpointPosition + " " + MainManager.Instance.playerCheckpointRotation);
+        GameObject player = Instantiate(playerPrefab, MainManager.Instance.playerCheckpointPosition, MainManager.Instance.playerCheckpointRotation);
+        //player.transform.rotation = MainManager.Instance.playerCheckpointRotation;
+
+        GameObject mainCamera = GameObject.FindGameObjectWithTag("MainCamera");
+        mainCamera.GetComponent<OrbitCamera>().focus = player.transform;
+        mainCamera.GetComponent<OrbitCamera>().SetAngle(30f, player.transform.rotation.eulerAngles.y-180);
+
         beansText.text = "Beans: " + MainManager.Instance.beans.ToString();
     }
 
@@ -37,10 +50,7 @@ public class GameManager : MonoBehaviour
         IEnumerable<Collectable> collectables = Collectable.FindAll();
 
         Collectable[] collectablesArray = collectables.ToArray();
-        if (MainManager.Instance.coffeeBeanCollected == null || MainManager.Instance.coffeeBeanCollected.Length == 0)
-        {
-            MainManager.Instance.coffeeBeanCollected = new bool[collectablesArray.Length];
-        }
+
         bool[] collected = MainManager.Instance.coffeeBeanCollected;
 
         for (int i = 0, j = 0; j < collectablesArray.Length; j++)
@@ -111,27 +121,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public static void SaveData()
-    {
-        //IEnumerable<Collectable> collectables = Collectable.FindAll();
-
-        //Collectable[] collectablesArray = collectables.ToArray();
-        //for(int i = 0; i < collectablesArray.Length; i++)
-        //{
-        //    Debug.Log("collectable " + collectablesArray[i].serializationId + " " + collectablesArray[i].collected);
-        //}
-        //Debug.Log("lenth " + collectablesArray.Length.ToString());
-        //bool[] asArray = new bool[collectablesArray.Length];
-        //foreach(Collectable collectable in collectablesArray)
-        //{
-        //    Debug.Log("array length " + asArray.Length.ToString());
-        //    Debug.Log("serialization " + collectable.serializationId.ToString());
-        //    asArray[collectable.serializationId] = collectable.collected;
-        //}
-        //MainManager.Instance.coffeeBeanCollected = asArray;
-        MainManager.Instance.SavePlayerInfo();
-
-    }
+  
 
     private void TogglePause()
     {

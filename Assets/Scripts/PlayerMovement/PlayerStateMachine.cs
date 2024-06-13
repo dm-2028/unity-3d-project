@@ -74,7 +74,7 @@ public class PlayerStateMachine : StateMachine, IHitboxResponder
     public float baseAnimationSpeed = 1;
 
     public Transform
-        playerInputSpace = default,
+        playerInputSpace,
         character = default;
 
     public float groundContactCount { get; set; }
@@ -139,6 +139,7 @@ public class PlayerStateMachine : StateMachine, IHitboxResponder
         gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
       
         mainCamera = Camera.main.transform;
+        playerInputSpace = mainCamera.transform;
         inputReader = GetComponent<InputReader>();
         animator = GetComponentInChildren<Animator>();
         splashParticles = GetComponent<ParticleSystem>();
@@ -217,9 +218,14 @@ public class PlayerStateMachine : StateMachine, IHitboxResponder
         Collectable bean = collectable.transform.GetComponent<Collectable>();
         collectable.gameObject.transform.GetChild(0).gameObject.SetActive(false);
         bean.collected = true;
+        String beans = string.Join(", ", MainManager.Instance.coffeeBeanCollected);
+        Debug.Log("beans " + beans);
+        for(int j = 0; j < MainManager.Instance.coffeeBeanCollected.Length; j++)
+        {
+            Debug.Log("bean " + j + ": " + MainManager.Instance.coffeeBeanCollected[j].ToString());
+        }
         MainManager.Instance.coffeeBeanCollected[bean.serializationId] = true;
         gameManager.IncrementBeans();
-        GameManager.SaveData();
     }
 
     public void CollidedWith(Collider collider)

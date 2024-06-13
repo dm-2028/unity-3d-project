@@ -12,6 +12,9 @@ public class MainManager : MonoBehaviour
     public bool[] coffeeBeanCollected;
     public int health = 10;
 
+    public Vector3 playerCheckpointPosition { get; private set; }
+    public Quaternion playerCheckpointRotation { get; private set; }
+
     public static MainManager Instance { get; private set; }
 
     // Start is called before the first frame update
@@ -24,6 +27,7 @@ public class MainManager : MonoBehaviour
         }
         Instance = this;
         DontDestroyOnLoad(gameObject);
+        coffeeBeanCollected = new bool[40];
     }
 
     public void SavePlayerInfo(SaveData data)
@@ -41,7 +45,44 @@ public class MainManager : MonoBehaviour
         data.beans = beans;
         data.saveFileName = saveFileName;
         data.health = health;
+        
+        data.playerPositionX = playerCheckpointPosition.x;
+        data.playerPositionY = playerCheckpointPosition.y;
+        data.playerPositionZ = playerCheckpointPosition.z;
 
+        data.playerRotationX = playerCheckpointRotation.x;
+        data.playerRotationY = playerCheckpointRotation.y;
+        data.playerRotationZ = playerCheckpointRotation.z;
+        data.playerRotationW = playerCheckpointRotation.w;
+
+        SavePlayerInfo(data);
+    }
+    
+    public void SaveCheckpoint(Vector3 position, Quaternion rotation)
+    {
+        Debug.Log("save rotation " + rotation);
+        SaveData data = new();
+        data.coffeeBeanCollected = coffeeBeanCollected;
+        data.beans = beans;
+        data.saveFileName = saveFileName;
+        data.health = health;
+        
+        data.playerPositionX = position.x;
+        data.playerPositionY = position.y;
+        data.playerPositionZ = position.z;
+
+        data.playerRotationX = rotation.x;
+        data.playerRotationY = rotation.y;
+        data.playerRotationZ = rotation.z;
+        data.playerRotationW = rotation.w;
+
+        playerCheckpointPosition = position;
+        playerCheckpointRotation = rotation;
+        Debug.Log("save rotation " + rotation);
+
+        Debug.Log("save player checkpoint rotation " + data.playerRotationX + " + " + data.playerRotationY + " + " + data.playerRotationZ + " + " + data.playerRotationW);
+
+        Debug.Log("save player checkpoint Rtotation quaternion " + playerCheckpointRotation);
         SavePlayerInfo(data);
     }
 
@@ -53,10 +94,8 @@ public class MainManager : MonoBehaviour
         FileInfo[] allFiles = dirInfo.GetFiles("*.json", SearchOption.TopDirectoryOnly);
         FileInfo lastModifiedFile = allFiles.OrderBy(fi => fi.LastWriteTime).LastOrDefault();
 
-        if (File.Exists(lastModifiedFile.FullName)){
-            LoadPlayerInfo(lastModifiedFile.FullName);
+        LoadPlayerInfo(lastModifiedFile.FullName);
 
-        }
     }
 
     public FileInfo[] GetAllFiles()
@@ -77,6 +116,12 @@ public class MainManager : MonoBehaviour
             saveFileName = data.saveFileName;
             coffeeBeanCollected = data.coffeeBeanCollected;
             health = data.health;
+
+            playerCheckpointPosition = new(data.playerPositionX, data.playerPositionY, data.playerPositionZ);
+            playerCheckpointRotation = new Quaternion(data.playerRotationX, data.playerRotationY, data.playerRotationZ, data.playerRotationW);
+            Debug.Log("load player checkpoint rotation " + data.playerRotationX + " + " + data.playerRotationY + " + " + data.playerRotationZ);
+
+            Debug.Log("load player checkpoint Rtotation quaternion " + playerCheckpointRotation);
         }
     }
 }

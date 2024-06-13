@@ -25,7 +25,6 @@ public class CoffeeBean : Collectable
     private void Awake()
     {
         UpdateVisibility();
-        Debug.Log("loading " + serializationId + " " + collected);
     }
 
     void Loaded()
@@ -35,7 +34,6 @@ public class CoffeeBean : Collectable
 
     private void UpdateVisibility()
     {
-        Debug.Log("updating visibility in " + serializationId);
         if (collected)
         {
             transform.GetChild(0).gameObject.SetActive(false);

@@ -72,7 +72,6 @@ public class MenuUIManager : MonoBehaviour
         enterPressed = Input.GetButtonDown("Jump");
         if (enterPressed)
         {
-            Debug.Log("enter pressed");
             if (mainMenu.activeInHierarchy)
             {
                 buttons[selectionIndex].onClick.Invoke();
@@ -109,7 +108,6 @@ public class MenuUIManager : MonoBehaviour
         }
 
 
-        Debug.Log("vertical " + Input.GetAxis("Vertical") + " horizontal " + Input.GetAxis("Horizontal"));
         if (mainMenu.activeInHierarchy)
         {
             bool indexChanged = false;
@@ -265,7 +263,6 @@ public class MenuUIManager : MonoBehaviour
 
     public void AddLetter(string letter)
     {
-        Debug.Log("Add Letter " + letter);
         nameString += letter;
         nameText.text = nameString;
     }

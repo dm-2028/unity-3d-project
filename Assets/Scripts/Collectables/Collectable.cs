@@ -12,11 +12,6 @@ public abstract class Collectable : MonoBehaviour
     public static IEnumerable<Collectable> FindAll()
     {
         GameObject[] objects = GameObject.FindGameObjectsWithTag(Tag);
-        for(int i = 0; i < objects.Length; i++)
-        {
-            Debug.Log(i + " " + objects[i].transform.GetComponent<Collectable>().serializationId);
-             
-        }
 
         return objects
             .Select(o => o.transform.GetComponent<Collectable>())
