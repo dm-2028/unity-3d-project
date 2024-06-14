@@ -18,11 +18,13 @@ public class GameManager : MonoBehaviour
 
     public Slider healthBar;
 
-    private bool gamePaused = false;
+    public bool gamePaused = false;
     private bool challengeStarted = false;
     private bool challengeAchieved = false;
 
     public GameObject playerPrefab;
+
+    private GameObject _player;
     // Start is called before the first frame update
     void Start()
     {
@@ -35,12 +37,12 @@ public class GameManager : MonoBehaviour
             MainManager.Instance.SaveCheckpoint(new Vector3(-321.3381f, -0.35f, 15.29987f), new Quaternion(0, -0.560115397f, 0, 0.828414619f));
         }
         Debug.Log("game manager player checkpoint " + MainManager.Instance.playerCheckpointPosition + " " + MainManager.Instance.playerCheckpointRotation);
-        GameObject player = Instantiate(playerPrefab, MainManager.Instance.playerCheckpointPosition, MainManager.Instance.playerCheckpointRotation);
+        _player = Instantiate(playerPrefab, MainManager.Instance.playerCheckpointPosition, MainManager.Instance.playerCheckpointRotation);
         //player.transform.rotation = MainManager.Instance.playerCheckpointRotation;
 
         GameObject mainCamera = GameObject.FindGameObjectWithTag("MainCamera");
-        mainCamera.GetComponent<OrbitCamera>().focus = player.transform;
-        mainCamera.GetComponent<OrbitCamera>().SetAngle(30f, player.transform.rotation.eulerAngles.y-180);
+        mainCamera.GetComponent<OrbitCamera>().focus = _player.transform;
+        mainCamera.GetComponent<OrbitCamera>().SetAngle(30f, _player.transform.rotation.eulerAngles.y-180);
 
         beansText.text = "Beans: " + MainManager.Instance.beans.ToString();
     }
@@ -125,25 +127,28 @@ public class GameManager : MonoBehaviour
 
     private void TogglePause()
     {
+        Debug.Log("game paused " + gamePaused);
         if (!gamePaused)
         {
+            GameObject.FindGameObjectWithTag("Menu").GetComponent<MainUIManager>().PauseGame();
             gamePaused = true;
-            pauseMenu.gameObject.SetActive(true);
-            Time.timeScale = 0;
         }
         else
         {
+            GameObject.FindGameObjectWithTag("Menu").GetComponent<MainUIManager>().UnPauseGame();
             gamePaused = false;
-            pauseMenu.gameObject.SetActive(false);
-            Time.timeScale = 1;
         }
     }
 
     public void UpdateHealth(int health)
     {
         healthBar.value = health;
-        //MainManager.Instance.health = health;
-        //MainManager.Instance.SavePlayerInfo();
+        MainManager.Instance.health = health;
+        if(health <= 0)
+        {
+            Destroy(_player);
+            GameObject.FindGameObjectWithTag("Menu").GetComponent<MainUIManager>().GameOver();
+        }
     }
 
     public void IncrementBeans()

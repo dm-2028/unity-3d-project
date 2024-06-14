@@ -111,6 +111,7 @@ public class PlayerStateMachine : StateMachine, IHitboxResponder
 
     public bool jumpFromSwim { get; set; }
     public bool isGrounded { get; set; }
+    public bool returnFromPause { get; set; } = false;
 
     public Rigidbody connectedBody { get; set; }
     public Rigidbody previousConnectedBody { get; set; }

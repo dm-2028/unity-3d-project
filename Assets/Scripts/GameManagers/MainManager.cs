@@ -78,11 +78,7 @@ public class MainManager : MonoBehaviour
 
         playerCheckpointPosition = position;
         playerCheckpointRotation = rotation;
-        Debug.Log("save rotation " + rotation);
 
-        Debug.Log("save player checkpoint rotation " + data.playerRotationX + " + " + data.playerRotationY + " + " + data.playerRotationZ + " + " + data.playerRotationW);
-
-        Debug.Log("save player checkpoint Rtotation quaternion " + playerCheckpointRotation);
         SavePlayerInfo(data);
     }
 

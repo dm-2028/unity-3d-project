@@ -25,6 +25,7 @@ public class NpcStateMachine : StateMachine
         talkIcon.SetActive(false);
 
         mainCamera = GameObject.FindGameObjectWithTag("MainCamera");
+        player = GameObject.FindGameObjectWithTag("Player");
 
         animator = GetComponentInChildren<Animator>();
         SwitchState(new NpcIdleState(this));

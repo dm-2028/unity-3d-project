@@ -373,9 +373,16 @@ public abstract class PlayerBaseState : State
 
     protected void CheckDoubleJump()
     {
-        if (stateMachine.maxAirJumps > 0 && stateMachine.jumpPhase <= stateMachine.maxAirJumps)
+        if (!stateMachine.returnFromPause)
         {
-            stateMachine.SwitchState(new PlayerJumpState(stateMachine));
+            if (stateMachine.maxAirJumps > 0 && stateMachine.jumpPhase <= stateMachine.maxAirJumps)
+            {
+                stateMachine.SwitchState(new PlayerJumpState(stateMachine));
+            }
+        }
+        else
+        {
+            stateMachine.returnFromPause = false;
         }
     }
     protected void SetPosition()
@@ -389,15 +396,22 @@ public abstract class PlayerBaseState : State
 
     protected void SwitchToJumpState()
     {
-        Debug.Log("Switch to jump state");
-        if (stateMachine.nearbyNPC != null)
+        if (!stateMachine.returnFromPause)
         {
-            stateMachine.SwitchState(new PlayerTalkState(stateMachine));
+            Debug.Log("Switch to jump state");
+            if (stateMachine.nearbyNPC != null)
+            {
+                stateMachine.SwitchState(new PlayerTalkState(stateMachine));
+            }
+            else
+            {
+                jumping = true;
+                stateMachine.SwitchState(new PlayerJumpState(stateMachine));
+            }
         }
         else
         {
-            jumping = true;
-            stateMachine.SwitchState(new PlayerJumpState(stateMachine));
+            stateMachine.returnFromPause = false;
         }
     }
 
