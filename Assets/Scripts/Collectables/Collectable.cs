@@ -6,12 +6,9 @@ using System;
 [Serializable]
 public abstract class Collectable : MonoBehaviour
 {
-
-    public const string Tag  = "Collectable";
-
-    public static IEnumerable<Collectable> FindAll()
+    public static IEnumerable<Collectable> FindAll(string tag)
     {
-        GameObject[] objects = GameObject.FindGameObjectsWithTag(Tag);
+        GameObject[] objects = GameObject.FindGameObjectsWithTag(tag);
 
         return objects
             .Select(o => o.transform.GetComponent<Collectable>())

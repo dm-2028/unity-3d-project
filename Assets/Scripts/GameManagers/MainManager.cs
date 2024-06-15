@@ -10,10 +10,17 @@ public class MainManager : MonoBehaviour
     public int beans;
     public string saveFileName;
     public bool[] coffeeBeanCollected;
+    public bool[][] partialFruitCollected;
+    public bool[] fruitCollected;
+
+    public bool[] cutsceneTriggered;
     public int health = 10;
 
     public Vector3 playerCheckpointPosition { get; private set; }
     public Quaternion playerCheckpointRotation { get; private set; }
+
+    public Vector3 playerLevelPosition { get; private set; }
+    public Quaternion playerLevelRotation { get; private set; }
 
     public static MainManager Instance { get; private set; }
 
@@ -40,8 +47,12 @@ public class MainManager : MonoBehaviour
     public void SavePlayerInfo()
     {
         SaveData data = new();
-        Debug.Log("Collectibles " + coffeeBeanCollected);
         data.coffeeBeanCollected = coffeeBeanCollected;
+        data.partialFruitCollected = partialFruitCollected;
+        data.fruitCollected = fruitCollected;
+
+        data.cutsceneTriggered = cutsceneTriggered;
+
         data.beans = beans;
         data.saveFileName = saveFileName;
         data.health = health;
@@ -54,6 +65,15 @@ public class MainManager : MonoBehaviour
         data.playerRotationY = playerCheckpointRotation.y;
         data.playerRotationZ = playerCheckpointRotation.z;
         data.playerRotationW = playerCheckpointRotation.w;
+
+        data.levelPositionX = playerLevelPosition.x;
+        data.levelPositionY = playerLevelPosition.y;
+        data.levelPositionZ = playerLevelPosition.z;
+
+        data.levelRotationX = playerLevelRotation.x;
+        data.levelRotationY = playerLevelRotation.y;
+        data.levelRotationZ = playerLevelRotation.z;
+        data.levelRotationW = playerLevelRotation.w;
 
         SavePlayerInfo(data);
     }
@@ -75,6 +95,15 @@ public class MainManager : MonoBehaviour
         data.playerRotationY = rotation.y;
         data.playerRotationZ = rotation.z;
         data.playerRotationW = rotation.w;
+
+        data.levelPositionX = playerLevelPosition.x;
+        data.levelPositionY = playerLevelPosition.y;
+        data.levelPositionZ = playerLevelPosition.z;
+
+        data.levelRotationX = playerLevelRotation.x;
+        data.levelRotationY = playerLevelRotation.y;
+        data.levelRotationZ = playerLevelRotation.z;
+        data.levelRotationW = playerLevelRotation.w;
 
         playerCheckpointPosition = position;
         playerCheckpointRotation = rotation;
@@ -111,13 +140,18 @@ public class MainManager : MonoBehaviour
             beans = data.beans;
             saveFileName = data.saveFileName;
             coffeeBeanCollected = data.coffeeBeanCollected;
+            partialFruitCollected = data.partialFruitCollected;
+            fruitCollected = data.fruitCollected;
+
+            cutsceneTriggered = data.cutsceneTriggered;
+
             health = data.health;
 
             playerCheckpointPosition = new(data.playerPositionX, data.playerPositionY, data.playerPositionZ);
             playerCheckpointRotation = new Quaternion(data.playerRotationX, data.playerRotationY, data.playerRotationZ, data.playerRotationW);
-            Debug.Log("load player checkpoint rotation " + data.playerRotationX + " + " + data.playerRotationY + " + " + data.playerRotationZ);
 
-            Debug.Log("load player checkpoint Rtotation quaternion " + playerCheckpointRotation);
+            playerLevelPosition = new(data.levelPositionX, data.levelPositionY, data.levelPositionZ);
+            playerLevelRotation = new Quaternion(data.levelRotationX, data.levelRotationY, data.levelRotationZ, data.levelRotationW);
         }
     }
 }

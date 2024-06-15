@@ -178,10 +178,10 @@ public class MainUIManager : MonoBehaviour
 
     private void GetNextDialog()
     {
-        string nextDialog = currentDialog.GetNextDialog();
+        Dialog nextDialog = currentDialog.GetNextDialog();
         if (nextDialog != null)
         {
-            dialogUI.ShowText(nextDialog, true);
+            dialogUI.ShowText(nextDialog.dialogText, true);
         }
         else
         {

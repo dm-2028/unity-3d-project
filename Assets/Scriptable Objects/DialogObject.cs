@@ -6,14 +6,14 @@ using UnityEngine.Events;
 [CreateAssetMenu(fileName = "Dialog Object", menuName = "Dialog System")]
 public class DialogObject : ScriptableObject
 {
-    public List<string> DialogText;
+    public List<Dialog> DialogText;
 
     public bool IsLoopable;
     public bool IsOrdered;
 
     protected string _dialogID;
     protected bool _hasCompleted;
-    protected Queue<string> _orderedDialog;
+    protected Queue<Dialog> _orderedDialog;
     protected bool[] _readHistory;
 
     public bool HasNext()
@@ -24,7 +24,7 @@ public class DialogObject : ScriptableObject
         }
         return false;
     }
-    public string GetNextDialog()
+    public Dialog GetNextDialog()
     {
         if (IsOrdered)
         {
@@ -64,10 +64,18 @@ public class DialogObject : ScriptableObject
 
     private void BuildTextQueue()
     {
-        _orderedDialog = new Queue<string>();
+        _orderedDialog = new Queue<Dialog>();
         for(int i = 0; i < DialogText.Count; i++)
         {
             _orderedDialog.Enqueue(DialogText[i]);
         }
     }
+}
+
+[System.Serializable]
+public class Dialog
+{
+    public string dialogText;
+    public Vector2 cameraRotation;
+    public Vector3 cameraFocusPosition;
 }

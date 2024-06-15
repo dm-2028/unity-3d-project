@@ -49,11 +49,17 @@ public class GameManager : MonoBehaviour
 
     public void SetCollectibles()
     {
-        IEnumerable<Collectable> collectables = Collectable.FindAll();
+        _SetCollectibles(CoffeeBean.Tag, MainManager.Instance.coffeeBeanCollected);
+        Debug.Log("finished setting collectables ");
+    }
+
+    private void _SetCollectibles(string tag, bool[] _collectables)
+    {
+        IEnumerable<Collectable> collectables = Collectable.FindAll(tag);
 
         Collectable[] collectablesArray = collectables.ToArray();
 
-        bool[] collected = MainManager.Instance.coffeeBeanCollected;
+        bool[] collected = _collectables;
 
         for (int i = 0, j = 0; j < collectablesArray.Length; j++)
         {
@@ -69,7 +75,6 @@ public class GameManager : MonoBehaviour
             collectable.collected = collected[i];
             collectable.gameObject.transform.GetChild(0).gameObject.SetActive(!collectable.collected);
         }
-        Debug.Log("finished setting collectables ");
     }
     // Update is called once per frame
     void Update()

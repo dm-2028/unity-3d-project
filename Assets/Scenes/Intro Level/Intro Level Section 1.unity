@@ -2053,7 +2053,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh32134200
+  m_Name: pb_Mesh131640
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -9666,17 +9666,9 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1529369432}
     m_Modifications:
-    - target: {fileID: 787789734942620591, guid: 4ccc13e157fc09d4ab11b095edb15427, type: 3}
-      propertyPath: serializationId
-      value: 17
-      objectReference: {fileID: 0}
     - target: {fileID: 5818710788144046920, guid: 4ccc13e157fc09d4ab11b095edb15427, type: 3}
       propertyPath: m_Name
       value: Coffee Bean (27)
-      objectReference: {fileID: 0}
-    - target: {fileID: 5818710788144046920, guid: 4ccc13e157fc09d4ab11b095edb15427, type: 3}
-      propertyPath: m_IsActive
-      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5818710788144046927, guid: 4ccc13e157fc09d4ab11b095edb15427, type: 3}
       propertyPath: m_RootOrder

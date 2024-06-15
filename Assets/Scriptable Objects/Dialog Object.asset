@@ -13,8 +13,20 @@ MonoBehaviour:
   m_Name: Dialog Object
   m_EditorClassIdentifier: 
   DialogText:
-  - Hey there!
-  - In order to jump press space bar/A
-  - That's a coffee bean, they're fun to collect!
+  - dialogText: Hey!
+    cameraRotation: {x: 0, y: 0}
+    cameraFocusPosition: {x: 0, y: 0, z: 0}
+  - dialogText: I think there's something going on at the village.
+    cameraRotation: {x: 0, y: 0}
+    cameraFocusPosition: {x: 0, y: 0, z: 0}
+  - dialogText: You know the way, right? just follow the path.
+    cameraRotation: {x: 0, y: 0}
+    cameraFocusPosition: {x: 0, y: 0, z: 0}
+  - dialogText: Remember you can jump with A or Spacebar!
+    cameraRotation: {x: 0, y: 0}
+    cameraFocusPosition: {x: 0, y: 0, z: 0}
+  - dialogText: Oh, and you might want to pick these beans up along the way.
+    cameraRotation: {x: 0, y: 0}
+    cameraFocusPosition: {x: 0, y: 0, z: 0}
   IsLoopable: 0
   IsOrdered: 1

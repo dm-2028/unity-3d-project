@@ -12,9 +12,8 @@ public class CustomCollectibleEditor : Editor
 
     private static int FindNextId()
     {
-        var collectables = Collectable.FindAll();
+        var collectables = Collectable.FindAll(CoffeeBean.Tag);
         var last = collectables.LastOrDefault();
-        Debug.Log("last " + last);
         var nextId = last == null ? 0 : last.serializationId + 1;
 
         var exists = new HashSet<int>(collectables.Select(o => o.serializationId));
@@ -37,7 +36,6 @@ public class CustomCollectibleEditor : Editor
         if(!isPrefab && collectable.serializationId == -1)
         {
             collectable.serializationId = FindNextId();
-            collectable.gameObject.tag = Collectable.Tag;
             _serializationId.intValue = collectable.serializationId;
             EditorUtility.SetDirty(target);
         }

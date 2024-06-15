@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 787789734942620591}
   m_Layer: 0
   m_Name: Coffee Bean
-  m_TagString: Collectable
+  m_TagString: CoffeeBean
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -45,7 +45,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d1571f0703df52045b5ebfa80bf5409f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  serializationId: -1
+  serializationId: 17
   collected: 0
 --- !u!1001 &5818710788262016402
 PrefabInstance:
