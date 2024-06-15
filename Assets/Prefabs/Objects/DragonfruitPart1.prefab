@@ -87,6 +87,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: dragonfruit_part_1
       objectReference: {fileID: 0}
+    - target: {fileID: 8290915589395374339, guid: 8d91a32fd823ecb4f980c2542d044215, type: 3}
+      propertyPath: speed
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 8290915589395374339, guid: 8d91a32fd823ecb4f980c2542d044215, type: 3}
+      propertyPath: floatHeight
+      value: 0.05
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8d91a32fd823ecb4f980c2542d044215, type: 3}
 --- !u!4 &6192890353012101108 stripped

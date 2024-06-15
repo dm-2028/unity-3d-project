@@ -750,7 +750,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 6
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &118801501 stripped
 Transform:
@@ -10079,3 +10079,64 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 39dffaeccc057c64597f4ca81c69f1c5, type: 3}
+--- !u!1001 &8240099249085669194
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 5319235227832328496, guid: c6c261c5d197a1a4e8cda9ac1df06d43, type: 3}
+      propertyPath: m_RootOrder
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 8240099248634469587, guid: c6c261c5d197a1a4e8cda9ac1df06d43, type: 3}
+      propertyPath: m_RootOrder
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 8240099248634469587, guid: c6c261c5d197a1a4e8cda9ac1df06d43, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -269.86
+      objectReference: {fileID: 0}
+    - target: {fileID: 8240099248634469587, guid: c6c261c5d197a1a4e8cda9ac1df06d43, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 5.96
+      objectReference: {fileID: 0}
+    - target: {fileID: 8240099248634469587, guid: c6c261c5d197a1a4e8cda9ac1df06d43, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -21.49
+      objectReference: {fileID: 0}
+    - target: {fileID: 8240099248634469587, guid: c6c261c5d197a1a4e8cda9ac1df06d43, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.9972232
+      objectReference: {fileID: 0}
+    - target: {fileID: 8240099248634469587, guid: c6c261c5d197a1a4e8cda9ac1df06d43, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8240099248634469587, guid: c6c261c5d197a1a4e8cda9ac1df06d43, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0.07447131
+      objectReference: {fileID: 0}
+    - target: {fileID: 8240099248634469587, guid: c6c261c5d197a1a4e8cda9ac1df06d43, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8240099248634469587, guid: c6c261c5d197a1a4e8cda9ac1df06d43, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8240099248634469587, guid: c6c261c5d197a1a4e8cda9ac1df06d43, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: -8.542
+      objectReference: {fileID: 0}
+    - target: {fileID: 8240099248634469587, guid: c6c261c5d197a1a4e8cda9ac1df06d43, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8240099248634469597, guid: c6c261c5d197a1a4e8cda9ac1df06d43, type: 3}
+      propertyPath: m_Name
+      value: DragonfruitPart1
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: c6c261c5d197a1a4e8cda9ac1df06d43, type: 3}
