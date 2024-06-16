@@ -15,6 +15,7 @@ public class PartialDragonFruit : Collectable
 
     [SerializeField]
     float floatHeight, speed;
+    public bool beingPulled { get; set; } = false;
 
     private void Start()
     {
@@ -27,10 +28,12 @@ public class PartialDragonFruit : Collectable
         {
             var newRotation = Quaternion.Euler(0.0f, transform.rotation.eulerAngles.y + 60.0f, 0.0f);
             transform.rotation = Quaternion.Lerp(transform.rotation, newRotation, Time.deltaTime);
-
-            var pos = transform.position;
-            var newY = yPos + floatHeight * Mathf.Sin(Time.time * speed);
-            transform.position = new Vector3(pos.x, newY, pos.z);
+            if (!beingPulled)
+            {
+                var pos = transform.position;
+                var newY = yPos + floatHeight * Mathf.Sin(Time.time * speed);
+                transform.position = new Vector3(pos.x, newY, pos.z);
+            }
         }
     }
 

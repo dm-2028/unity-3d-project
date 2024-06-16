@@ -9654,6 +9654,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: DragonfruitPart2
       objectReference: {fileID: 0}
+    - target: {fileID: 943492638156991939, guid: 45527f73af2c3204a812b70582208341, type: 3}
+      propertyPath: m_TagString
+      value: PartialDragonFruit
+      objectReference: {fileID: 0}
     - target: {fileID: 5654367900422273686, guid: 45527f73af2c3204a812b70582208341, type: 3}
       propertyPath: m_RootOrder
       value: 2
@@ -9713,7 +9717,7 @@ CapsuleCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 160964768101912926}
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_Enabled: 1
   m_Radius: 5.7
   m_Height: 20.25

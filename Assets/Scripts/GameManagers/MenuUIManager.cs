@@ -40,9 +40,9 @@ public class MenuUIManager : MonoBehaviour
     private bool verticalAxisDown = false, horizontalAxisDown = false;
     private float previousVerticalAxis = 0, previousHorizontalAxis = 0;
    
-
     Vector2 scrollBasePosition;
 
+    private InputReader inputReader;
 
     // Start is called before the first frame update
     void Start()
@@ -61,6 +61,9 @@ public class MenuUIManager : MonoBehaviour
         buttons[selectionIndex].Select();
         buttons[selectionIndex].GetComponentInChildren<TextMeshProUGUI>().color = Color.red;
         scrollBasePosition = ((RectTransform)scrollContent.transform).anchoredPosition;
+
+        inputReader = GetComponent<InputReader>();
+        inputReader.OnJumpPerformed += SelectButton;
         files = MainManager.Instance.GetAllFiles();
     }
 
@@ -69,23 +72,7 @@ public class MenuUIManager : MonoBehaviour
     {
         float directionVertical = 0, directionHorizontal = 0;
 
-        enterPressed = Input.GetButtonDown("Jump");
-        if (enterPressed)
-        {
-            if (mainMenu.activeInHierarchy)
-            {
-                buttons[selectionIndex].onClick.Invoke();
-            }
-            else if (enterName.activeInHierarchy)
-            {
-                keyboard[rowIndex][keyIndex].onClick.Invoke();
-            }else if (saveList.activeInHierarchy)
-            {
-                saveFileButtons[saveSelectionIndex].onClick.Invoke();
-            }
-            enterPressed = false;
-            return;
-        }
+
         float verticalAxis = Input.GetAxis("Vertical");
         float horizontalAxis = Input.GetAxis("Horizontal");
 
@@ -230,6 +217,10 @@ public class MenuUIManager : MonoBehaviour
 
 
     }
+    private void OnDestroy()
+    {
+        inputReader.OnJumpPerformed -= SelectButton;
+    }
 
     public void StartGame()
     {
@@ -253,6 +244,22 @@ public class MenuUIManager : MonoBehaviour
         mainMenu.SetActive(false);
         saveList.SetActive(true);
         BuildLoadMenu();
+    }
+
+    void SelectButton()
+    {
+        if (mainMenu.activeInHierarchy)
+        {
+            buttons[selectionIndex].onClick.Invoke();
+        }
+        else if (enterName.activeInHierarchy)
+        {
+            keyboard[rowIndex][keyIndex].onClick.Invoke();
+        }
+        else if (saveList.activeInHierarchy)
+        {
+            saveFileButtons[saveSelectionIndex].onClick.Invoke();
+        }
     }
 
     public void LoadSelectedFile(string path)

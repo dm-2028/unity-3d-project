@@ -30,9 +30,9 @@ public class CustomCollectibleEditor : Editor
         var collectable = (Collectable)target;
         var isPrefab = PrefabUtility.GetCorrespondingObjectFromSource(collectable.gameObject) == null;
         LayerMask layerMask = -1;
-        if(Physics.Raycast(collectable.transform.position, Vector3.down, out RaycastHit hit, 2f, layerMask, QueryTriggerInteraction.Ignore)){
-            collectable.transform.position = new(collectable.transform.position.x, hit.point.y + .5f, collectable.transform.position.z);
-        }
+        //if(Physics.Raycast(collectable.transform.position, Vector3.down, out RaycastHit hit, 2f, layerMask, QueryTriggerInteraction.Ignore)){
+        //    collectable.transform.position = new(collectable.transform.position.x, hit.point.y + .5f, collectable.transform.position.z);
+        //}
         if(!isPrefab && collectable.serializationId == -1)
         {
             collectable.serializationId = FindNextId();

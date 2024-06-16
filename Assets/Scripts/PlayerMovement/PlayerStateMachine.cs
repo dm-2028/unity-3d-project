@@ -187,8 +187,11 @@ public class PlayerStateMachine : StateMachine, IHitboxResponder
     private void OnTriggerEnter(Collider other)
     {
 
-
-        if (other.transform.parent.tag == ("Collectable"))
+        if(other.transform.tag == "PartialDragonFruit")
+        {
+            StartCoroutine(PullDragonFruit(other.transform.gameObject));
+        }
+        else if (other.transform.parent.tag == "CoffeeBean")
         {
             StartCoroutine(PullCollectable(other.transform.parent.gameObject));
         }
@@ -204,22 +207,45 @@ public class PlayerStateMachine : StateMachine, IHitboxResponder
         ((PlayerBaseState)currentState)?.EvaluateSubmergence(other);
     }
 
-    IEnumerator PullCollectable(GameObject collectable)
+    IEnumerator PullDragonFruit(GameObject collectable)
     {
         Debug.Log("start coroutine");
         float i = 0f;
         float rate = 1.0f / 3.0f;
+        PartialDragonFruit fruit = collectable.GetComponentInChildren<PartialDragonFruit>();
+        fruit.beingPulled = true;
+        Vector3 midpoint = (collectable.transform.position + transform.position) / 2 + new Vector3(0, 1.0f, 0);
+        Vector3 startPostion = collectable.transform.position;
+        while (transform.position != collectable.transform.position)
+        {
+            i += Time.deltaTime * rate;
+            Debug.Log("i is " + i);
+            Vector3 m1 = Vector3.Lerp(startPostion, midpoint, i);
+            Vector3 m2 = Vector3.Lerp(midpoint, transform.position, i);
+            collectable.transform.position = Vector3.Lerp(m1, m2, i);
+            Debug.Log(midpoint + " and" + m1 + "and " + m2);
+
+            yield return null;
+        }
+    }
+
+    IEnumerator PullCollectable(GameObject collectable)
+    {
+        Debug.Log("start coroutine");
+        float i = 0f;
+        float rate = 1.0f / 300.0f;
 
         while (transform.position != collectable.transform.position)
         {
-            i += Time.deltaTime / rate;
+            i += Time.deltaTime * rate;
+            Debug.Log("i is " + i);
             collectable.transform.position = Vector3.Lerp(collectable.transform.position, transform.position, i);
             yield return null;
         }
         Collectable bean = collectable.transform.GetComponent<Collectable>();
         collectable.gameObject.transform.GetChild(0).gameObject.SetActive(false);
         bean.collected = true;
-        String beans = string.Join(", ", MainManager.Instance.coffeeBeanCollected);
+        string beans = string.Join(", ", MainManager.Instance.coffeeBeanCollected);
         Debug.Log("beans " + beans);
         for(int j = 0; j < MainManager.Instance.coffeeBeanCollected.Length; j++)
         {
