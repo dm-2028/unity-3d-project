@@ -15,6 +15,8 @@ public class RotateWheel : MonoBehaviour
     bool backAndForth = false;
     [SerializeField]
     float maxAngle = 180f;
+    [SerializeField]
+    float factor = 5f;
 
     bool reversing = false;
 
@@ -35,5 +37,58 @@ public class RotateWheel : MonoBehaviour
             reversing = !reversing;
         }
         transform.Rotate(axis, rotationSpeed * Time.deltaTime * (reverse ? -1 : 1) * (reversing ? 1 : -1));
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if(collision.gameObject.CompareTag("Player"))
+        {
+
+            EvaluateCollision(collision);
+
+        }
+    }
+
+    private void OnCollisionStay(Collision collision)
+    {
+        if (collision.gameObject.CompareTag("Player"))
+        {
+
+            EvaluateCollision(collision);
+
+        }
+    }
+    private void OnCollisionExit(Collision collision)
+    {
+        if (collision.gameObject.CompareTag("Player"))
+        {
+
+            var player = collision.gameObject.GetComponent<PlayerStateMachine>();
+            player.body.velocity = new Vector3(0f, 0f, 0f);
+            player.velocity = player.body.velocity;
+        }
+    }
+
+    void EvaluateCollision(Collision collision)
+    {
+        Debug.Log("evaluating collision");
+        var player = collision.gameObject.GetComponent<PlayerStateMachine>();
+
+
+        
+        if (player.submergence >= player.swimThreshold)
+        {
+            Vector3 direction = collision.transform.position - transform.position;
+            Debug.Log("direction before " + direction);
+            direction = transform.InverseTransformDirection(direction);
+
+            Vector3 xDirection = new Vector3(direction.x, 0f, 0f);
+
+            xDirection = transform.TransformDirection(xDirection);
+            xDirection.Normalize();
+
+            player.body.velocity += xDirection*factor;
+            player.velocity = player.body.velocity;
+        }
     }
 }

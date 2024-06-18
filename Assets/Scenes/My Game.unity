@@ -2247,7 +2247,7 @@ MonoBehaviour:
   upAlignmentSpeed: 360
   obstructionMask:
     serializedVersion: 2
-    m_Bits: 3135
+    m_Bits: 3133
   orbitAngles: {x: 0, y: 0}
 --- !u!114 &963194230
 MonoBehaviour:
@@ -3417,15 +3417,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2389992658095732611, guid: 94a401645e5ee5241b185fe1072ff13d, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -271.29
+      value: -234.4
       objectReference: {fileID: 0}
     - target: {fileID: 2389992658095732611, guid: 94a401645e5ee5241b185fe1072ff13d, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 4.96
+      value: 12.41
       objectReference: {fileID: 0}
     - target: {fileID: 2389992658095732611, guid: 94a401645e5ee5241b185fe1072ff13d, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -22.76
+      value: -10.4
       objectReference: {fileID: 0}
     - target: {fileID: 2389992658095732611, guid: 94a401645e5ee5241b185fe1072ff13d, type: 3}
       propertyPath: m_LocalRotation.w
@@ -3461,7 +3461,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7568703474669444069, guid: 94a401645e5ee5241b185fe1072ff13d, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 94a401645e5ee5241b185fe1072ff13d, type: 3}

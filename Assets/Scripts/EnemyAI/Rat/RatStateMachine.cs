@@ -19,7 +19,7 @@ public class RatStateMachine : EnemyStateMachine, IHitboxResponder
         hitbox = GetComponentInChildren<HitBox>();
         hitbox.UseResponder(this);
 
-        SwitchState(new RatWanderState(this));
+        SwitchState(new RatPursueState(this));
     }
 
     public override void ReceiveDamage(int damage)

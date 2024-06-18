@@ -122,7 +122,7 @@ NavMeshSettings:
     preserveTilesOutsideBounds: 0
     debug:
       m_Flags: 0
-  m_NavMeshData: {fileID: 0}
+  m_NavMeshData: {fileID: 23800000, guid: d1338f43b8cf07a4db3024e0703d8cdc, type: 2}
 --- !u!1001 &46997722
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -9689,9 +9689,17 @@ PrefabInstance:
       propertyPath: m_TagString
       value: PartialDragonFruit
       objectReference: {fileID: 0}
+    - target: {fileID: 1408467230165579378, guid: 45527f73af2c3204a812b70582208341, type: 3}
+      propertyPath: levelId
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1408467230165579378, guid: 45527f73af2c3204a812b70582208341, type: 3}
+      propertyPath: serializationId
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4590099159607224247, guid: 45527f73af2c3204a812b70582208341, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.22535992
+      value: -0.73484135
       objectReference: {fileID: 0}
     - target: {fileID: 5654367900422273686, guid: 45527f73af2c3204a812b70582208341, type: 3}
       propertyPath: m_RootOrder
