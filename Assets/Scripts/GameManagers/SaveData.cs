@@ -1,18 +1,14 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
 [System.Serializable]
 public class SaveData
 {
     public string saveFileName;
     public int beans;
-    public bool[] coffeeBeanCollected;
-    public bool[][] partialFruitCollected;
-    public bool[] fruitCollected;
 
-    public bool[] cutsceneTriggered;
+    public LevelData[] levelData;
+
     public int health;
+
+    public int currentLevelIndex;
 
     public float playerPositionX;
     public float playerPositionY;

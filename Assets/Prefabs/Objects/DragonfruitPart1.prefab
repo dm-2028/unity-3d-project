@@ -9,9 +9,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8240099248634469587}
+  - component: {fileID: 5756238172154171882}
   m_Layer: 0
   m_Name: DragonfruitPart1
-  m_TagString: PartialDragonFruit
+  m_TagString: Collectable
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -24,7 +25,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8240099248634469597}
   m_LocalRotation: {x: -0, y: -0.07447131, z: -0, w: 0.9972232}
-  m_LocalPosition: {x: -269.86, y: 5.96, z: -21.49}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -32,6 +33,20 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: -8.542, z: 0}
+--- !u!136 &5756238172154171882
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8240099248634469597}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  m_Radius: 3.44
+  m_Height: 19.52
+  m_Direction: 2
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1001 &1610221139038205665
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -49,7 +64,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4875489020446554389, guid: 8d91a32fd823ecb4f980c2542d044215, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -1.0909805
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4875489020446554389, guid: 8d91a32fd823ecb4f980c2542d044215, type: 3}
       propertyPath: m_LocalPosition.z
@@ -61,15 +76,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4875489020446554389, guid: 8d91a32fd823ecb4f980c2542d044215, type: 3}
       propertyPath: m_LocalRotation.x
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4875489020446554389, guid: 8d91a32fd823ecb4f980c2542d044215, type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4875489020446554389, guid: 8d91a32fd823ecb4f980c2542d044215, type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4875489020446554389, guid: 8d91a32fd823ecb4f980c2542d044215, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -94,6 +109,14 @@ PrefabInstance:
     - target: {fileID: 8290915589395374339, guid: 8d91a32fd823ecb4f980c2542d044215, type: 3}
       propertyPath: floatHeight
       value: 0.05
+      objectReference: {fileID: 0}
+    - target: {fileID: 8290915589395374339, guid: 8d91a32fd823ecb4f980c2542d044215, type: 3}
+      propertyPath: pieceNumber
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8290915589395374339, guid: 8d91a32fd823ecb4f980c2542d044215, type: 3}
+      propertyPath: serializationId
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8d91a32fd823ecb4f980c2542d044215, type: 3}

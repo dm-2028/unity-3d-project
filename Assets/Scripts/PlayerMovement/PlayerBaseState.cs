@@ -277,7 +277,7 @@ public abstract class PlayerBaseState : State
             Debug.Log("layer is pit layer");
             stateMachine.transform.position = stateMachine.lastGroundPosition;
             stateMachine.body.velocity = new(0f, 0f, 0f);
-            stateMachine.DecrementHealth(1);
+            stateMachine.ReceiveDamage(1);
             return;
         }
         else if ((stateMachine.waterMask & (1 << other.gameObject.layer)) != 0)

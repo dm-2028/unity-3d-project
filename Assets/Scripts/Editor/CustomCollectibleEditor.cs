@@ -8,11 +8,11 @@ using UnityEngine;
 [CanEditMultipleObjects]
 public class CustomCollectibleEditor : Editor
 {
-    private SerializedProperty _serializationId;
+    //private SerializedProperty _serializationId;
 
     private static int FindNextId()
     {
-        var collectables = Collectable.FindAll(CoffeeBean.Tag);
+        var collectables = Collectable.FindAll(CollectableType.CoffeeBean);
         var last = collectables.LastOrDefault();
         var nextId = last == null ? 0 : last.serializationId + 1;
 
@@ -34,19 +34,19 @@ public class CustomCollectibleEditor : Editor
         {
             collectable.transform.position = new(collectable.transform.position.x, hit.point.y + .5f, collectable.transform.position.z);
         }
-        if (!isPrefab && collectable.serializationId == -1)
-        {
-            collectable.serializationId = FindNextId();
-            _serializationId.intValue = collectable.serializationId;
-            EditorUtility.SetDirty(target);
-        }
+        //if (!isPrefab && collectable.serializationId == -1)
+        //{
+        //    //collectable.serializationId = FindNextId();
+        //    //_serializationId.intValue = collectable.serializationId;
+        //    EditorUtility.SetDirty(target);
+        //}
 
         DrawDefaultInspector();
     }
 
     private void Awake()
     {
-         _serializationId = serializedObject.FindProperty("serializationId");
+         //_serializationId = serializedObject.FindProperty("serializationId");
     }
     
 }

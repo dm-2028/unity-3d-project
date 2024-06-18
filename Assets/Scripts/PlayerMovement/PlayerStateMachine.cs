@@ -160,14 +160,6 @@ public class PlayerStateMachine : StateMachine, IHitboxResponder
         OnValidate();
     }
 
-    public void DecrementHealth(int damage)
-    {
-        health -= damage;
-        gameManager.UpdateHealth(health);
-        damageCooldown = true;
-        Invoke("ResetDamageCooldown", 2.0f);
-    }
-
 
     private void OnCollisionEnter(Collision collision)
     {
@@ -187,13 +179,9 @@ public class PlayerStateMachine : StateMachine, IHitboxResponder
     private void OnTriggerEnter(Collider other)
     {
 
-        if(other.transform.tag == "PartialDragonFruit")
+        if (other.transform.tag == "Collectable")
         {
-            StartCoroutine(PullDragonFruit(other.transform.gameObject));
-        }
-        else if (other.transform.parent.tag == "CoffeeBean")
-        {
-            StartCoroutine(PullCollectable(other.transform.parent.gameObject));
+            StartCoroutine(PullCollectable(other.transform.gameObject));
         }
         else
         {
@@ -207,52 +195,70 @@ public class PlayerStateMachine : StateMachine, IHitboxResponder
         ((PlayerBaseState)currentState)?.EvaluateSubmergence(other);
     }
 
-    IEnumerator PullDragonFruit(GameObject collectable)
+    //IEnumerator PullDragonFruit(GameObject collectable)
+    //{
+    //    Debug.Log("start coroutine");
+    //    float i = 0f;
+    //    float rate = 1.0f / 3.0f;
+    //    PartialDragonFruit fruit = collectable.GetComponentInChildren<PartialDragonFruit>();
+    //    fruit.beingPulled = true;
+      
+    //    Vector3 startPostion = collectable.transform.position;
+    //    while (transform.position != collectable.transform.position)
+    //    {
+    //        i += Time.deltaTime * rate;
+    //        Debug.Log("i is " + i);
+    //        Vector3 m1 = Vector3.Lerp(startPostion, midpoint, i);
+    //        Vector3 m2 = Vector3.Lerp(midpoint, transform.position, i);
+    //        collectable.transform.position = Vector3.Lerp(m1, m2, i);
+    //        Debug.Log(midpoint + " and" + m1 + "and " + m2);
+
+    //        yield return null;
+    //    }
+    //}
+
+    IEnumerator PullCollectable(GameObject collectableObject)
     {
         Debug.Log("start coroutine");
         float i = 0f;
-        float rate = 1.0f / 3.0f;
-        PartialDragonFruit fruit = collectable.GetComponentInChildren<PartialDragonFruit>();
-        fruit.beingPulled = true;
-        Vector3 midpoint = (collectable.transform.position + transform.position) / 2 + new Vector3(0, 1.0f, 0);
-        Vector3 startPostion = collectable.transform.position;
-        while (transform.position != collectable.transform.position)
+        float rate = 3.0f;
+
+        Vector3 midpoint = (collectableObject.transform.position + transform.position) / 2;
+
+        Collectable _collectable = collectableObject.transform.GetComponentInChildren<Collectable>();
+        if (_collectable.Tag == CollectableType.PartialDragonFruit) {
+            midpoint += new Vector3(0f, 3.0f, 0f);
+        }
+        Vector3 startPostion = _collectable.transform.position;
+
+        while (transform.position != collectableObject.transform.position)
         {
             i += Time.deltaTime * rate;
-            Debug.Log("i is " + i);
+
             Vector3 m1 = Vector3.Lerp(startPostion, midpoint, i);
             Vector3 m2 = Vector3.Lerp(midpoint, transform.position, i);
-            collectable.transform.position = Vector3.Lerp(m1, m2, i);
-            Debug.Log(midpoint + " and" + m1 + "and " + m2);
+            collectableObject.transform.position = Vector3.Lerp(m1, m2, i);
 
             yield return null;
         }
-    }
 
-    IEnumerator PullCollectable(GameObject collectable)
-    {
-        Debug.Log("start coroutine");
-        float i = 0f;
-        float rate = 1.0f / 300.0f;
+        collectableObject.SetActive(false);
+        _collectable.collected = true;
 
-        while (transform.position != collectable.transform.position)
+        switch (_collectable.Tag)
         {
-            i += Time.deltaTime * rate;
-            Debug.Log("i is " + i);
-            collectable.transform.position = Vector3.Lerp(collectable.transform.position, transform.position, i);
-            yield return null;
+            case CollectableType.CoffeeBean:
+                MainManager.Instance.levelData[MainManager.Instance.currentLevelIndex].coffeeBeanCollected[_collectable.serializationId] = true;
+                gameManager.IncrementBeans();
+                break;
+            case CollectableType.PartialDragonFruit:
+                MainManager.Instance.levelData[MainManager.Instance.currentLevelIndex].partialFruitCollected[_collectable.serializationId] = true;
+                gameManager.CollectPartialFruit(_collectable.serializationId);
+                break;
+            default:
+                break;
         }
-        Collectable bean = collectable.transform.GetComponent<Collectable>();
-        collectable.gameObject.transform.GetChild(0).gameObject.SetActive(false);
-        bean.collected = true;
-        string beans = string.Join(", ", MainManager.Instance.coffeeBeanCollected);
-        Debug.Log("beans " + beans);
-        for(int j = 0; j < MainManager.Instance.coffeeBeanCollected.Length; j++)
-        {
-            Debug.Log("bean " + j + ": " + MainManager.Instance.coffeeBeanCollected[j].ToString());
-        }
-        MainManager.Instance.coffeeBeanCollected[bean.serializationId] = true;
-        gameManager.IncrementBeans();
+
     }
 
     public void CollidedWith(Collider collider)
@@ -261,7 +267,7 @@ public class PlayerStateMachine : StateMachine, IHitboxResponder
         if (collider.gameObject.CompareTag("Enemy"))
         {
             Debug.Log("hitbox attacking enemy");
-            collider.gameObject.GetComponentInParent<EnemyStateMachine>().ReceiveDamage();
+            collider.gameObject.GetComponentInParent<EnemyStateMachine>().ReceiveDamage(1);
         }
     }
 
@@ -275,21 +281,14 @@ public class PlayerStateMachine : StateMachine, IHitboxResponder
         damageCooldown = false;
     }
 
-    public void ReceiveDamage()
+    public void ReceiveDamage(int damage)
     {
         if (!damageCooldown)
         {
-            if (health <= 0)
-            {
-                //player is dead
-                //isDead = true;
-                //enemySpawn.incrementKilled(gameObject);
-                //SwitchState(new EnemyDeadState(this));
-            }
-            else
-            {
-                DecrementHealth(1);
-            }
+            health -= damage;
+            gameManager.UpdateHealth(health);
+            damageCooldown = true;
+            Invoke("ResetDamageCooldown", 2.0f);
         }
     }
 

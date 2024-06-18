@@ -7918,10 +7918,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   beans: 0
   saveFileName: 
-  coffeeBeanCollected: 
-  fruitCollected: 
   cutsceneTriggered: 
   health: 10
+  levelDataObjects:
+  - {fileID: 11400000, guid: 255837d669de8944685753250771f391, type: 2}
+  levelData: []
+  currentLevelIndex: 0
 --- !u!4 &1731111289
 Transform:
   m_ObjectHideFlags: 0

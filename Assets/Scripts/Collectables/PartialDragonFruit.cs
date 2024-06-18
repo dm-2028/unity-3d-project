@@ -5,11 +5,14 @@ using UnityEngine;
 public class PartialDragonFruit : Collectable
 {
 
-    static public string Tag = "PartialDragonFruit";
+    override public string Tag
+    {
+        get
+        {
+            return CollectableType.PartialDragonFruit;
+        }
+    }
 
-    [SerializeField]
-    [Range(0,2)]
-    int pieceNumber;
 
     float yPos;
 
@@ -51,10 +54,10 @@ public class PartialDragonFruit : Collectable
     {
         if (collected)
         {
-            gameObject.SetActive(false);
+            gameObject.transform.parent.gameObject.SetActive(false);
 
         }
-        else gameObject.SetActive(true);
+        else gameObject.transform.parent.gameObject.SetActive(true);
     }
 }
 

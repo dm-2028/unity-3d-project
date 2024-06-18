@@ -32,7 +32,7 @@ public abstract class EnemyStateMachine : StateMachine
 
     public abstract void ResetHurt();
 
-    public abstract void ReceiveDamage();
+    public abstract void ReceiveDamage(int damage);
 
     public void CollidedWith(Collider collider)
     {
@@ -40,7 +40,7 @@ public abstract class EnemyStateMachine : StateMachine
         if (collider.gameObject.CompareTag("Player"))
         {
             Debug.Log("hitbox attacking player");
-            collider.gameObject.GetComponent<PlayerStateMachine>().ReceiveDamage();
+            collider.gameObject.GetComponent<PlayerStateMachine>().ReceiveDamage(1);
         }
     }
 }

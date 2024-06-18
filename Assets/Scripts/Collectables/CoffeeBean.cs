@@ -3,10 +3,16 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[Serializable]
 public class CoffeeBean : Collectable
 {
-    static public string Tag = "CoffeeBean";
+
+    override public string Tag
+    {
+        get
+        {
+            return CollectableType.CoffeeBean;
+        }
+    }
 
     // Update is called once per frame
     void Update()
@@ -30,11 +36,12 @@ public class CoffeeBean : Collectable
 
     private void UpdateVisibility()
     {
+        Debug.Log("updatevisibility " + serializationId + " collected " + collected);
         if (collected)
         {
-            transform.GetChild(0).gameObject.SetActive(false);
+            gameObject.transform.parent.gameObject.SetActive(false);
 
         }
-        else transform.GetChild(0).gameObject.SetActive(true);
+        else gameObject.transform.parent.gameObject.SetActive(true);
     }
 }

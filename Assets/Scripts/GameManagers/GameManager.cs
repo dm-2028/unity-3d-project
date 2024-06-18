@@ -15,6 +15,7 @@ public class GameManager : MonoBehaviour
     public GameObject pauseMenu;
 
     public TextMeshProUGUI beansText;
+    public TextMeshProUGUI dragonFruitText;
 
     public Slider healthBar;
 
@@ -23,6 +24,7 @@ public class GameManager : MonoBehaviour
     private bool challengeAchieved = false;
 
     public GameObject playerPrefab;
+
 
     private GameObject _player;
     // Start is called before the first frame update
@@ -49,13 +51,15 @@ public class GameManager : MonoBehaviour
 
     public void SetCollectibles()
     {
-        _SetCollectibles(CoffeeBean.Tag, MainManager.Instance.coffeeBeanCollected);
+        _SetCollectibles(CollectableType.CoffeeBean, MainManager.Instance.levelData[MainManager.Instance.currentLevelIndex].coffeeBeanCollected);
+        _SetCollectibles(CollectableType.PartialDragonFruit, MainManager.Instance.levelData[MainManager.Instance.currentLevelIndex].partialFruitCollected);
         Debug.Log("finished setting collectables ");
     }
 
     private void _SetCollectibles(string tag, bool[] _collectables)
     {
         IEnumerable<Collectable> collectables = Collectable.FindAll(tag);
+        Debug.Log(" collectables " + collectables.ToArray().Length.ToString() + " " + collectables.ToArray().ToString());
 
         Collectable[] collectablesArray = collectables.ToArray();
 
@@ -73,7 +77,7 @@ public class GameManager : MonoBehaviour
                 break;
             }
             collectable.collected = collected[i];
-            collectable.gameObject.transform.GetChild(0).gameObject.SetActive(!collectable.collected);
+            collectable.transform.parent.gameObject.SetActive(!collectable.collected);
         }
     }
     // Update is called once per frame
@@ -160,6 +164,17 @@ public class GameManager : MonoBehaviour
     {
         MainManager.Instance.beans++;
         beansText.text = "Beans: " + MainManager.Instance.beans.ToString();
+        MainManager.Instance.SavePlayerInfo();
+    }
+
+    public void CollectPartialFruit(int id)
+    {
+        LevelData data = MainManager.Instance.levelData[MainManager.Instance.currentLevelIndex];
+        bool[] collected = data.partialFruitCollected;
+        Debug.Log(collected.ToString() + " collected " + collected.Length.ToString());
+        int count = collected.Count(o => o);
+        Debug.Log(collected.ToString() + " collected " + count.ToString());
+        dragonFruitText.text = "Dragon Fruit: " + count.ToString() + " / 3";
         MainManager.Instance.SavePlayerInfo();
     }
 }

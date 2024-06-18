@@ -20,11 +20,11 @@ public class WormStateMachine : EnemyStateMachine, IHitboxResponder
         animator.Play(appearHash);
     }
 
-    public override void ReceiveDamage()
+    public override void ReceiveDamage(int damage)
     {
         if (IsDead) return;
         Debug.Log("Receiving damage " + health);
-        health--;
+        health -= damage;
         Debug.Log("health " + health);
         takingDamage = true;
         if (health <= 0)
@@ -72,7 +72,7 @@ public class WormStateMachine : EnemyStateMachine, IHitboxResponder
 
             if (magnitude < outerRadius && magnitude > innerRadius && psm.isGrounded)
             {
-                psm.ReceiveDamage();
+                psm.ReceiveDamage(1);
             }
             Vector3 point = slamPosition + (distance.normalized * innerRadius);
             Vector3 pointTwo = slamPosition + (distance.normalized * outerRadius);

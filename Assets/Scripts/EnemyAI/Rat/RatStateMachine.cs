@@ -22,11 +22,11 @@ public class RatStateMachine : EnemyStateMachine, IHitboxResponder
         SwitchState(new RatWanderState(this));
     }
 
-    public override void ReceiveDamage()
+    public override void ReceiveDamage(int damage)
     {
         if (IsDead) return;
         Debug.Log("Receiving damage " + health);
-        health--;
+        health -= damage;
         Debug.Log("health " + health);
         takingDamage = true;
         if (health <= 0)
