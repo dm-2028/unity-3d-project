@@ -31,6 +31,7 @@ public class PlayerFallState : PlayerBaseState
 
         if (OnGround)
         {
+            stateMachine.audioSource.PlayOneShot(stateMachine.landSound);
             stateMachine.SwitchState(new PlayerMoveState(stateMachine));
         }
     }

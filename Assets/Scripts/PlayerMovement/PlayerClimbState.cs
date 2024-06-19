@@ -15,6 +15,7 @@ public class PlayerClimbState : PlayerBaseState
     }
     public override void Enter()
     {
+        stateMachine.audioSource.clip = stateMachine.climbSound;
         stateMachine.animator.CrossFadeInFixedTime(climbBlendTreeHash, crossFadeDuration);
         Debug.Log("climbing " + Climbing + "\nsteepcontactcount " + stateMachine.climbContactCount);
         Debug.Log("enter climb state");
@@ -23,7 +24,13 @@ public class PlayerClimbState : PlayerBaseState
 
     public override void Tick()
     {
-
+        if (!stateMachine.audioSource.isPlaying)
+        {
+            if (stateMachine.inputReader.movement.sqrMagnitude > 0f)
+            {
+                stateMachine.audioSource.PlayScheduled(1f - stateMachine.inputReader.movement.sqrMagnitude);
+            }
+        }
         CalculateMoveDirection();
         stateMachine.transform.rotation = Quaternion.Slerp(stateMachine.transform.rotation, Quaternion.LookRotation(stateMachine.climbNormal), stateMachine.lookRotationDampFactor * Time.deltaTime);
 
@@ -68,6 +75,7 @@ public class PlayerClimbState : PlayerBaseState
 
     public override void Exit()
     {
+        stateMachine.audioSource.Stop();
         stateMachine.inputReader.OnJumpPerformed -= SwitchToJumpState;
     }
 }

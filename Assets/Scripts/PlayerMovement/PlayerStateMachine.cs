@@ -127,6 +127,11 @@ public class PlayerStateMachine : StateMachine, IHitboxResponder
 
     public GameObject nearbyNPC;
 
+    public AudioSource audioSource { get; private set; }
+
+    [SerializeField]
+    public AudioClip runningSound, jumpSound, landSound, splashSound, swimSound, waterJumpSound, climbSound;
+
 
     private void OnValidate()
     {
@@ -147,6 +152,7 @@ public class PlayerStateMachine : StateMachine, IHitboxResponder
         waveParticles = GetComponentInChildren<ParticleSystem>(); 
         hitbox = GetComponentInChildren<HitBox>();
         hitbox.UseResponder(this);
+        audioSource = GetComponent<AudioSource>();
         
         SwitchState(new PlayerMoveState(this));
     }

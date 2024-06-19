@@ -35,19 +35,15 @@ public class PlayerJumpState : PlayerBaseState
         }
         else
         {
-            //Debug.Log("return without jumping");
             return;
         }
-        //Debug.Log("jump direction before " + jumpDirection);
         stateMachine.stepsSinceLastJump = 0;
         stateMachine.jumpPhase += 1;
 
         float jumpSpeed = Mathf.Sqrt(2f * Physics.gravity.magnitude * stateMachine.jumpHeight);
-        //Debug.Log("jump speed " + jumpSpeed);
 
         jumpDirection = (jumpDirection + stateMachine.upAxis).normalized;
         float alignedSpeed = Vector3.Dot(stateMachine.velocity, jumpDirection);
-        //Debug.Log("aligned speed " + alignedSpeed);
         if(stateMachine.velocity.y < 0)
         {
             stateMachine.velocity += new Vector3(0f, -stateMachine.velocity.y, 0f);
@@ -56,10 +52,9 @@ public class PlayerJumpState : PlayerBaseState
         {
             jumpSpeed = Mathf.Max(jumpSpeed - alignedSpeed, 0f);
         }
-            //Debug.Log("jump direction " + jumpDirection);
-        //Debug.Log("aligned jump speed " + jumpSpeed);
+        stateMachine.audioSource.PlayOneShot(stateMachine.jumpSound);
+
         stateMachine.velocity += jumpDirection * jumpSpeed;
-        //Debug.Log("velocity of jump " + stateMachine.velocity);
         stateMachine.body.velocity = stateMachine.velocity;
         stateMachine.animator.CrossFadeInFixedTime(jumpHash, crossFadeDuration);
         stateMachine.jumpFromSwim = false;

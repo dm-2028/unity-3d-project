@@ -18,6 +18,7 @@ public class PlayerSurfaceSwimState : PlayerBaseState
     public override void Enter()
     {
         Debug.Log("enter swim state");
+        stateMachine.audioSource.PlayOneShot(stateMachine.splashSound);
         stateMachine.splashParticles.Play();
         stateMachine.waveParticles.Play();
         stateMachine.waveParticles.gameObject.transform.position = new(stateMachine.waveParticles.transform.position.x, stateMachine.bodyOfWaterSurface.Value + .01f, stateMachine.waveParticles.transform.position.z);
@@ -29,6 +30,7 @@ public class PlayerSurfaceSwimState : PlayerBaseState
 
         stateMachine.inputReader.OnJumpPerformed += Jump;
         stateMachine.animator.CrossFadeInFixedTime(swimBlendTreeHash, crossFadeDuration);
+        stateMachine.audioSource.clip = stateMachine.swimSound;
     }
 
     public override void Tick()
@@ -36,6 +38,14 @@ public class PlayerSurfaceSwimState : PlayerBaseState
         CalculateMoveDirection();
         FaceMoveDirection();
         SetPosition();
+
+        if (!stateMachine.audioSource.isPlaying)
+        {
+            if (stateMachine.inputReader.movement.sqrMagnitude > 0f)
+            {
+                stateMachine.audioSource.PlayScheduled(1f - stateMachine.inputReader.movement.sqrMagnitude);
+            }
+        }
         Debug.Log("body position " + stateMachine.body.position.y);
 
         stateMachine.transform.position = new(stateMachine.transform.position.x, Mathf.Lerp(stateMachine.transform.position.y, stateMachine.bodyOfWaterSurface.Value, Time.deltaTime*100), stateMachine.transform.position.z);
@@ -108,12 +118,15 @@ public class PlayerSurfaceSwimState : PlayerBaseState
     void Jump()
     {
         jumping = true;
+        
         stateMachine.SwitchState(new PlayerJumpState(stateMachine));
     }
 
     public override void Exit()
     {
         Debug.Log("exiting swim state");
+        stateMachine.audioSource.Stop();
+        stateMachine.audioSource.PlayOneShot(stateMachine.waterJumpSound);
         stateMachine.jumpFromSwim = true;
         stateMachine.contactNormal = stateMachine.upAxis;
         stateMachine.waveParticles.Stop();
