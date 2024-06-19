@@ -130,7 +130,7 @@ public class PlayerStateMachine : StateMachine, IHitboxResponder
     public AudioSource audioSource { get; private set; }
 
     [SerializeField]
-    public AudioClip runningSound, jumpSound, landSound, splashSound, swimSound, waterJumpSound, climbSound;
+    public AudioClip runningSound, jumpSound, landSound, splashSound, swimSound, waterJumpSound, climbSound, beanSound, fruitSound;
 
 
     private void OnValidate()
@@ -201,28 +201,6 @@ public class PlayerStateMachine : StateMachine, IHitboxResponder
         ((PlayerBaseState)currentState)?.EvaluateSubmergence(other);
     }
 
-    //IEnumerator PullDragonFruit(GameObject collectable)
-    //{
-    //    Debug.Log("start coroutine");
-    //    float i = 0f;
-    //    float rate = 1.0f / 3.0f;
-    //    PartialDragonFruit fruit = collectable.GetComponentInChildren<PartialDragonFruit>();
-    //    fruit.beingPulled = true;
-      
-    //    Vector3 startPostion = collectable.transform.position;
-    //    while (transform.position != collectable.transform.position)
-    //    {
-    //        i += Time.deltaTime * rate;
-    //        Debug.Log("i is " + i);
-    //        Vector3 m1 = Vector3.Lerp(startPostion, midpoint, i);
-    //        Vector3 m2 = Vector3.Lerp(midpoint, transform.position, i);
-    //        collectable.transform.position = Vector3.Lerp(m1, m2, i);
-    //        Debug.Log(midpoint + " and" + m1 + "and " + m2);
-
-    //        yield return null;
-    //    }
-    //}
-
     IEnumerator PullCollectable(GameObject collectableObject)
     {
         Debug.Log("start coroutine");
@@ -255,10 +233,12 @@ public class PlayerStateMachine : StateMachine, IHitboxResponder
         {
             case CollectableType.CoffeeBean:
                 MainManager.Instance.levelData[MainManager.Instance.currentLevelIndex].coffeeBeanCollected[_collectable.serializationId] = true;
+                audioSource.PlayOneShot(beanSound);
                 gameManager.IncrementBeans();
                 break;
             case CollectableType.PartialDragonFruit:
                 MainManager.Instance.levelData[MainManager.Instance.currentLevelIndex].partialFruitCollected[_collectable.serializationId] = true;
+                audioSource.PlayOneShot(fruitSound);
                 gameManager.CollectPartialFruit(_collectable.serializationId);
                 break;
             default:

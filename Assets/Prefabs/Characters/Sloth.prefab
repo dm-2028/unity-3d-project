@@ -5119,6 +5119,8 @@ MonoBehaviour:
   swimSound: {fileID: 8300000, guid: 695be21ef056df946b1746e149dc9cf5, type: 3}
   waterJumpSound: {fileID: 8300000, guid: 8ff708c2ef19b434aa3ee5ab814e5723, type: 3}
   climbSound: {fileID: 8300000, guid: 55a5a001ad9ac3b429adbbe18412b1f9, type: 3}
+  beanSound: {fileID: 8300000, guid: 16627ace4424d91498eb01bb4028a449, type: 3}
+  fruitSound: {fileID: 8300000, guid: 16627ace4424d91498eb01bb4028a449, type: 3}
 --- !u!114 &2040343451
 MonoBehaviour:
   m_ObjectHideFlags: 0
