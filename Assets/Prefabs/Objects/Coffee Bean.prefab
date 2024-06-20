@@ -121,6 +121,18 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 35593bd0d5c68114ba9bd57d1466f399, type: 3}
   m_PrefabInstance: {fileID: 5818710788262016402}
   m_PrefabAsset: {fileID: 0}
+--- !u!122 &5507199640141453471
+Halo:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6629685078104082627}
+  m_Enabled: 0
+  m_Color:
+    serializedVersion: 2
+    rgba: 4286611584
+  m_Size: 5
 --- !u!114 &4470079024338063005
 MonoBehaviour:
   m_ObjectHideFlags: 0

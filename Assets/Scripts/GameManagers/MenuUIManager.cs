@@ -153,15 +153,13 @@ public class MenuUIManager : MonoBehaviour
                 indexChanged = true;
 
             }
-            if (keyIndex >= keyboard[rowIndex].Length)
-            {
-                keyboard[rowIndex][keyIndex].GetComponentInChildren<TextMeshProUGUI>().color = Color.black;
-                keyIndex = keyboard[rowIndex].Length - 1;
-                indexChanged = true;
 
-            }
             if (indexChanged)
             {
+                if(keyIndex >= keyboard[rowIndex].Length)
+                {
+                    keyIndex = keyboard[rowIndex].Length - 1;
+                }
                 keyboard[rowIndex][keyIndex].Select();
                 keyboard[rowIndex][keyIndex].GetComponentInChildren<TextMeshProUGUI>().color = Color.red;
             }

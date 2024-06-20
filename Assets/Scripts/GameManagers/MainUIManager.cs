@@ -8,13 +8,16 @@ using TMPro;
 public class MainUIManager : MonoBehaviour
 {
     [SerializeField]
-    GameObject pauseMenu, dialogBox, gameOver;
+    GameObject pauseMenu, dialogBox, gameOver, settingsMenu, totalsMenu;
 
     
-    Button[] pauseButtons, gameOverButtons;
+    Button[] pauseButtons, gameOverButtons, settingsButtons, totalsButtons;
 
     [SerializeField]
-    Button mainMenuPause, mainMenuGameOver, continueButton, close;
+    Button mainMenuPause, mainMenuGameOver, continueButton, close, totalsBack, settingsBack, settings, totals, volume;
+
+    [SerializeField]
+    Slider volumeSlider;
 
     private DialogUI dialogUI;
 
@@ -24,8 +27,8 @@ public class MainUIManager : MonoBehaviour
 
     private int selectionIndex = 0;
 
-    private bool verticalAxisDown = false;
-    private float previousVerticalAxis = 0;
+    private bool verticalAxisDown = false, horizontalAxisDown = false;
+    private float previousVerticalAxis = 0, previousHorizontalAxis = 0;
 
     public InputReader inputReader { get; private set; }
 
@@ -34,18 +37,24 @@ public class MainUIManager : MonoBehaviour
         pauseMenu.SetActive(false);
         dialogBox.SetActive(false);
         gameOver.SetActive(false);
-        pauseButtons = new[] { close, mainMenuPause };
+        settingsMenu.SetActive(false);
+        totalsMenu.SetActive(false);
+        pauseButtons = new[] { close, settings, totals, mainMenuPause };
         gameOverButtons = new[] { continueButton, mainMenuGameOver };
+        settingsButtons = new[] { settingsBack, volume };
+        totalsButtons = new[] { totalsBack };
     }
 
     private void Update()
     {
         Debug.Log("Update");
-        if (pauseMenu.activeInHierarchy || gameOver.activeInHierarchy)
+        if (pauseMenu.activeInHierarchy || gameOver.activeInHierarchy || settingsMenu.activeInHierarchy)
         {
-            float directionVertical = 0;
+            float directionVertical = 0, directionHorizontal = 0;
 
-            float verticalAxis = Input.GetAxisRaw("Vertical");
+
+            float verticalAxis = Input.GetAxis("Vertical");
+            float horizontalAxis = Input.GetAxis("Horizontal");
 
             if (Mathf.Abs(verticalAxis) > Mathf.Abs(previousVerticalAxis))
             {
@@ -53,6 +62,15 @@ public class MainUIManager : MonoBehaviour
                 {
                     verticalAxisDown = true;
                     directionVertical = verticalAxis;
+                }
+            }
+            if (Mathf.Abs(horizontalAxis) > Mathf.Abs(previousHorizontalAxis))
+            {
+                if (!horizontalAxisDown)
+                {
+                    horizontalAxisDown = true;
+                    directionHorizontal = horizontalAxis;
+
                 }
             }
 
@@ -63,6 +81,10 @@ public class MainUIManager : MonoBehaviour
             {
                 HandleSelection(directionVertical, gameOverButtons);
 
+            }else if (settingsMenu.activeInHierarchy)
+            {
+                HandleSelection(directionVertical, settingsButtons);
+                HandleVolume(directionHorizontal);
             }
             if (Mathf.Abs(verticalAxis) < Mathf.Abs(previousVerticalAxis))
             {
@@ -98,6 +120,26 @@ public class MainUIManager : MonoBehaviour
         }
     }
 
+    private void HandleVolume(float directionHorizontal)
+    {
+        Debug.Log("handle volume " + directionHorizontal);
+        if(directionHorizontal < 0)
+        {
+            volumeSlider.value = Mathf.Max(0f, volumeSlider.value - directionHorizontal * .01f * Time.deltaTime);
+        }else if(directionHorizontal > 0)
+        {
+            volumeSlider.value = Mathf.Min(1f, volumeSlider.value + directionHorizontal * .01f * Time.deltaTime);
+
+        }
+    }
+
+    void ResetIndex(Button[] buttons)
+    {
+        selectionIndex = 0;
+        buttons[selectionIndex].Select();
+    }
+
+
     void SelectButton()
     {
         if (pauseMenu.activeInHierarchy)
@@ -107,6 +149,12 @@ public class MainUIManager : MonoBehaviour
         else if (gameOver.activeInHierarchy)
         {
             gameOverButtons[selectionIndex].onClick.Invoke();
+        }else if (settingsMenu.activeInHierarchy)
+        {
+            if(selectionIndex == 0)
+            {
+                settingsButtons[selectionIndex].onClick.Invoke();
+            }
         }
     }
     public void ExitGame()
@@ -176,6 +224,26 @@ public class MainUIManager : MonoBehaviour
         GetNextDialog();
     }
 
+    public void OpenSettings()
+    {
+        pauseMenu.SetActive(false);
+        settingsMenu.SetActive(true);
+        ResetIndex(settingsButtons);
+    }
+
+    public void OpenTotals()
+    {
+        pauseMenu.SetActive(false);
+        totalsMenu.SetActive(true);
+        ResetIndex(totalsButtons);
+    }
+
+    public void Back()
+    {
+        pauseMenu.SetActive(true);
+        totalsMenu.SetActive(false);
+        settingsMenu.SetActive(false);
+    }
     private void GetNextDialog()
     {
         Dialog nextDialog = currentDialog.GetNextDialog();
