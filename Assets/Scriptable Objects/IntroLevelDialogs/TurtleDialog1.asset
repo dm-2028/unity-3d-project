@@ -10,23 +10,23 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 087f521287539d34493c2b50d77c3757, type: 3}
-  m_Name: Dialog Object
+  m_Name: TurtleDialog1
   m_EditorClassIdentifier: 
   DialogText:
   - dialogText: Hey!
-    cameraRotation: {x: 0, y: 0}
-    cameraFocusPosition: {x: 0, y: 0, z: 0}
+    cameraRotation: {x: 20, y: 140}
+    cameraFocusPosition: {x: -300.82, y: 0.011, z: 13.41}
   - dialogText: I think there's something going on at the village.
-    cameraRotation: {x: 0, y: 0}
-    cameraFocusPosition: {x: 0, y: 0, z: 0}
+    cameraRotation: {x: 20, y: 140}
+    cameraFocusPosition: {x: -300.82, y: 0.011, z: 13.41}
   - dialogText: You know the way, right? just follow the path.
-    cameraRotation: {x: 0, y: 0}
-    cameraFocusPosition: {x: 0, y: 0, z: 0}
+    cameraRotation: {x: 15, y: 110}
+    cameraFocusPosition: {x: -297.42, y: 0.011, z: 15.79}
   - dialogText: Remember you can jump with A or Spacebar!
-    cameraRotation: {x: 0, y: 0}
-    cameraFocusPosition: {x: 0, y: 0, z: 0}
+    cameraRotation: {x: 20, y: 140}
+    cameraFocusPosition: {x: -300.82, y: 0.011, z: 13.41}
   - dialogText: Oh, and you might want to pick these beans up along the way.
-    cameraRotation: {x: 0, y: 0}
-    cameraFocusPosition: {x: 0, y: 0, z: 0}
+    cameraRotation: {x: 30, y: 200}
+    cameraFocusPosition: {x: -302.98, y: 0.59809303, z: 11.78}
   IsLoopable: 0
   IsOrdered: 1

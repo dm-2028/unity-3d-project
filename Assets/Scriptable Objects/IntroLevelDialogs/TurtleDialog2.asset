@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 087f521287539d34493c2b50d77c3757, type: 3}
+  m_Name: TurtleDialog2
+  m_EditorClassIdentifier: 
+  DialogText:
+  - dialogText: You see that shiny thing?
+    cameraRotation: {x: 20, y: 110}
+    cameraFocusPosition: {x: -274.12415, y: 4.72, z: -27.808434}
+  - dialogText: That's part of a golden dragonfruit.
+    cameraRotation: {x: 30, y: 90}
+    cameraFocusPosition: {x: -269.86, y: 4.88, z: -21.49}
+  - dialogText: If bring me dragonfruit, I should be able to help you out.
+    cameraRotation: {x: 30, y: 90}
+    cameraFocusPosition: {x: -269.86, y: 4.88, z: -21.49}
+  - dialogText: But in some areas, they're split into three pieces.
+    cameraRotation: {x: 30, y: 90}
+    cameraFocusPosition: {x: -269.86, y: 4.88, z: -21.49}
+  - dialogText: Collect as many as you can!
+    cameraRotation: {x: 20, y: 110}
+    cameraFocusPosition: {x: -274.12415, y: 4.72, z: -27.808434}
+  IsLoopable: 0
+  IsOrdered: 1

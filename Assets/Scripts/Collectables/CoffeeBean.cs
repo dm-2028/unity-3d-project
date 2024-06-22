@@ -23,25 +23,4 @@ public class CoffeeBean : Collectable
             transform.rotation = Quaternion.Lerp(transform.rotation, newRotation, Time.deltaTime);
         }
     }
-
-    private void Awake()
-    {
-        UpdateVisibility();
-    }
-
-    void Loaded()
-    {
-        UpdateVisibility();
-    }
-
-    private void UpdateVisibility()
-    {
-        Debug.Log("updatevisibility " + serializationId + " collected " + collected);
-        if (collected)
-        {
-            gameObject.transform.parent.gameObject.SetActive(false);
-
-        }
-        else gameObject.transform.parent.gameObject.SetActive(true);
-    }
 }

@@ -4,11 +4,12 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using TMPro;
+using System.Linq;
 
 public class MainUIManager : MonoBehaviour
 {
     [SerializeField]
-    GameObject pauseMenu, dialogBox, gameOver, settingsMenu, totalsMenu;
+    GameObject pauseMenu, dialogBox, gameOver, settingsMenu, totalsMenu, scrollContent;
 
     
     Button[] pauseButtons, gameOverButtons, settingsButtons, totalsButtons;
@@ -19,18 +20,26 @@ public class MainUIManager : MonoBehaviour
     [SerializeField]
     Slider volumeSlider;
 
+    [SerializeField]
+    GameObject levelDataPrefab;
+
     private DialogUI dialogUI;
 
     private DialogObject currentDialog;
 
-    private bool enterPressed;
-
     private int selectionIndex = 0;
 
-    private bool verticalAxisDown = false, horizontalAxisDown = false;
-    private float previousVerticalAxis = 0, previousHorizontalAxis = 0;
+    private bool verticalAxisDown = false;
+    private float previousVerticalAxis = 0;
+    private float horizontalAxisTimer = 1;
 
     public InputReader inputReader { get; private set; }
+
+    OrbitCamera mainCamera;
+
+    int levelInfoHeight = 100;
+
+    Vector2 scrollBasePosition;
 
     private void Start()
     {
@@ -43,35 +52,34 @@ public class MainUIManager : MonoBehaviour
         gameOverButtons = new[] { continueButton, mainMenuGameOver };
         settingsButtons = new[] { settingsBack, volume };
         totalsButtons = new[] { totalsBack };
+        scrollBasePosition = ((RectTransform)scrollContent.transform).anchoredPosition;
+        mainCamera = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<OrbitCamera>();
     }
 
     private void Update()
     {
         Debug.Log("Update");
+        float directionVertical = 0, directionHorizontal = 0;
+
+        float verticalAxis = inputReader.movement.y;
+        float horizontalAxis = inputReader.movement.x;
+
+        if (Mathf.Abs(verticalAxis) > Mathf.Abs(previousVerticalAxis))
+        {
+            if (!verticalAxisDown)
+            {
+                verticalAxisDown = true;
+                directionVertical = verticalAxis;
+            }
+        }
+
         if (pauseMenu.activeInHierarchy || gameOver.activeInHierarchy || settingsMenu.activeInHierarchy)
         {
-            float directionVertical = 0, directionHorizontal = 0;
-
-
-            float verticalAxis = Input.GetAxis("Vertical");
-            float horizontalAxis = Input.GetAxis("Horizontal");
-
-            if (Mathf.Abs(verticalAxis) > Mathf.Abs(previousVerticalAxis))
+            if (horizontalAxisTimer <= 0)
             {
-                if (!verticalAxisDown)
-                {
-                    verticalAxisDown = true;
-                    directionVertical = verticalAxis;
-                }
-            }
-            if (Mathf.Abs(horizontalAxis) > Mathf.Abs(previousHorizontalAxis))
-            {
-                if (!horizontalAxisDown)
-                {
-                    horizontalAxisDown = true;
-                    directionHorizontal = horizontalAxis;
+                horizontalAxisTimer = 1;
+                directionHorizontal = horizontalAxis;
 
-                }
             }
 
             if (pauseMenu.activeInHierarchy)
@@ -84,15 +92,30 @@ public class MainUIManager : MonoBehaviour
             }else if (settingsMenu.activeInHierarchy)
             {
                 HandleSelection(directionVertical, settingsButtons);
-                HandleVolume(directionHorizontal);
-            }
-            if (Mathf.Abs(verticalAxis) < Mathf.Abs(previousVerticalAxis))
-            {
-                verticalAxisDown = false;
-            }
-            previousVerticalAxis = verticalAxis;
+                volumeSlider.value = Mathf.Clamp(volumeSlider.value + directionHorizontal * .01f, 0f, 1f);
 
+            }
+            horizontalAxisTimer -= 100 * Time.unscaledDeltaTime;
+        }else if (totalsMenu.activeInHierarchy)
+        {
+            if (directionVertical < 0
+                && ((RectTransform)scrollContent.transform).anchoredPosition.y < (scrollContent.transform.childCount-3)*levelInfoHeight)
+            {
+                ((RectTransform)scrollContent.transform).anchoredPosition += new Vector2(0, levelInfoHeight);
+            }
+            else if (directionVertical > 0
+                && ((RectTransform)scrollContent.transform).anchoredPosition.y > scrollBasePosition.y+levelInfoHeight)
+            {
+                ((RectTransform)scrollContent.transform).anchoredPosition -= new Vector2(0, levelInfoHeight);
+
+            }
         }
+        if (Mathf.Abs(verticalAxis) < Mathf.Abs(previousVerticalAxis))
+        {
+            verticalAxisDown = false;
+        }
+        previousVerticalAxis = verticalAxis;
+
     }
 
     private void HandleSelection(float directionVertical, Button[] buttons)
@@ -120,23 +143,15 @@ public class MainUIManager : MonoBehaviour
         }
     }
 
-    private void HandleVolume(float directionHorizontal)
-    {
-        Debug.Log("handle volume " + directionHorizontal);
-        if(directionHorizontal < 0)
-        {
-            volumeSlider.value = Mathf.Max(0f, volumeSlider.value - directionHorizontal * .01f * Time.deltaTime);
-        }else if(directionHorizontal > 0)
-        {
-            volumeSlider.value = Mathf.Min(1f, volumeSlider.value + directionHorizontal * .01f * Time.deltaTime);
-
-        }
-    }
-
     void ResetIndex(Button[] buttons)
     {
+        foreach (Button button in buttons)
+        {
+            button.GetComponentInChildren<TextMeshProUGUI>().color = Color.black;
+        }
         selectionIndex = 0;
         buttons[selectionIndex].Select();
+        buttons[selectionIndex].GetComponentInChildren<TextMeshProUGUI>().color = Color.red;
     }
 
 
@@ -155,6 +170,9 @@ public class MainUIManager : MonoBehaviour
             {
                 settingsButtons[selectionIndex].onClick.Invoke();
             }
+        }else if (totalsMenu.activeInHierarchy)
+        {
+            totalsButtons[selectionIndex].onClick.Invoke();
         }
     }
     public void ExitGame()
@@ -172,6 +190,7 @@ public class MainUIManager : MonoBehaviour
         
         inputReader = GetComponent<InputReader>();
         inputReader.OnJumpPerformed += SelectButton;
+        GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerStateMachine>().inputReader.enabled = false;
 
         pauseMenu.gameObject.SetActive(true);
         selectionIndex = 0;
@@ -188,6 +207,8 @@ public class MainUIManager : MonoBehaviour
         pauseButtons[selectionIndex].GetComponentInChildren<TextMeshProUGUI>().color = Color.black;
         GameObject.Find("GameManager").GetComponent<GameManager>().gamePaused = false;
         GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerStateMachine>().returnFromPause = true;
+        GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerStateMachine>().inputReader.enabled = true;
+
         pauseMenu.gameObject.SetActive(false);
     }
     public void GameOver()
@@ -235,6 +256,7 @@ public class MainUIManager : MonoBehaviour
     {
         pauseMenu.SetActive(false);
         totalsMenu.SetActive(true);
+        BuildTotalsMenu();
         ResetIndex(totalsButtons);
     }
 
@@ -243,17 +265,23 @@ public class MainUIManager : MonoBehaviour
         pauseMenu.SetActive(true);
         totalsMenu.SetActive(false);
         settingsMenu.SetActive(false);
+        ResetIndex(pauseButtons);
     }
     private void GetNextDialog()
     {
         Dialog nextDialog = currentDialog.GetNextDialog();
         if (nextDialog != null)
         {
+            if(nextDialog.cameraFocusPosition != null || nextDialog.cameraRotation != null)
+            {
+                mainCamera.SetFocusPoint(nextDialog.cameraFocusPosition, nextDialog.cameraRotation);
+            }
             dialogUI.ShowText(nextDialog.dialogText, true);
         }
         else
         {
             CloseDialog();
+            mainCamera.ResetFocusToPlayer();
         }
     }
 
@@ -278,5 +306,37 @@ public class MainUIManager : MonoBehaviour
         dialogUI = null;
         currentDialog = null;
         GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerStateMachine>().StopTalking();
+    }
+
+    public void BuildTotalsMenu()
+    {
+        for (int i = 0; i < MainManager.Instance.levelDataObjects.Length; i++)
+        {
+            GameObject newListItem = Instantiate(levelDataPrefab, scrollContent.transform);
+            RectTransform itemRect = (RectTransform)newListItem.transform;
+            TextMeshProUGUI levelNameText = newListItem.transform.GetChild(0).GetComponent<TextMeshProUGUI>();
+            TextMeshProUGUI BeanCountText = newListItem.transform.GetChild(2).GetComponent<TextMeshProUGUI>();
+            TextMeshProUGUI BeanTotalText = newListItem.transform.GetChild(3).GetComponent<TextMeshProUGUI>();
+            TextMeshProUGUI FruitCountText = newListItem.transform.GetChild(5).GetComponent<TextMeshProUGUI>();
+            TextMeshProUGUI FruitTotalText = newListItem.transform.GetChild(6).GetComponent<TextMeshProUGUI>();
+
+            levelNameText.text = MainManager.Instance.levelDataObjects[i].levelName;
+            BeanCountText.text = MainManager.Instance.levelData[i].coffeeBeanCollected.Count(o => o).ToString();
+            BeanTotalText.text = "/" + MainManager.Instance.levelDataObjects[i].totalBeans.ToString();
+
+            bool[] partialFruitCollected = MainManager.Instance.levelData[i].partialFruitCollected;
+            if(partialFruitCollected.Length == 0 || partialFruitCollected.All(o => o))
+            {
+                FruitCountText.text = MainManager.Instance.levelData[i].fruitCollected.Count(o => o).ToString();
+            }
+            else
+            {
+                FruitCountText.text = MainManager.Instance.levelData[i].fruitCollected.Count(o => o).ToString() + " (" + partialFruitCollected.Count(o => o).ToString() + "/3)";
+            }
+
+            FruitTotalText.text = "/" + MainManager.Instance.levelDataObjects[i].totalFruit.ToString();
+            itemRect.sizeDelta = new(950, levelInfoHeight);
+            itemRect.anchoredPosition = new(0, 200 - (levelInfoHeight * i));
+        }
     }
 }

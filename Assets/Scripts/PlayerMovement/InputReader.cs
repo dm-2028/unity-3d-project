@@ -17,10 +17,11 @@ public class InputReader : MonoBehaviour, PlayerControls.IControlsActions
 
     private void OnEnable()
     {
-        if (controls != null) return;
-
-        controls = new PlayerControls();
-        controls.Controls.SetCallbacks(this);
+        if (controls == null)
+        {
+            controls = new PlayerControls();
+            controls.Controls.SetCallbacks(this);
+        }
         controls.Controls.Enable();
     }
 
@@ -49,6 +50,7 @@ public class InputReader : MonoBehaviour, PlayerControls.IControlsActions
 
     public void OnMovement(InputAction.CallbackContext context)
     {
+        Debug.Log("movement ");
         movement = context.ReadValue<Vector2>(); 
     }
 

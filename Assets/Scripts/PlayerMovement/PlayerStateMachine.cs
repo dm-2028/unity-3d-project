@@ -297,6 +297,12 @@ public class PlayerStateMachine : StateMachine, IHitboxResponder
         }
     }
 
+    public void StartTalking(GameObject NPC)
+    {
+        nearbyNPC = NPC;
+        SwitchState(new PlayerTalkState(this));
+    }
+
     public void StopTalking()
     {
         SwitchState(new PlayerMoveState(this));

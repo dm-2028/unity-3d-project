@@ -21,7 +21,6 @@ public class MenuUIManager : MonoBehaviour
     private int selectionIndex, rowIndex, keyIndex = 0;
     private int saveSelectionIndex = 0;
     string nameString = "";
-    bool enterPressed;
     FileInfo[] files;
 
     [SerializeField]
@@ -73,8 +72,8 @@ public class MenuUIManager : MonoBehaviour
         float directionVertical = 0, directionHorizontal = 0;
 
 
-        float verticalAxis = Input.GetAxis("Vertical");
-        float horizontalAxis = Input.GetAxis("Horizontal");
+        float verticalAxis = inputReader.movement.y;
+        float horizontalAxis = inputReader.movement.x;
 
         if (Mathf.Abs(verticalAxis) > Mathf.Abs(previousVerticalAxis))
         {

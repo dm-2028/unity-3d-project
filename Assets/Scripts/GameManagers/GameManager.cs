@@ -36,7 +36,7 @@ public class GameManager : MonoBehaviour
 
         if(MainManager.Instance.playerCheckpointPosition == Vector3.zero || MainManager.Instance.playerCheckpointRotation == new Quaternion(0, 0, 0, 0))
         {
-            MainManager.Instance.SaveCheckpoint(new Vector3(-321.3381f, -0.35f, 15.29987f), new Quaternion(0, -0.560115397f, 0, 0.828414619f));
+            MainManager.Instance.SetSpawnIndex(0);
         }
         Debug.Log("game manager player checkpoint " + MainManager.Instance.playerCheckpointPosition + " " + MainManager.Instance.playerCheckpointRotation);
         _player = Instantiate(playerPrefab, MainManager.Instance.playerCheckpointPosition, MainManager.Instance.playerCheckpointRotation);
@@ -53,6 +53,7 @@ public class GameManager : MonoBehaviour
     {
         _SetCollectibles(CollectableType.CoffeeBean, MainManager.Instance.levelData[MainManager.Instance.currentLevelIndex].coffeeBeanCollected);
         _SetCollectibles(CollectableType.PartialDragonFruit, MainManager.Instance.levelData[MainManager.Instance.currentLevelIndex].partialFruitCollected);
+        _SetCollectibles(CollectableType.Cutscene, MainManager.Instance.levelData[MainManager.Instance.currentLevelIndex].cutsceneTriggered);
         Debug.Log("finished setting collectables ");
     }
 

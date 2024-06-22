@@ -4,10 +4,11 @@ using UnityEngine;
 public class LevelObject : ScriptableObject
 {
     public int levelIndex;
+    public string levelName;
     public int totalBeans;
     public int totalFruit;
+    public int totalCutscenes;
 
-    public GameObject[] cutscenes;
     public SpawnPoint[] spawnPoints;
 }
 [System.Serializable]

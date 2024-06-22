@@ -19,6 +19,7 @@ public class MainManager : MonoBehaviour
     public LevelData[] levelData;
 
     public int currentLevelIndex;
+    public int spawnIndex;
 
     public Vector3 playerCheckpointPosition { get; private set; }
     public Quaternion playerCheckpointRotation { get; private set; }
@@ -45,7 +46,7 @@ public class MainManager : MonoBehaviour
             levelData[i].coffeeBeanCollected = new bool[levelDataObjects[i].totalBeans];
             levelData[i].fruitCollected = new bool[levelDataObjects[i].totalFruit];
             levelData[i].partialFruitCollected = new bool[3];
-            levelData[i].cutsceneTriggered = new bool[levelDataObjects[i].cutscenes.Length];
+            levelData[i].cutsceneTriggered = new bool[levelDataObjects[i].totalCutscenes];
         }
         currentLevelIndex = 0;
     }
@@ -69,62 +70,17 @@ public class MainManager : MonoBehaviour
 
         data.currentLevelIndex = currentLevelIndex;
 
-
-        data.playerPositionX = playerCheckpointPosition.x;
-        data.playerPositionY = playerCheckpointPosition.y;
-        data.playerPositionZ = playerCheckpointPosition.z;
-
-        data.playerRotationX = playerCheckpointRotation.x;
-        data.playerRotationY = playerCheckpointRotation.y;
-        data.playerRotationZ = playerCheckpointRotation.z;
-        data.playerRotationW = playerCheckpointRotation.w;
-
-        data.levelPositionX = playerLevelPosition.x;
-        data.levelPositionY = playerLevelPosition.y;
-        data.levelPositionZ = playerLevelPosition.z;
-
-        data.levelRotationX = playerLevelRotation.x;
-        data.levelRotationY = playerLevelRotation.y;
-        data.levelRotationZ = playerLevelRotation.z;
-        data.levelRotationW = playerLevelRotation.w;
+        data.spawnIndex = spawnIndex;
 
         SavePlayerInfo(data);
     }
-    
-    public void SaveCheckpoint(Vector3 position, Quaternion rotation)
+
+    public void SetSpawnIndex(int index)
     {
-        Debug.Log("save rotation " + rotation);
-        SaveData data = new();
-        //data.coffeeBeanCollected = coffeeBeanCollected;
-        data.beans = beans;
-        data.saveFileName = saveFileName;
-        data.health = health;
-
-        data.levelData = levelData;
-        data.currentLevelIndex = currentLevelIndex;
-        
-        data.playerPositionX = position.x;
-        data.playerPositionY = position.y;
-        data.playerPositionZ = position.z;
-
-        data.playerRotationX = rotation.x;
-        data.playerRotationY = rotation.y;
-        data.playerRotationZ = rotation.z;
-        data.playerRotationW = rotation.w;
-
-        data.levelPositionX = playerLevelPosition.x;
-        data.levelPositionY = playerLevelPosition.y;
-        data.levelPositionZ = playerLevelPosition.z;
-
-        data.levelRotationX = playerLevelRotation.x;
-        data.levelRotationY = playerLevelRotation.y;
-        data.levelRotationZ = playerLevelRotation.z;
-        data.levelRotationW = playerLevelRotation.w;
-
-        playerCheckpointPosition = position;
-        playerCheckpointRotation = rotation;
-
-        SavePlayerInfo(data);
+        spawnIndex = index;
+        playerCheckpointPosition = levelDataObjects[currentLevelIndex].spawnPoints[spawnIndex].position;
+        playerCheckpointRotation = levelDataObjects[currentLevelIndex].spawnPoints[spawnIndex].rotation;
+        SavePlayerInfo();
     }
 
     public void LoadMostRecent()
@@ -161,11 +117,13 @@ public class MainManager : MonoBehaviour
             levelData = data.levelData;
             health = data.health;
 
-            playerCheckpointPosition = new(data.playerPositionX, data.playerPositionY, data.playerPositionZ);
-            playerCheckpointRotation = new Quaternion(data.playerRotationX, data.playerRotationY, data.playerRotationZ, data.playerRotationW);
+            spawnIndex = data.spawnIndex;
 
-            playerLevelPosition = new(data.levelPositionX, data.levelPositionY, data.levelPositionZ);
-            playerLevelRotation = new Quaternion(data.levelRotationX, data.levelRotationY, data.levelRotationZ, data.levelRotationW);
+            playerCheckpointPosition = levelDataObjects[currentLevelIndex].spawnPoints[spawnIndex].position;
+            playerCheckpointRotation = levelDataObjects[currentLevelIndex].spawnPoints[spawnIndex].rotation;
+
+            playerLevelPosition = levelDataObjects[currentLevelIndex].spawnPoints[0].position;
+            playerLevelRotation = levelDataObjects[currentLevelIndex].spawnPoints[0].rotation;
         }
     }
 }

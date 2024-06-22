@@ -24,10 +24,31 @@ public abstract class Collectable : MonoBehaviour
     public int levelId = -1;
 
     public bool collected = false;
+
+    protected void Awake()
+    {
+        UpdateVisibility();
+    }
+
+    protected void Loaded()
+    {
+        UpdateVisibility();
+    }
+
+    protected void UpdateVisibility()
+    {
+        if (collected)
+        {
+            gameObject.transform.parent.gameObject.SetActive(false);
+
+        }
+        else gameObject.transform.parent.gameObject.SetActive(true);
+    }
 }
 
 public static class CollectableType
 {
     public const string CoffeeBean = "CoffeeBean";
     public const string PartialDragonFruit = "PartialDragonFruit";
+    public const string Cutscene = "Cutscene";
 }

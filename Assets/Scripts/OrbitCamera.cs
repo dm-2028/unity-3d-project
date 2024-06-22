@@ -37,7 +37,7 @@ public class OrbitCamera : MonoBehaviour
 
     Vector3 focusPoint, previousFocusPoint;
 
-    public Vector2 orbitAngles;
+    public Vector2 orbitAngles, saveCameraAngle;
 
     float lastManualRotationTime;
 
@@ -47,6 +47,8 @@ public class OrbitCamera : MonoBehaviour
 
     Quaternion gravityAlignment = Quaternion.identity;
     Quaternion orbitRotation;
+
+    bool cutscene;
 
     Vector3 CameraHalfExtends
     {
@@ -84,6 +86,7 @@ public class OrbitCamera : MonoBehaviour
 
     private void LateUpdate()
     {
+        Debug.Log(orbitAngles.ToString());
         UpdateGravityAlignment();
         UpdateFocusPoint();
         if (ManualRotation() || AutomaticRotation())
@@ -98,7 +101,7 @@ public class OrbitCamera : MonoBehaviour
 
         Vector3 rectOffset = lookDirection * regularCamera.nearClipPlane;
         Vector3 rectPosition = lookPosition + rectOffset;
-        Vector3 castFrom = focus.position;
+        Vector3 castFrom = cutscene ? focusPoint : focus.position;
         Vector3 castLine = rectPosition - castFrom;
         float castDistance = castLine.magnitude;
         Vector3 castDirection = castLine / castDistance;
@@ -140,7 +143,7 @@ public class OrbitCamera : MonoBehaviour
     void UpdateFocusPoint()
     {
         previousFocusPoint = focusPoint;
-        Vector3 targetPoint = focus.position;
+        Vector3 targetPoint = cutscene ? focusPoint : focus.position;
         if (focusRadius > 0f)
         {
             float distance = Vector3.Distance(targetPoint, focusPoint);
@@ -165,6 +168,27 @@ public class OrbitCamera : MonoBehaviour
     {
         orbitAngles = new Vector2(x, y);
         transform.localRotation = orbitRotation = Quaternion.Euler(orbitAngles);
+    }
+
+    public void SetFocusPoint(Vector3 cutsceneFocusPosition, Vector2 cutsceneRotation)
+    {
+        if (!cutscene)
+        {
+            saveCameraAngle = orbitAngles;
+        }
+        inputReader.controls.Disable();
+        cutscene = true;
+        focusPoint = cutsceneFocusPosition;
+        SetAngle(cutsceneRotation.x, cutsceneRotation.y);
+    }
+
+    public void ResetFocusToPlayer()
+    {
+        inputReader.controls.Enable();
+        cutscene = false;
+        focusPoint = focus.position;
+        SetAngle(saveCameraAngle.x, saveCameraAngle.y);
+
     }
 
     bool ManualRotation()

@@ -40,24 +40,6 @@ public class PartialDragonFruit : Collectable
         }
     }
 
-    private void Awake()
-    {
-        UpdateVisibility();
-    }
 
-    void Loaded()
-    {
-        UpdateVisibility();
-    }
-
-    private void UpdateVisibility()
-    {
-        if (collected)
-        {
-            gameObject.transform.parent.gameObject.SetActive(false);
-
-        }
-        else gameObject.transform.parent.gameObject.SetActive(true);
-    }
 }
 
