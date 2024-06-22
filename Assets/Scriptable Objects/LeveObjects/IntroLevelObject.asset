@@ -20,15 +20,22 @@ MonoBehaviour:
   spawnPoints:
   - position: {x: -321.3381, y: -0.35, z: 15.29987}
     rotation: {x: 0, y: 0.5515876, z: 0, w: -0.834117}
+    sectionToLoad: 01000000
   - position: {x: -297.011, y: 8.099, z: -0.852}
     rotation: {x: 0, y: 0.122414954, z: 0, w: -0.992479}
+    sectionToLoad: 01000000
   - position: {x: -269.2774, y: 4.829, z: -20.945469}
     rotation: {x: 0, y: -0.7052469, z: 0, w: 0.7089617}
+    sectionToLoad: 01000000
   - position: {x: -234.42203, y: 12.41, z: -4.9726195}
     rotation: {x: 0, y: -0.9996253, z: 0, w: -0.027371965}
+    sectionToLoad: 0100000002000000
   - position: {x: -206.93, y: 8.38, z: 39.08}
     rotation: {x: 0, y: -0.7052469, z: 0, w: 0.7089617}
+    sectionToLoad: 0200000003000000
   - position: {x: -188.3159, y: 7.16, z: 26.940445}
     rotation: {x: 0, y: -0.555933, z: 0, w: 0.8312271}
+    sectionToLoad: 0200000003000000
   - position: {x: -125.15413, y: 5.18, z: 41.45999}
     rotation: {x: 0, y: -0.7023395, z: 0, w: 0.7118422}
+    sectionToLoad: 0300000004000000

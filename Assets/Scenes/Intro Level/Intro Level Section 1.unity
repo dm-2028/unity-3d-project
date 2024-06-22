@@ -9463,7 +9463,7 @@ GameObject:
   - component: {fileID: 1908448731}
   m_Layer: 0
   m_Name: Cutscene2
-  m_TagString: Cutscene
+  m_TagString: Collectable
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -9690,7 +9690,7 @@ GameObject:
   - component: {fileID: 1991190633}
   m_Layer: 0
   m_Name: Cutscene1
-  m_TagString: Cutscene
+  m_TagString: Collectable
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

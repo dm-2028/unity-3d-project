@@ -31,16 +31,19 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         SceneManager.LoadScene("Intro Level", LoadSceneMode.Additive);
-        SceneManager.LoadScene("Intro Level Section 1", LoadSceneMode.Additive);
         pauseMenu.gameObject.SetActive(false);
 
         if(MainManager.Instance.playerCheckpointPosition == Vector3.zero || MainManager.Instance.playerCheckpointRotation == new Quaternion(0, 0, 0, 0))
         {
             MainManager.Instance.SetSpawnIndex(0);
         }
+        foreach(int scene in MainManager.Instance.levelDataObjects[MainManager.Instance.currentLevelIndex].spawnPoints[MainManager.Instance.spawnIndex].sectionToLoad)
+        {
+            SceneManager.LoadScene("Intro Level Section " + scene.ToString(), LoadSceneMode.Additive);
+
+        }
         Debug.Log("game manager player checkpoint " + MainManager.Instance.playerCheckpointPosition + " " + MainManager.Instance.playerCheckpointRotation);
         _player = Instantiate(playerPrefab, MainManager.Instance.playerCheckpointPosition, MainManager.Instance.playerCheckpointRotation);
-        //player.transform.rotation = MainManager.Instance.playerCheckpointRotation;
 
         GameObject mainCamera = GameObject.FindGameObjectWithTag("MainCamera");
         mainCamera.GetComponent<OrbitCamera>().focus = _player.transform;
@@ -78,7 +81,14 @@ public class GameManager : MonoBehaviour
                 break;
             }
             collectable.collected = collected[i];
-            collectable.transform.parent.gameObject.SetActive(!collectable.collected);
+            if (tag == CollectableType.Cutscene)
+            {
+                collectable.transform.gameObject.SetActive(!collectable.collected);
+            }
+            else
+            {
+                collectable.transform.parent.gameObject.SetActive(!collectable.collected);
+            }
         }
     }
     // Update is called once per frame

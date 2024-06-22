@@ -15,8 +15,6 @@ TagManager:
   - Enemy
   - NPC
   - Menu
-  - PartialDragonFruit
-  - Cutscene
   layers:
   - Default
   - TransparentFX

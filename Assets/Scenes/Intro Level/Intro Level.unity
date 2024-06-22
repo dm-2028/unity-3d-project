@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.18028352, g: 0.22571376, b: 0.30692244, a: 1}
+  m_IndirectSpecularColor: {r: 0.12731713, g: 0.13414736, b: 0.12107852, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -435,7 +435,7 @@ GameObject:
   - component: {fileID: 132313073}
   m_Layer: 0
   m_Name: Cutscene4
-  m_TagString: Cutscene
+  m_TagString: Collectable
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -811,7 +811,7 @@ GameObject:
   - component: {fileID: 346479040}
   m_Layer: 0
   m_Name: Cutscene3
-  m_TagString: Cutscene
+  m_TagString: Collectable
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -892,6 +892,7 @@ Transform:
   - {fileID: 346479042}
   - {fileID: 132313075}
   - {fileID: 1702031958}
+  - {fileID: 1431559566}
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -4555,12 +4556,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1431559563}
   m_LocalRotation: {x: -0, y: 0.07802851, z: -0, w: 0.99695116}
-  m_LocalPosition: {x: -189.2, y: 15.2, z: 28.1}
+  m_LocalPosition: {x: 44.90001, y: 0, z: 33.2}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 6
+  m_Father: {fileID: 521362818}
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 8.951, z: 0}
 --- !u!1 &1444173845
 GameObject:
@@ -10132,7 +10133,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 943492638156991939, guid: 45527f73af2c3204a812b70582208341, type: 3}
       propertyPath: m_TagString
-      value: PartialDragonFruit
+      value: Collectable
       objectReference: {fileID: 0}
     - target: {fileID: 1408467230165579378, guid: 45527f73af2c3204a812b70582208341, type: 3}
       propertyPath: levelId

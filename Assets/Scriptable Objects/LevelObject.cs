@@ -16,4 +16,5 @@ public class SpawnPoint
 {
     public Vector3 position;
     public Quaternion rotation;
+    public int[] sectionToLoad;
 }
