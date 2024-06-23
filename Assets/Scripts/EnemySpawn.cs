@@ -2,15 +2,25 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EnemySpawn : MonoBehaviour
+public class EnemySpawn : Collectable
 {
+
+    override public string Tag
+    {
+        get
+        {
+            return CollectableType.EnemyEncounter;
+        }
+    }
     public Vector3[] spawnPositions;
     public Quaternion[] spawnRotations;
     public GameObject enemyPrefab;
-    //public GameObject wormPrefab;
     public int spawnLimit = 2;
     public int enemyCount = 4;
     public List<GameObject> activeEnemies;
+    private GameObject player;
+    public GameObject reward;
+    public Vector3 rewardSetPosition;
 
     public GameObject animateObject;
     private Animation mAnimation;
@@ -23,12 +33,16 @@ public class EnemySpawn : MonoBehaviour
     private int enemiesKilled = 0;
     private int spawnIndex;
 
+    private OrbitCamera orbitCamera;
+
     // Start is called before the first frame update
     void Start()
     {
+        player = GameObject.FindGameObjectWithTag("Player");
         mAnimation = animateObject.GetComponent<Animation>();
         activeEnemies = new List<GameObject>(spawnLimit);
         int spawnIndex = Random.Range(0, spawnPositions.Length);
+        orbitCamera = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<OrbitCamera>();
     }
 
     // Update is called once per frame
@@ -105,7 +119,6 @@ public class EnemySpawn : MonoBehaviour
         if(enemiesKilled == enemyCount)
         {
             activeSpawning = false;
-            mAnimation.Play();
             StartCoroutine(CameraFinish());
         }
     }
@@ -113,20 +126,28 @@ public class EnemySpawn : MonoBehaviour
     IEnumerator CameraStart()
     {
         Debug.Log("camera starting");
-        while (false)
-        {
-            yield return null;
-        }
-        Debug.Log("setting scenshown");
+        player.GetComponent<PlayerStateMachine>().inputReader.controls.Controls.Disable();
+        orbitCamera.SetFocusPoint(spawnPositions[0], new Vector2(30, 140));
         sceneShown = true;
         activeSpawning = true;
+        yield return new WaitForSeconds(2);
+        orbitCamera.ResetFocusToPlayer();
+        player.GetComponent<PlayerStateMachine>().inputReader.controls.Controls.Enable();
     }
 
     IEnumerator CameraFinish()
     {
-        while (false)
-        {
-            yield return null;
-        }
+        collected = true;
+        MainManager.Instance.levelData[MainManager.Instance.currentLevelIndex].enemyEncounterComplete[serializationId] = true;
+        MainManager.Instance.SavePlayerInfo();
+        player.GetComponent<PlayerStateMachine>().inputReader.controls.Controls.Disable();
+
+        orbitCamera.SetFocusPoint(rewardSetPosition, new Vector2(20, 90));
+        reward.transform.position = rewardSetPosition;
+        mAnimation.Play();
+        yield return new WaitForSeconds(3);
+        orbitCamera.ResetFocusToPlayer();
+        player.GetComponent<PlayerStateMachine>().inputReader.controls.Controls.Enable();
+
     }
 }

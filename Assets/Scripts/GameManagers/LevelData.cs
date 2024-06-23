@@ -6,5 +6,6 @@ public class LevelData
     public bool[] partialFruitCollected;
     public bool[] fruitCollected;
     public bool[] cutsceneTriggered;
+    public bool[] enemyEncounterComplete;
     public int spawnPointIndex;
 }

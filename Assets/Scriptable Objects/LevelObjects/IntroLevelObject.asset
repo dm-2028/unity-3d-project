@@ -17,6 +17,7 @@ MonoBehaviour:
   totalBeans: 40
   totalFruit: 1
   totalCutscenes: 5
+  enemyEncounters: 1
   spawnPoints:
   - position: {x: -321.3381, y: -0.35, z: 15.29987}
     rotation: {x: 0, y: 0.5515876, z: 0, w: -0.834117}

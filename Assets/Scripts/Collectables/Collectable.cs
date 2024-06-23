@@ -51,4 +51,5 @@ public static class CollectableType
     public const string CoffeeBean = "CoffeeBean";
     public const string PartialDragonFruit = "PartialDragonFruit";
     public const string Cutscene = "Cutscene";
+    public const string EnemyEncounter = "EnemyEncounter";
 }

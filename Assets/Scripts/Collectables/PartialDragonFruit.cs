@@ -22,7 +22,7 @@ public class PartialDragonFruit : Collectable
 
     private void Start()
     {
-        yPos = transform.position.y;
+        yPos = transform.localPosition.y;
     }
     // Update is called once per frame
     void Update()
@@ -33,9 +33,9 @@ public class PartialDragonFruit : Collectable
             transform.rotation = Quaternion.Lerp(transform.rotation, newRotation, Time.deltaTime);
             if (!beingPulled)
             {
-                var pos = transform.position;
+                var pos = transform.localPosition;
                 var newY = yPos + floatHeight * Mathf.Sin(Time.time * speed);
-                transform.position = new Vector3(pos.x, newY, pos.z);
+                transform.localPosition = new Vector3(pos.x, newY, pos.z);
             }
         }
     }

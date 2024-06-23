@@ -8,6 +8,7 @@ public class LevelObject : ScriptableObject
     public int totalBeans;
     public int totalFruit;
     public int totalCutscenes;
+    public int enemyEncounters;
 
     public SpawnPoint[] spawnPoints;
 }

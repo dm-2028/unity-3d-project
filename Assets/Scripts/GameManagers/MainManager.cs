@@ -47,6 +47,7 @@ public class MainManager : MonoBehaviour
             levelData[i].fruitCollected = new bool[levelDataObjects[i].totalFruit];
             levelData[i].partialFruitCollected = new bool[3];
             levelData[i].cutsceneTriggered = new bool[levelDataObjects[i].totalCutscenes];
+            levelData[i].enemyEncounterComplete = new bool[levelDataObjects[i].enemyEncounters];
         }
         currentLevelIndex = 0;
     }

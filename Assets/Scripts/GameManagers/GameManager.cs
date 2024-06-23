@@ -57,6 +57,7 @@ public class GameManager : MonoBehaviour
         _SetCollectibles(CollectableType.CoffeeBean, MainManager.Instance.levelData[MainManager.Instance.currentLevelIndex].coffeeBeanCollected);
         _SetCollectibles(CollectableType.PartialDragonFruit, MainManager.Instance.levelData[MainManager.Instance.currentLevelIndex].partialFruitCollected);
         _SetCollectibles(CollectableType.Cutscene, MainManager.Instance.levelData[MainManager.Instance.currentLevelIndex].cutsceneTriggered);
+        _SetCollectibles(CollectableType.EnemyEncounter, MainManager.Instance.levelData[MainManager.Instance.currentLevelIndex].enemyEncounterComplete);
         Debug.Log("finished setting collectables ");
     }
 

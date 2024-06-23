@@ -1379,6 +1379,38 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 6a0aee48b1f490849978e03a1358ff9c, type: 3}
   m_PrefabInstance: {fileID: 1074869178}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1113621414
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1113621415}
+  m_Layer: 0
+  m_Name: EnemySpawn
+  m_TagString: Collectable
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1113621415
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1113621414}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 1926702371}
+  m_Father: {fileID: 1272844137}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1151839733
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1563,7 +1595,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 1926702371}
+  - {fileID: 1113621415}
   - {fileID: 652856243}
   - {fileID: 1994200004}
   m_Father: {fileID: 0}
@@ -6226,7 +6258,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1272844137}
+  m_Father: {fileID: 1113621415}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: -8.246, z: 0}
 --- !u!65 &1926702372
@@ -6254,6 +6286,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 33e350b309733944d9abbe7fdc4634d6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  serializationId: 0
+  levelId: 0
+  collected: 0
   spawnPositions:
   - {x: -99.4, y: 2.16, z: 32.09}
   - {x: -102.6, y: 2.16, z: 57.96}
@@ -6264,6 +6299,8 @@ MonoBehaviour:
   spawnLimit: 2
   enemyCount: 4
   activeEnemies: []
+  reward: {fileID: 1627005915305321286}
+  rewardSetPosition: {x: -96.18, y: 2.32, z: 45.88}
   animateObject: {fileID: 561026349181480646}
 --- !u!1 &1994200003
 GameObject:
@@ -7060,6 +7097,94 @@ Animation:
   m_PlayAutomatically: 0
   m_AnimatePhysics: 0
   m_CullingType: 0
+--- !u!1001 &1627005915305321285
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 520162792081886394, guid: 8685897b0ffd8434d8806b1b0f2f4ab5, type: 3}
+      propertyPath: m_Name
+      value: DragonfruitPart3
+      objectReference: {fileID: 0}
+    - target: {fileID: 520162792081886394, guid: 8685897b0ffd8434d8806b1b0f2f4ab5, type: 3}
+      propertyPath: m_TagString
+      value: Collectable
+      objectReference: {fileID: 0}
+    - target: {fileID: 985622528195885409, guid: 8685897b0ffd8434d8806b1b0f2f4ab5, type: 3}
+      propertyPath: m_RootOrder
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 985622528195885409, guid: 8685897b0ffd8434d8806b1b0f2f4ab5, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -96.18
+      objectReference: {fileID: 0}
+    - target: {fileID: 985622528195885409, guid: 8685897b0ffd8434d8806b1b0f2f4ab5, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -13.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 985622528195885409, guid: 8685897b0ffd8434d8806b1b0f2f4ab5, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 45.88
+      objectReference: {fileID: 0}
+    - target: {fileID: 985622528195885409, guid: 8685897b0ffd8434d8806b1b0f2f4ab5, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.9974898
+      objectReference: {fileID: 0}
+    - target: {fileID: 985622528195885409, guid: 8685897b0ffd8434d8806b1b0f2f4ab5, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 985622528195885409, guid: 8685897b0ffd8434d8806b1b0f2f4ab5, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0.07081064
+      objectReference: {fileID: 0}
+    - target: {fileID: 985622528195885409, guid: 8685897b0ffd8434d8806b1b0f2f4ab5, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 985622528195885409, guid: 8685897b0ffd8434d8806b1b0f2f4ab5, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 985622528195885409, guid: 8685897b0ffd8434d8806b1b0f2f4ab5, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: -8.121
+      objectReference: {fileID: 0}
+    - target: {fileID: 985622528195885409, guid: 8685897b0ffd8434d8806b1b0f2f4ab5, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1970788617755157827, guid: 8685897b0ffd8434d8806b1b0f2f4ab5, type: 3}
+      propertyPath: m_Radius
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 5741435894604733852, guid: 8685897b0ffd8434d8806b1b0f2f4ab5, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0.7036265
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 1970788617755157827, guid: 8685897b0ffd8434d8806b1b0f2f4ab5, type: 3}
+  m_SourcePrefab: {fileID: 100100000, guid: 8685897b0ffd8434d8806b1b0f2f4ab5, type: 3}
+--- !u!1 &1627005915305321286 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 520162792081886394, guid: 8685897b0ffd8434d8806b1b0f2f4ab5, type: 3}
+  m_PrefabInstance: {fileID: 1627005915305321285}
+  m_PrefabAsset: {fileID: 0}
+--- !u!65 &1627005915305321287
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1627005915305321286}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1, y: 10, z: 11}
+  m_Center: {x: 0, y: 3, z: 0}
 --- !u!65 &5309208413055991926
 BoxCollider:
   m_ObjectHideFlags: 0
