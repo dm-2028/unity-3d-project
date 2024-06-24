@@ -35,11 +35,15 @@ public class EnemySpawn : Collectable
 
     private OrbitCamera orbitCamera;
 
+    override protected void Awake()
+    {
+        base.Awake();
+        mAnimation = animateObject.GetComponent<Animation>();
+    }
     // Start is called before the first frame update
     void Start()
     {
         player = GameObject.FindGameObjectWithTag("Player");
-        mAnimation = animateObject.GetComponent<Animation>();
         activeEnemies = new List<GameObject>(spawnLimit);
         int spawnIndex = Random.Range(0, spawnPositions.Length);
         orbitCamera = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<OrbitCamera>();
@@ -143,11 +147,26 @@ public class EnemySpawn : Collectable
         player.GetComponent<PlayerStateMachine>().inputReader.controls.Controls.Disable();
 
         orbitCamera.SetFocusPoint(rewardSetPosition, new Vector2(20, 90));
-        reward.transform.position = rewardSetPosition;
-        mAnimation.Play();
+        SetCompleted();
         yield return new WaitForSeconds(3);
         orbitCamera.ResetFocusToPlayer();
         player.GetComponent<PlayerStateMachine>().inputReader.controls.Controls.Enable();
 
+    }
+
+    override public void SetCollected(bool collected)
+    {
+        base.SetCollected(collected);
+        if (this.collected)
+        {
+            Debug.Log("set completed");
+            SetCompleted();
+        }
+    }
+
+    void SetCompleted()
+    {
+        reward.transform.position = rewardSetPosition;
+        mAnimation.Play();
     }
 }

@@ -86,7 +86,6 @@ public class OrbitCamera : MonoBehaviour
 
     private void LateUpdate()
     {
-        Debug.Log(orbitAngles.ToString());
         UpdateGravityAlignment();
         UpdateFocusPoint();
         if (ManualRotation() || AutomaticRotation())
@@ -195,7 +194,6 @@ public class OrbitCamera : MonoBehaviour
     {
         Vector2 input = new(inputReader.cameraMovement.y, inputReader.cameraMovement.x);
         const float e = 0.3f;
-        Debug.Log("input " + input);
         if (input.x < -e || input.x > e || input.y < -e || input.y > e)
         {
             orbitAngles += rotationSpeed * Time.deltaTime * input;

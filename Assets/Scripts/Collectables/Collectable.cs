@@ -25,7 +25,7 @@ public abstract class Collectable : MonoBehaviour
 
     public bool collected = false;
 
-    protected void Awake()
+    virtual protected void Awake()
     {
         UpdateVisibility();
     }
@@ -35,14 +35,26 @@ public abstract class Collectable : MonoBehaviour
         UpdateVisibility();
     }
 
-    protected void UpdateVisibility()
+    virtual public void SetCollected(bool collected)
     {
-        if (collected)
-        {
-            gameObject.transform.parent.gameObject.SetActive(false);
+        this.collected = collected;
+        UpdateVisibility();
+    }
 
+    virtual public void UpdateVisibility()
+    {
+        Debug.Log("Update Visibility " + Tag + " " + collected);
+        switch (Tag)
+        {
+            case CollectableType.CoffeeBean:
+            case CollectableType.PartialDragonFruit:
+            case CollectableType.EnemyEncounter:
+                transform.parent.gameObject.SetActive(!collected);
+                break;
+            case CollectableType.Cutscene:
+                gameObject.SetActive(!collected);
+                break;
         }
-        else gameObject.transform.parent.gameObject.SetActive(true);
     }
 }
 

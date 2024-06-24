@@ -81,15 +81,7 @@ public class GameManager : MonoBehaviour
             {
                 break;
             }
-            collectable.collected = collected[i];
-            if (tag == CollectableType.Cutscene)
-            {
-                collectable.transform.gameObject.SetActive(!collectable.collected);
-            }
-            else
-            {
-                collectable.transform.parent.gameObject.SetActive(!collectable.collected);
-            }
+            collectable.SetCollected(collected[i]);
         }
     }
     // Update is called once per frame
