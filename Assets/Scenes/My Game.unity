@@ -758,6 +758,7 @@ MonoBehaviour:
   healthBar: {fileID: 240187166}
   gamePaused: 0
   playerPrefab: {fileID: 7568703474669444069, guid: 94a401645e5ee5241b185fe1072ff13d, type: 3}
+  menu: {fileID: 0}
 --- !u!4 &265946010
 Transform:
   m_ObjectHideFlags: 0
@@ -3200,6 +3201,8 @@ MonoBehaviour:
   settingsMenu: {fileID: 194837729}
   totalsMenu: {fileID: 622879730}
   scrollContent: {fileID: 976679359}
+  beansText: {fileID: 656014218}
+  dragonFruitText: {fileID: 2072474730}
   mainMenuPause: {fileID: 1976958021}
   mainMenuGameOver: {fileID: 560605414}
   continueButton: {fileID: 1179984706}
@@ -3525,7 +3528,7 @@ MonoBehaviour:
   upAlignmentSpeed: 360
   obstructionMask:
     serializedVersion: 2
-    m_Bits: 3133
+    m_Bits: 3125
   orbitAngles: {x: 0, y: 0}
   saveCameraAngle: {x: 0, y: 0}
 --- !u!114 &963194230

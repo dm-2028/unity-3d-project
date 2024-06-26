@@ -8,12 +8,14 @@ public class NpcStateMachine : StateMachine
 
     public float baseSpeed = .5f;
 
-    private GameObject questionMark;
+    public GameObject questionMark;
     private GameObject talkIcon;
 
     private GameObject mainCamera;
 
     public DialogObject dialog;
+
+    public bool showIcon;
 
     GameObject player;
     // Start is called before the first frame update
@@ -47,13 +49,29 @@ public class NpcStateMachine : StateMachine
     public void InTalkingRange()
     {
         questionMark.SetActive(false);
-        talkIcon.SetActive(true);
+
+        if (showIcon)
+        {
+            talkIcon.SetActive(true);
+        }
+        else
+        {
+            talkIcon.SetActive(false);
+        }
     }
 
     public void OutOfTalkingRange()
     {
-        questionMark.SetActive(true);
         talkIcon.SetActive(false);
+
+        if (showIcon)
+        {
+            questionMark.SetActive(true);
+        }
+        else
+        {
+            questionMark.SetActive(false);
+        }
     }
 
     public void RotateTowardsplayer(Vector3 position)
@@ -83,5 +101,16 @@ public class NpcStateMachine : StateMachine
     public void StopTalking()
     {
         SwitchState(new NpcIdleState(this));
+    }
+
+    public void HideIcon()
+    {
+        showIcon = false;
+        questionMark.SetActive(false);
+        talkIcon.SetActive(false);
+    }
+    public void ShowIcon()
+    {
+        showIcon = true;
     }
 }

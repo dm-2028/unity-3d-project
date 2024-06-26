@@ -11,7 +11,8 @@ public class MainUIManager : MonoBehaviour
     [SerializeField]
     GameObject pauseMenu, dialogBox, gameOver, settingsMenu, totalsMenu, scrollContent;
 
-    
+    [SerializeField]
+    TextMeshProUGUI beansText, dragonFruitText;
     Button[] pauseButtons, gameOverButtons, settingsButtons, totalsButtons;
 
     [SerializeField]
@@ -58,7 +59,6 @@ public class MainUIManager : MonoBehaviour
 
     private void Update()
     {
-        Debug.Log("Update");
         float directionVertical = 0, directionHorizontal = 0;
 
         float verticalAxis = inputReader.movement.y;
@@ -120,7 +120,6 @@ public class MainUIManager : MonoBehaviour
 
     private void HandleSelection(float directionVertical, Button[] buttons)
     {
-        Debug.Log("handle selection " + directionVertical);
         bool indexChanged = false;
         if (directionVertical < 0)
         {
@@ -337,6 +336,21 @@ public class MainUIManager : MonoBehaviour
             FruitTotalText.text = "/" + MainManager.Instance.levelDataObjects[i].totalFruit.ToString();
             itemRect.sizeDelta = new(950, levelInfoHeight);
             itemRect.anchoredPosition = new(0, 200 - (levelInfoHeight * i));
+        }
+    }
+
+    public void UpdateCollectableText()
+    {
+        beansText.text = "Beans: " + MainManager.Instance.beans.ToString();
+
+        bool[] partialFruitCollected = MainManager.Instance.levelData[MainManager.Instance.currentLevelIndex].partialFruitCollected;
+        if (partialFruitCollected.Length == 0 || partialFruitCollected.All(o => o))
+        {
+            dragonFruitText.text = "Dragon Fruit: " + MainManager.Instance.totalDragonFruit.ToString();
+        }
+        else
+        {
+            dragonFruitText.text = "Dragon Fruit: (" + partialFruitCollected.Count(o => o) + "/3) " + MainManager.Instance.totalDragonFruit.ToString();
         }
     }
 }

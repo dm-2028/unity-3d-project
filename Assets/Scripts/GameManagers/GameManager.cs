@@ -25,6 +25,7 @@ public class GameManager : MonoBehaviour
 
     public GameObject playerPrefab;
 
+    public MainUIManager menu;
 
     private GameObject _player;
     // Start is called before the first frame update
@@ -32,7 +33,7 @@ public class GameManager : MonoBehaviour
     {
         SceneManager.LoadScene("Intro Level", LoadSceneMode.Additive);
         pauseMenu.gameObject.SetActive(false);
-
+        menu = GameObject.FindGameObjectWithTag("Menu").GetComponent<MainUIManager>();
         if(MainManager.Instance.playerCheckpointPosition == Vector3.zero || MainManager.Instance.playerCheckpointRotation == new Quaternion(0, 0, 0, 0))
         {
             MainManager.Instance.SetSpawnIndex(0);
@@ -42,14 +43,16 @@ public class GameManager : MonoBehaviour
             SceneManager.LoadScene("Intro Level Section " + scene.ToString(), LoadSceneMode.Additive);
 
         }
-        Debug.Log("game manager player checkpoint " + MainManager.Instance.playerCheckpointPosition + " " + MainManager.Instance.playerCheckpointRotation);
+
         _player = Instantiate(playerPrefab, MainManager.Instance.playerCheckpointPosition, MainManager.Instance.playerCheckpointRotation);
 
         GameObject mainCamera = GameObject.FindGameObjectWithTag("MainCamera");
         mainCamera.GetComponent<OrbitCamera>().focus = _player.transform;
         mainCamera.GetComponent<OrbitCamera>().SetAngle(30f, _player.transform.rotation.eulerAngles.y-180);
 
-        beansText.text = "Beans: " + MainManager.Instance.beans.ToString();
+        menu.UpdateCollectableText();
+
+
     }
 
     public void SetCollectibles()
@@ -167,18 +170,18 @@ public class GameManager : MonoBehaviour
     public void IncrementBeans()
     {
         MainManager.Instance.beans++;
-        beansText.text = "Beans: " + MainManager.Instance.beans.ToString();
+        menu.UpdateCollectableText();
         MainManager.Instance.SavePlayerInfo();
     }
 
-    public void CollectPartialFruit(int id)
+    public void CollectPartialFruit()
     {
-        LevelData data = MainManager.Instance.levelData[MainManager.Instance.currentLevelIndex];
-        bool[] collected = data.partialFruitCollected;
-        Debug.Log(collected.ToString() + " collected " + collected.Length.ToString());
-        int count = collected.Count(o => o);
-        Debug.Log(collected.ToString() + " collected " + count.ToString());
-        dragonFruitText.text = "Dragon Fruit: " + count.ToString() + " / 3";
+        if(MainManager.Instance.levelData[MainManager.Instance.currentLevelIndex].partialFruitCollected.All(o => o))
+        {
+            MainManager.Instance.levelData[MainManager.Instance.currentLevelIndex].fruitCollected[0] = true;
+            MainManager.Instance.totalDragonFruit++;
+        }
+        menu.UpdateCollectableText();
         MainManager.Instance.SavePlayerInfo();
     }
 }

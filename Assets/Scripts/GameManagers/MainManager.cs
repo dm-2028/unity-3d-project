@@ -9,10 +9,8 @@ public class MainManager : MonoBehaviour
     [SerializeField]
     public int beans;
     public string saveFileName;
+    public int totalDragonFruit;
 
-
-
-    public bool[] cutsceneTriggered;
     public int health = 10;
 
     public LevelObject[] levelDataObjects;
@@ -39,6 +37,12 @@ public class MainManager : MonoBehaviour
         }
         Instance = this;
         DontDestroyOnLoad(gameObject);
+
+        SetDefaults();
+    }
+
+    private void InitiateLevelData()
+    {
         levelData = new LevelData[levelDataObjects.Length];
         for (int i = 0; i < levelDataObjects.Length; i++)
         {
@@ -49,7 +53,17 @@ public class MainManager : MonoBehaviour
             levelData[i].cutsceneTriggered = new bool[levelDataObjects[i].totalCutscenes];
             levelData[i].enemyEncounterComplete = new bool[levelDataObjects[i].enemyEncounters];
         }
+    }
+    private void SetDefaults()
+    {
+        beans = 0;
+        totalDragonFruit = 0;
+        health = 10;
+        InitiateLevelData();
+
         currentLevelIndex = 0;
+
+        spawnIndex = 0;
     }
 
     public void SavePlayerInfo(SaveData data)
@@ -64,6 +78,7 @@ public class MainManager : MonoBehaviour
         SaveData data = new();
 
         data.beans = beans;
+        data.totalDragonFruit = totalDragonFruit;
         data.saveFileName = saveFileName;
         data.health = health;
 
@@ -111,6 +126,7 @@ public class MainManager : MonoBehaviour
             SaveData data = JsonUtility.FromJson<SaveData>(json);
 
             beans = data.beans;
+            totalDragonFruit = data.totalDragonFruit;
             saveFileName = data.saveFileName;
 
             currentLevelIndex = data.currentLevelIndex;
@@ -126,5 +142,12 @@ public class MainManager : MonoBehaviour
             playerLevelPosition = levelDataObjects[currentLevelIndex].spawnPoints[0].position;
             playerLevelRotation = levelDataObjects[currentLevelIndex].spawnPoints[0].rotation;
         }
+    }
+
+    public void CreateNewFile(string name){
+        SaveData data = new SaveData();
+        this.name = data.saveFileName = name;
+        SetDefaults();
+        SavePlayerInfo(data);
     }
 }

@@ -3,6 +3,7 @@ public class SaveData
 {
     public string saveFileName;
     public int beans;
+    public int totalDragonFruit;
 
     public LevelData[] levelData;
 

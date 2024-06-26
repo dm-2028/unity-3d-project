@@ -303,6 +303,7 @@ public class MenuUIManager : MonoBehaviour
 
     public void EnterClicked()
     {
+        MainManager.Instance.CreateNewFile(nameString);
         SaveData data = new SaveData();
 
         data.saveFileName = nameString + Time.time + ".json";

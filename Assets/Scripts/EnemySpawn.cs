@@ -102,7 +102,6 @@ public class EnemySpawn : Collectable
 
     private void OnTriggerExit(Collider other)
     {
-        Debug.Log("collider exit");
 
         if (other.CompareTag("Player"))
         {
@@ -159,7 +158,6 @@ public class EnemySpawn : Collectable
         base.SetCollected(collected);
         if (this.collected)
         {
-            Debug.Log("set completed");
             SetCompleted();
         }
     }

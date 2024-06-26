@@ -239,7 +239,7 @@ public class PlayerStateMachine : StateMachine, IHitboxResponder
             case CollectableType.PartialDragonFruit:
                 MainManager.Instance.levelData[MainManager.Instance.currentLevelIndex].partialFruitCollected[_collectable.serializationId] = true;
                 audioSource.PlayOneShot(fruitSound);
-                gameManager.CollectPartialFruit(_collectable.serializationId);
+                gameManager.CollectPartialFruit();
                 break;
             default:
                 break;
