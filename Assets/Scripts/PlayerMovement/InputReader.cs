@@ -50,7 +50,6 @@ public class InputReader : MonoBehaviour, PlayerControls.IControlsActions
 
     public void OnMovement(InputAction.CallbackContext context)
     {
-        Debug.Log("movement ");
         movement = context.ReadValue<Vector2>(); 
     }
 

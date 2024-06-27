@@ -9,6 +9,7 @@ public class MainManager : MonoBehaviour
     [SerializeField]
     public int beans;
     public string saveFileName;
+    public string displayName;
     public int totalDragonFruit;
 
     public int health = 10;
@@ -70,6 +71,7 @@ public class MainManager : MonoBehaviour
     {
         string json = JsonUtility.ToJson(data);
         Debug.Log("saving " + data.saveFileName);
+        Debug.Log(data.displayName);
         string path = Path.Combine(Application.persistentDataPath, data.saveFileName);
         File.WriteAllText(path, json);
     }
@@ -80,6 +82,7 @@ public class MainManager : MonoBehaviour
         data.beans = beans;
         data.totalDragonFruit = totalDragonFruit;
         data.saveFileName = saveFileName;
+        data.displayName = displayName;
         data.health = health;
 
         data.levelData = levelData;
@@ -128,6 +131,7 @@ public class MainManager : MonoBehaviour
             beans = data.beans;
             totalDragonFruit = data.totalDragonFruit;
             saveFileName = data.saveFileName;
+            displayName = data.displayName;
 
             currentLevelIndex = data.currentLevelIndex;
 
@@ -146,7 +150,9 @@ public class MainManager : MonoBehaviour
 
     public void CreateNewFile(string name){
         SaveData data = new SaveData();
-        this.name = data.saveFileName = name;
+        saveFileName = data.saveFileName = name + Time.time + ".json";
+        displayName = data.displayName = name;
+
         SetDefaults();
         SavePlayerInfo(data);
     }

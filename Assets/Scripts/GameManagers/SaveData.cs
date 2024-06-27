@@ -2,6 +2,7 @@
 public class SaveData
 {
     public string saveFileName;
+    public string displayName;
     public int beans;
     public int totalDragonFruit;
 

@@ -9,7 +9,7 @@ using System.Collections.Generic;
 public class MenuUIManager : MonoBehaviour
 {
     [SerializeField]
-    Button newGameButton, continueButton, loadGameButton;
+    Button newGameButton, continueButton, loadGameButton, nameBackButton, saveListBackButton;
 
     Button[] buttons;
     Button[][] keyboard;
@@ -18,7 +18,7 @@ public class MenuUIManager : MonoBehaviour
     GameObject buttonPrefab;
     List<Button> saveFileButtons = new List<Button>();
 
-    private int selectionIndex, rowIndex, keyIndex = 0;
+    private int selectionIndex, rowIndex, keyIndex = 0, saveKeyIndex = 0;
     private int saveSelectionIndex = 0;
     string nameString = "";
     FileInfo[] files;
@@ -52,11 +52,11 @@ public class MenuUIManager : MonoBehaviour
         buttons = new[] { newGameButton, continueButton, loadGameButton };
         keyboard = new Button[][] { new[] { Qbutton, Wbutton, Ebutton, Rbutton, Tbutton, Ybutton, Ubutton, Ibutton, Obutton, Pbutton },
                              new[]{ Abutton, Sbutton, Dbutton, Fbutton, Gbutton, Hbutton, Jbutton, Kbutton, Lbutton },
-                             new[]{ Zbutton, Xbutton, Cbutton, Vbutton, Bbutton, Nbutton, Mbutton, BackButton, EnterButton} };
+                             new[]{ Zbutton, Xbutton, Cbutton, Vbutton, Bbutton, Nbutton, Mbutton, BackButton, EnterButton},
+                             new[]{ nameBackButton } };
         keyboard[rowIndex][keyIndex].Select();
         keyboard[rowIndex][keyIndex].GetComponentInChildren<TextMeshProUGUI>().color = Color.red;
 
-        Debug.Log(keyboard[0].Length + keyboard[1].Length + keyboard[2].Length);
         buttons[selectionIndex].Select();
         buttons[selectionIndex].GetComponentInChildren<TextMeshProUGUI>().color = Color.red;
         scrollBasePosition = ((RectTransform)scrollContent.transform).anchoredPosition;
@@ -123,7 +123,16 @@ public class MenuUIManager : MonoBehaviour
             if (directionVertical < 0)
             {
                 keyboard[rowIndex][keyIndex].GetComponentInChildren<TextMeshProUGUI>().color = Color.black;
-                rowIndex = (rowIndex + 1) % buttons.Length;
+                if (rowIndex == keyboard.Length - 2)
+                {
+                    saveKeyIndex = keyIndex;
+                }
+                else if (rowIndex == keyboard.Length - 1)
+                {
+                    keyIndex = saveKeyIndex;
+                }
+                rowIndex = (rowIndex + 1) % keyboard.Length;
+                Debug.Log("buttons " + keyboard.Length.ToString() + " " + rowIndex);
                 if (keyIndex >= keyboard[rowIndex].Length)
                 {
                     keyIndex = keyboard[rowIndex].Length - 1;
@@ -133,7 +142,16 @@ public class MenuUIManager : MonoBehaviour
             }
             else if (directionVertical > 0)
             {
+
                 keyboard[rowIndex][keyIndex].GetComponentInChildren<TextMeshProUGUI>().color = Color.black;
+                if (rowIndex == 0)
+                {
+                    saveKeyIndex = keyIndex;
+                }
+                else if (rowIndex == keyboard.Length - 1)
+                {
+                    keyIndex = saveKeyIndex;
+                }
                 rowIndex = (rowIndex - 1) < 0 ? keyboard.Length - 1 : rowIndex - 1;
                 indexChanged = true;
 
@@ -152,7 +170,6 @@ public class MenuUIManager : MonoBehaviour
                 indexChanged = true;
 
             }
-
             if (indexChanged)
             {
                 if(keyIndex >= keyboard[rowIndex].Length)
@@ -161,7 +178,10 @@ public class MenuUIManager : MonoBehaviour
                 }
                 keyboard[rowIndex][keyIndex].Select();
                 keyboard[rowIndex][keyIndex].GetComponentInChildren<TextMeshProUGUI>().color = Color.red;
+                Debug.Log(directionVertical + " " + rowIndex + " " + keyIndex);
+
             }
+
         }
         else if (saveList.activeInHierarchy)
         {
@@ -243,6 +263,13 @@ public class MenuUIManager : MonoBehaviour
         BuildLoadMenu();
     }
 
+    public void MainMenu()
+    {
+        mainMenu.SetActive(true);
+        saveList.SetActive(false);
+        enterName.SetActive(false);
+    }
+
     void SelectButton()
     {
         if (mainMenu.activeInHierarchy)
@@ -278,6 +305,7 @@ public class MenuUIManager : MonoBehaviour
 
     public void BuildLoadMenu()
     {
+        saveFileButtons.Add(saveListBackButton);
         for(int i = 0; i < files.Length; i++)
         {
             GameObject newObject = GameObject.Instantiate(buttonPrefab, scrollContent.transform);
@@ -285,10 +313,12 @@ public class MenuUIManager : MonoBehaviour
             TextMeshProUGUI fileText = newObject.transform.GetChild(0).GetComponent<TextMeshProUGUI>();
             Button fileButton = newObject.GetComponent<Button>();
 
-            fileText.text = "Name: " + files[i].Name.Replace(".json", "");
+            string json = File.ReadAllText(files[i].FullName);
+            SaveData data = JsonUtility.FromJson<SaveData>(json);
+            fileText.text = "Name: " + data.displayName + "  Date: " + files[i].LastWriteTime;
             saveFileButtons.Add(fileButton);
             objectRect.sizeDelta = new(700, buttonHeight);
-            objectRect.anchoredPosition = new(0, 150-(buttonHeight * i));
+            objectRect.anchoredPosition = new(0, 150-(buttonHeight * (i+1)));
             string fileName = files[i].FullName;
             fileButton.onClick.AddListener(() => 
                 LoadSelectedFile(fileName)
@@ -304,12 +334,6 @@ public class MenuUIManager : MonoBehaviour
     public void EnterClicked()
     {
         MainManager.Instance.CreateNewFile(nameString);
-        SaveData data = new SaveData();
-
-        data.saveFileName = nameString + Time.time + ".json";
-        MainManager.Instance.saveFileName = data.saveFileName;
-        Debug.Log(data.saveFileName + " is the file name");
-        MainManager.Instance.SavePlayerInfo(data);
 
         SceneManager.LoadScene(1);
     }
