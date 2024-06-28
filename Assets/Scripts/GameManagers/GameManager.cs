@@ -19,7 +19,6 @@ public class GameManager : MonoBehaviour
 
     public Slider healthBar;
 
-    public bool gamePaused = false;
     private bool challengeStarted = false;
     private bool challengeAchieved = false;
 
@@ -41,7 +40,6 @@ public class GameManager : MonoBehaviour
         foreach(int scene in MainManager.Instance.levelDataObjects[MainManager.Instance.currentLevelIndex].spawnPoints[MainManager.Instance.spawnIndex].sectionToLoad)
         {
             SceneManager.LoadScene("Intro Level Section " + scene.ToString(), LoadSceneMode.Additive);
-
         }
 
         _player = Instantiate(playerPrefab, MainManager.Instance.playerCheckpointPosition, MainManager.Instance.playerCheckpointRotation);
@@ -90,10 +88,7 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.P))
-        {
-            TogglePause();
-        }
+
         if (challengeStarted)
         {
             bool challengeComplete = true;
@@ -141,20 +136,6 @@ public class GameManager : MonoBehaviour
 
   
 
-    private void TogglePause()
-    {
-        Debug.Log("game paused " + gamePaused);
-        if (!gamePaused)
-        {
-            GameObject.FindGameObjectWithTag("Menu").GetComponent<MainUIManager>().PauseGame();
-            gamePaused = true;
-        }
-        else
-        {
-            GameObject.FindGameObjectWithTag("Menu").GetComponent<MainUIManager>().UnPauseGame();
-            gamePaused = false;
-        }
-    }
 
     public void UpdateHealth(int health)
     {

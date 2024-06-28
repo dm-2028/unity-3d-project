@@ -14,21 +14,24 @@ public class PlayerMoveState : PlayerBaseState
     public override void Enter()
     {
         ContinueAnimation();
-        stateMachine.inputReader.OnJumpPerformed += SwitchToJumpState;
-        stateMachine.inputReader.OnAttackPerformed += Attack;
-        stateMachine.audioSource.clip = stateMachine.runningSound;
+        if (stateMachine.playable)
+        {
+            stateMachine.inputReader.OnJumpPerformed += SwitchToJumpState;
+            stateMachine.inputReader.OnAttackPerformed += Attack;
+            stateMachine.audioSource.clip = stateMachine.runningSound;
+        }
     }
 
     public override void Tick()
     {
-        if (!stateMachine.audioSource.isPlaying)
+        if (!stateMachine.playable) return;
+
+        if (stateMachine.inputReader.movement.sqrMagnitude > 0f)
         {
-            if (stateMachine.inputReader.movement.sqrMagnitude > 0f)
-            {
-                stateMachine.audioSource.PlayScheduled(1f - stateMachine.inputReader.movement.sqrMagnitude);
-            }
+            stateMachine.audioSource.PlayScheduled(1f - stateMachine.inputReader.movement.sqrMagnitude);
         }
-        if (!OnGround && stateMachine.stepsSinceLastGrounded > 2)
+            
+        if (!OnGround && stateMachine.stepsSinceLastGrounded > stateMachine.offGroundJumpFrames)
         {
             stateMachine.SwitchState(new PlayerFallState(stateMachine));
         }

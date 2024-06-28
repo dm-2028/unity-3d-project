@@ -12,6 +12,7 @@ public class InputReader : MonoBehaviour, PlayerControls.IControlsActions
 
     public Action OnJumpPerformed;
     public Action OnAttackPerformed;
+    public Action OnPausePressed;
 
     public PlayerControls controls;
 
@@ -56,5 +57,12 @@ public class InputReader : MonoBehaviour, PlayerControls.IControlsActions
     public void OnVertical(InputAction.CallbackContext context)
     {
         verticalMovement = context.ReadValue<float>();
+    }
+
+    public void OnPause(InputAction.CallbackContext context)
+    {
+        if (!context.performed) return;
+
+        OnPausePressed?.Invoke();
     }
 }

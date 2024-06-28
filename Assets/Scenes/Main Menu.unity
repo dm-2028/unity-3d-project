@@ -5094,6 +5094,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2040343450, guid: 94a401645e5ee5241b185fe1072ff13d, type: 3}
+      propertyPath: playable
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2040343451, guid: 94a401645e5ee5241b185fe1072ff13d, type: 3}
       propertyPath: m_Enabled
       value: 0
@@ -8587,6 +8591,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   beans: 0
   saveFileName: 
+  displayName: 
   totalDragonFruit: 0
   health: 10
   levelDataObjects:

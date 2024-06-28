@@ -35,8 +35,9 @@ public class PlayerTalkState : PlayerBaseState
 
     public override void Tick()
     {
-
-
+        Vector3 gravity = CustomGravity.GetGravity(stateMachine.body.position, out stateMachine.upAxis);
+        stateMachine.velocity += gravity * Time.deltaTime;
+        stateMachine.body.velocity = stateMachine.velocity;
     }
 
     public override void TickFixed()

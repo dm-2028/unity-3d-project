@@ -14,9 +14,9 @@ public class PlayerJumpState : PlayerBaseState
         jumping = true;
 
         stateMachine.inputReader.OnJumpPerformed += CheckDoubleJump;
-
+        Debug.Log("steps since last grounded " + stateMachine.stepsSinceLastGrounded);
         Vector3 jumpDirection;
-        if (OnGround || stateMachine.jumpFromSwim)
+        if (OnGround || stateMachine.stepsSinceLastGrounded < stateMachine.offGroundJumpFrames || stateMachine.jumpFromSwim)
         {
             jumpDirection = stateMachine.contactNormal;
         }

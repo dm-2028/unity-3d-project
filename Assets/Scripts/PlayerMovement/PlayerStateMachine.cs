@@ -11,6 +11,7 @@ public class PlayerStateMachine : StateMachine, IHitboxResponder
     //public float jumpForce { get; private set; } = 5f;
     public float lookRotationDampFactor { get; private set; } = 10f;
 
+    public bool playable = true;
     //public Vector3 velocity, connectionVelocity, lastConnectionVelocity;
 
     public Transform mainCamera { get; private set; }
@@ -36,6 +37,9 @@ public class PlayerStateMachine : StateMachine, IHitboxResponder
     public float jumpHeight = 2f;
     [Range(0, 5)]
     public int maxAirJumps = 0;
+
+    [Range(0, 20)]
+    public int offGroundJumpFrames = 10;
     [Range(0f, 90f)]
     public float
         maxGroundAngle = 25,
@@ -142,12 +146,15 @@ public class PlayerStateMachine : StateMachine, IHitboxResponder
 
     private void Start()
     {
-        gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
-      
+        if (playable)
+        {
+            gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
+
+        }
         mainCamera = Camera.main.transform;
         playerInputSpace = mainCamera.transform;
-        inputReader = GetComponent<InputReader>();
         animator = GetComponentInChildren<Animator>();
+        inputReader = GetComponent<InputReader>();
         splashParticles = GetComponent<ParticleSystem>();
         waveParticles = GetComponentInChildren<ParticleSystem>(); 
         hitbox = GetComponentInChildren<HitBox>();

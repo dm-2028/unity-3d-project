@@ -43,6 +43,8 @@ public class OrbitCamera : MonoBehaviour
 
     Camera regularCamera;
 
+    public bool gamePaused = false;
+
     public InputReader inputReader { get; private set; }
 
     Quaternion gravityAlignment = Quaternion.identity;
@@ -74,6 +76,7 @@ public class OrbitCamera : MonoBehaviour
     private void Start()
     {
         inputReader = GetComponent<InputReader>();
+        inputReader.OnPausePressed += TogglePause;
     }
 
     private void OnValidate()
@@ -257,4 +260,20 @@ public class OrbitCamera : MonoBehaviour
         float angle = Mathf.Acos(direction.y) * Mathf.Rad2Deg;
         return direction.x < 0f ? 360f - angle : angle;
     }
+
+    private void TogglePause()
+    {
+        Debug.Log("game paused " + gamePaused);
+        if (!gamePaused)
+        {
+            GameObject.FindGameObjectWithTag("Menu").GetComponent<MainUIManager>().PauseGame();
+            gamePaused = true;
+        }
+        else
+        {
+            GameObject.FindGameObjectWithTag("Menu").GetComponent<MainUIManager>().UnPauseGame();
+            gamePaused = false;
+        }
+    }
+
 }

@@ -59,6 +59,8 @@ public class MainUIManager : MonoBehaviour
 
     private void Update()
     {
+        if( inputReader == null) return;
+
         float directionVertical = 0, directionHorizontal = 0;
 
         float verticalAxis = inputReader.movement.y;
@@ -204,7 +206,7 @@ public class MainUIManager : MonoBehaviour
 
         Time.timeScale = 1;
         pauseButtons[selectionIndex].GetComponentInChildren<TextMeshProUGUI>().color = Color.black;
-        GameObject.Find("GameManager").GetComponent<GameManager>().gamePaused = false;
+        GameObject.FindGameObjectWithTag("MainCamera").GetComponent<OrbitCamera>().gamePaused = false;
         GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerStateMachine>().returnFromPause = true;
         GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerStateMachine>().inputReader.enabled = true;
 

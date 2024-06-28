@@ -71,6 +71,15 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Pause"",
+                    ""type"": ""Button"",
+                    ""id"": ""7ba94860-1e1d-4a95-b7b3-83ecc8b78e7d"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -315,6 +324,28 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                     ""action"": ""Attack"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""eb8d36e6-1db0-437b-9c01-c369dc51ac46"",
+                    ""path"": ""<Gamepad>/start"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Controller"",
+                    ""action"": ""Pause"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""70bb9b1a-e6f6-4050-955b-cc30792aeb9b"",
+                    ""path"": ""<Keyboard>/#(P)"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard"",
+                    ""action"": ""Pause"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -351,6 +382,7 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
         m_Controls_Jump = m_Controls.FindAction("Jump", throwIfNotFound: true);
         m_Controls_Vertical = m_Controls.FindAction("Vertical", throwIfNotFound: true);
         m_Controls_Attack = m_Controls.FindAction("Attack", throwIfNotFound: true);
+        m_Controls_Pause = m_Controls.FindAction("Pause", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -415,6 +447,7 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
     private readonly InputAction m_Controls_Jump;
     private readonly InputAction m_Controls_Vertical;
     private readonly InputAction m_Controls_Attack;
+    private readonly InputAction m_Controls_Pause;
     public struct ControlsActions
     {
         private @PlayerControls m_Wrapper;
@@ -424,6 +457,7 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
         public InputAction @Jump => m_Wrapper.m_Controls_Jump;
         public InputAction @Vertical => m_Wrapper.m_Controls_Vertical;
         public InputAction @Attack => m_Wrapper.m_Controls_Attack;
+        public InputAction @Pause => m_Wrapper.m_Controls_Pause;
         public InputActionMap Get() { return m_Wrapper.m_Controls; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -448,6 +482,9 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                 @Attack.started -= m_Wrapper.m_ControlsActionsCallbackInterface.OnAttack;
                 @Attack.performed -= m_Wrapper.m_ControlsActionsCallbackInterface.OnAttack;
                 @Attack.canceled -= m_Wrapper.m_ControlsActionsCallbackInterface.OnAttack;
+                @Pause.started -= m_Wrapper.m_ControlsActionsCallbackInterface.OnPause;
+                @Pause.performed -= m_Wrapper.m_ControlsActionsCallbackInterface.OnPause;
+                @Pause.canceled -= m_Wrapper.m_ControlsActionsCallbackInterface.OnPause;
             }
             m_Wrapper.m_ControlsActionsCallbackInterface = instance;
             if (instance != null)
@@ -467,6 +504,9 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                 @Attack.started += instance.OnAttack;
                 @Attack.performed += instance.OnAttack;
                 @Attack.canceled += instance.OnAttack;
+                @Pause.started += instance.OnPause;
+                @Pause.performed += instance.OnPause;
+                @Pause.canceled += instance.OnPause;
             }
         }
     }
@@ -496,5 +536,6 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
         void OnJump(InputAction.CallbackContext context);
         void OnVertical(InputAction.CallbackContext context);
         void OnAttack(InputAction.CallbackContext context);
+        void OnPause(InputAction.CallbackContext context);
     }
 }
