@@ -34,6 +34,7 @@ public class PlayerFallState : PlayerBaseState
             stateMachine.audioSource.PlayOneShot(stateMachine.landSound);
             stateMachine.SwitchState(new PlayerMoveState(stateMachine));
         }
+
     }
 
     public override void Exit()
@@ -47,8 +48,11 @@ public class PlayerFallState : PlayerBaseState
         stateMachine.upAxis = -Physics.gravity.normalized;
         Vector3 gravity = CustomGravity.GetGravity(stateMachine.body.position, out stateMachine.upAxis);
         UpdateState();
-        //CalcVelocity(stateMachine.maxAirAcceleration, stateMachine.maxSpeed, stateMachine.rightAxis, stateMachine.forwardAxis);
+        //works if i comment this out
+        CalcVelocity(stateMachine.maxAirAcceleration, stateMachine.maxSpeed, stateMachine.rightAxis, stateMachine.forwardAxis);
         stateMachine.velocity += gravity * Time.deltaTime;
+        Debug.Log(stateMachine.velocity + " velocity tick  " + gravity);
+
         stateMachine.body.velocity = stateMachine.velocity;
         ClearState();
     }

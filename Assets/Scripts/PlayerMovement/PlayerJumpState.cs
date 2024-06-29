@@ -65,6 +65,7 @@ public class PlayerJumpState : PlayerBaseState
     public override void Tick()
     {
         CalculateMoveDirection();
+        FaceMoveDirection();
     }
 
     public override void Exit()
@@ -85,12 +86,9 @@ public class PlayerJumpState : PlayerBaseState
         }
         stateMachine.upAxis = -Physics.gravity.normalized;
         Vector3 gravity = CustomGravity.GetGravity(stateMachine.body.position, out stateMachine.upAxis);
-        //Debug.Log("velocity before update " + stateMachine.velocity);
         UpdateState();
-        //Debug.Log("velocity before adjust " + stateMachine.velocity);
         CalcVelocity(stateMachine.maxAirAcceleration, stateMachine.maxSpeed, stateMachine.rightAxis, stateMachine.forwardAxis);
         stateMachine.velocity += gravity * Time.deltaTime;
-        //Debug.Log("velocity in jump = " + stateMachine.velocity);
         stateMachine.body.velocity = stateMachine.velocity;
         ClearState();
     }

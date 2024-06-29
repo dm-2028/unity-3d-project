@@ -161,6 +161,9 @@ public class GameManager : MonoBehaviour
         {
             MainManager.Instance.levelData[MainManager.Instance.currentLevelIndex].fruitCollected[0] = true;
             MainManager.Instance.totalDragonFruit++;
+
+            //TODO: remove this
+            GameObject.FindGameObjectWithTag("Menu").GetComponent<MainUIManager>().GameOver();
         }
         menu.UpdateCollectableText();
         MainManager.Instance.SavePlayerInfo();

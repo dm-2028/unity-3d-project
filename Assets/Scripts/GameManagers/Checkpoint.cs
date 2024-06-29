@@ -10,8 +10,7 @@ public class Checkpoint : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            MainManager.Instance.spawnIndex = spawnId;
-            MainManager.Instance.SavePlayerInfo();
+            MainManager.Instance.SetSpawnIndex(spawnId);
         }
     }
 

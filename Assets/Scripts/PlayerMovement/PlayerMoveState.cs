@@ -19,6 +19,7 @@ public class PlayerMoveState : PlayerBaseState
             stateMachine.inputReader.OnJumpPerformed += SwitchToJumpState;
             stateMachine.inputReader.OnAttackPerformed += Attack;
             stateMachine.audioSource.clip = stateMachine.runningSound;
+            stateMachine.audioSource.volume = .5f;
         }
     }
 
@@ -26,9 +27,13 @@ public class PlayerMoveState : PlayerBaseState
     {
         if (!stateMachine.playable) return;
 
-        if (stateMachine.inputReader.movement.sqrMagnitude > 0f)
+        if (!stateMachine.audioSource.isPlaying)
         {
-            stateMachine.audioSource.PlayScheduled(1f - stateMachine.inputReader.movement.sqrMagnitude);
+            if (stateMachine.inputReader.movement.sqrMagnitude > 0f)
+            {
+                Debug.Log("playing scheduled");
+                stateMachine.audioSource.PlayScheduled(1f - stateMachine.inputReader.movement.sqrMagnitude);
+            }
         }
             
         if (!OnGround && stateMachine.stepsSinceLastGrounded > stateMachine.offGroundJumpFrames)
@@ -87,6 +92,7 @@ public class PlayerMoveState : PlayerBaseState
     public override void Exit()
     {
         stateMachine.audioSource.Stop();
+        stateMachine.audioSource.volume = 1f;
         stateMachine.animator.speed = 1f;
         Debug.Log("exit move state");
         stateMachine.inputReader.OnJumpPerformed -= SwitchToJumpState;

@@ -756,7 +756,6 @@ MonoBehaviour:
   beansText: {fileID: 656014218}
   dragonFruitText: {fileID: 2072474730}
   healthBar: {fileID: 240187166}
-  gamePaused: 0
   playerPrefab: {fileID: 7568703474669444069, guid: 94a401645e5ee5241b185fe1072ff13d, type: 3}
   menu: {fileID: 0}
 --- !u!4 &265946010
@@ -3531,6 +3530,7 @@ MonoBehaviour:
     m_Bits: 3125
   orbitAngles: {x: 0, y: 0}
   saveCameraAngle: {x: 0, y: 0}
+  gamePaused: 0
 --- !u!114 &963194230
 MonoBehaviour:
   m_ObjectHideFlags: 0

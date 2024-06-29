@@ -75,7 +75,8 @@ public class MenuUIManager : MonoBehaviour
         float verticalAxis = inputReader.movement.y;
         float horizontalAxis = inputReader.movement.x;
 
-        if (Mathf.Abs(verticalAxis) > Mathf.Abs(previousVerticalAxis))
+        if (Mathf.Abs(verticalAxis) > Mathf.Abs(previousVerticalAxis) &&
+            Mathf.Abs(verticalAxis) > .5f)
         {
             if (!verticalAxisDown)
             {
@@ -83,7 +84,8 @@ public class MenuUIManager : MonoBehaviour
                 directionVertical = verticalAxis;
             }
         }
-        if (Mathf.Abs(horizontalAxis) > Mathf.Abs(previousHorizontalAxis))
+        if (Mathf.Abs(horizontalAxis) > Mathf.Abs(previousHorizontalAxis) &&
+            Mathf.Abs(horizontalAxis) > .5f)
         {
             if (!horizontalAxisDown)
             {
@@ -92,7 +94,16 @@ public class MenuUIManager : MonoBehaviour
 
             }
         }
+        Debug.Log(directionVertical + " " + directionHorizontal + " " + rowIndex + " " + keyIndex);
 
+        if (Mathf.Abs(directionVertical) > Mathf.Abs(directionHorizontal))
+        {
+            directionHorizontal = 0;
+        }
+        else
+        {
+            directionVertical = 0;
+        }
 
         if (mainMenu.activeInHierarchy)
         {
@@ -132,7 +143,6 @@ public class MenuUIManager : MonoBehaviour
                     keyIndex = saveKeyIndex;
                 }
                 rowIndex = (rowIndex + 1) % keyboard.Length;
-                Debug.Log("buttons " + keyboard.Length.ToString() + " " + rowIndex);
                 if (keyIndex >= keyboard[rowIndex].Length)
                 {
                     keyIndex = keyboard[rowIndex].Length - 1;
@@ -156,7 +166,7 @@ public class MenuUIManager : MonoBehaviour
                 indexChanged = true;
 
             }
-            if (directionHorizontal < 0)
+            else if (directionHorizontal < 0)
             {
                 keyboard[rowIndex][keyIndex].GetComponentInChildren<TextMeshProUGUI>().color = Color.black;
                 keyIndex = (keyIndex - 1) < 0 ? keyboard[rowIndex].Length - 1 : keyIndex - 1;
@@ -178,7 +188,6 @@ public class MenuUIManager : MonoBehaviour
                 }
                 keyboard[rowIndex][keyIndex].Select();
                 keyboard[rowIndex][keyIndex].GetComponentInChildren<TextMeshProUGUI>().color = Color.red;
-                Debug.Log(directionVertical + " " + rowIndex + " " + keyIndex);
 
             }
 
