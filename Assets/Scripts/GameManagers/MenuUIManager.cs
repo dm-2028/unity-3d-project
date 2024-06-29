@@ -9,7 +9,7 @@ using System.Collections.Generic;
 public class MenuUIManager : MonoBehaviour
 {
     [SerializeField]
-    Button newGameButton, continueButton, loadGameButton, nameBackButton, saveListBackButton;
+    Button newGameButton, continueButton, loadGameButton, nameBackButton, saveListBackButton, quitButton;
 
     Button[] buttons;
     Button[][] keyboard;
@@ -49,7 +49,7 @@ public class MenuUIManager : MonoBehaviour
         enterName.SetActive(false);
         mainMenu.SetActive(true);
         saveList.SetActive(false);
-        buttons = new[] { newGameButton, continueButton, loadGameButton };
+        buttons = new[] { newGameButton, continueButton, loadGameButton, quitButton };
         keyboard = new Button[][] { new[] { Qbutton, Wbutton, Ebutton, Rbutton, Tbutton, Ybutton, Ubutton, Ibutton, Obutton, Pbutton },
                              new[]{ Abutton, Sbutton, Dbutton, Fbutton, Gbutton, Hbutton, Jbutton, Kbutton, Lbutton },
                              new[]{ Zbutton, Xbutton, Cbutton, Vbutton, Bbutton, Nbutton, Mbutton, BackButton, EnterButton},
