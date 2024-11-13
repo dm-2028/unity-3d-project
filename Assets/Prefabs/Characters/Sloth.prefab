@@ -5070,7 +5070,7 @@ MonoBehaviour:
   body: {fileID: 0}
   nearbyNPC: {fileID: 0}
   runningSound: {fileID: 8300000, guid: fa95ebee958fb0e41a42a832aab767eb, type: 3}
-  jumpSound: {fileID: 8300000, guid: c33b58877ef714c259942f78e8f14187, type: 3}
+  jumpSound: {fileID: 8300000, guid: 4dd3709bc57e142658a6b53f15346ce6, type: 3}
   landSound: {fileID: 8300000, guid: 942019cf9ecd5854ebeb343b12b7f779, type: 3}
   splashSound: {fileID: 8300000, guid: 15af46f10b0129a499d31b23666943f9, type: 3}
   swimSound: {fileID: 8300000, guid: 695be21ef056df946b1746e149dc9cf5, type: 3}
